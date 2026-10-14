@@ -282,14 +282,6 @@
   .quiz-progress { font-weight: 800; color: var(--primary); }
   .quiz-nav-btns { display: flex; gap: 8px; }
   .quiz-nav .quiz-last { flex: 1; }
-  .quiz-more { position: relative; }
-  .quiz-menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 300; min-width: 190px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 12px 32px rgba(0,0,0,0.14); padding: 6px; display: none; transform-origin: top right; }
-  .quiz-menu.open { display: block; animation: popIn 0.18s ease both; }
-  .quiz-menu button { display: block; width: 100%; text-align: left; margin: 0; padding: 12px 14px; font-size: 0.92rem; font-weight: 600; background: transparent; color: var(--text); border-radius: 9px; }
-  .quiz-menu button:hover:not(:disabled) { background: var(--bg); }
-  .quiz-menu button:disabled { opacity: 0.35; }
-  .quiz-menu button.danger { color: var(--danger); }
-  .menu-sep { height: 1px; background: var(--border); margin: 4px 6px; }
 
   /* 완료 요약 */
   .q-summary { width: 100%; padding: 6px 4px; animation: riseIn 0.3s cubic-bezier(.3,1.25,.6,1) both; cursor: default; }
@@ -694,20 +686,15 @@
       <div class="quiz-nav-btns">
         <button class="btn-outline btn-small" id="btn-quiz-prev" onclick="prevQuestion()" aria-label="이전 문제">← 이전</button>
         <button class="btn-outline btn-small quiz-jump" data-n="1" onclick="jumpQuestion(1)" aria-label="다음 문제로 건너뛰기">다음 →</button>
+        <button class="btn-outline btn-small quiz-jump" data-n="10" onclick="jumpQuestion(10)" aria-label="10문제 건너뛰기">10문제 ⇥</button>
       </div>
       <span class="quiz-last" id="quiz-last"></span>
-      <div class="quiz-more">
-        <button class="icon-btn" id="btn-quiz-more" onclick="toggleQuizMenu(event)" title="더보기" aria-label="더보기" aria-haspopup="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
-        <div class="quiz-menu" id="quiz-menu" role="menu">
-          <button class="quiz-jump" data-n="10" role="menuitem" onclick="closeQuizMenu(); jumpQuestion(10)">10문제 건너뛰기</button>
-          <button id="btn-hide-word" role="menuitem" onclick="closeQuizMenu(); hideWord()">이 한자 숨기기</button>
-        </div>
-      </div>
     </div>
     
     <div class="quiz-layout">
       <div class="quiz-flashcard-area">
         <div class="flashcard">
+          <button class="hide-btn" id="btn-hide-word" onclick="hideWord()" title="이 한자 숨기기">숨김</button>
           <div class="q-text" id="play-q"></div>
           <div class="ans-text" id="play-a"></div>
         </div>
@@ -2940,7 +2927,6 @@ function hlClearSearch() {
 // 끝내기: 확인 없이 바로 나가되, 위치는 저장돼 있어서 토스트에서 바로 다시 열 수 있음
 function quitQuiz() {
   flushAdvance();
-  closeQuizMenu();
   const unfinished = currentQuiz.length && currentIndex < currentQuiz.length;
   const pos = currentIndex + 1, total = currentQuiz.length;
   document.getElementById('main-tabs').style.display = 'flex';
@@ -2969,27 +2955,13 @@ function switchTab(tabId) {
   });
 })();
 
-/* ---------- 퀴즈 더보기 메뉴 ---------- */
-function toggleQuizMenu(e) {
-  e.stopPropagation();
-  const m = document.getElementById('quiz-menu');
-  const open = !m.classList.contains('open');
-  m.classList.toggle('open', open);
-  document.getElementById('btn-quiz-more').setAttribute('aria-expanded', open);
-}
-function closeQuizMenu() {
-  document.getElementById('quiz-menu').classList.remove('open');
-  document.getElementById('btn-quiz-more').setAttribute('aria-expanded', 'false');
-}
-document.addEventListener('click', e => { if (!e.target.closest('.quiz-more')) closeQuizMenu(); });
-
 // 단축키
 document.addEventListener('keydown', function(e) {
   if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
   if(e.key === 'Escape' && document.getElementById('sync-modal').classList.contains('open')) { closeSyncModal(); return; }
   if(document.getElementById('quiz-play').style.display !== 'block') return;
   if(e.code === 'Backspace') { e.preventDefault(); prevQuestion(); return; }
-  if(e.key === 'Escape') { e.preventDefault(); if (document.getElementById('quiz-menu').classList.contains('open')) closeQuizMenu(); else quitQuiz(); return; }
+  if(e.key === 'Escape') { e.preventDefault(); quitQuiz(); return; }
 
   const btnAns = document.getElementById('btn-show-ans');
   const gradeBtns = document.getElementById('grade-btns');
