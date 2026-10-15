@@ -391,34 +391,59 @@
   .rec-limit { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
   .si-of { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
 
-  /* 손글씨 패드 */
-  .write-pad { display: none; position: relative; width: 100%; max-width: 420px; aspect-ratio: 1 / 1; margin: 6px auto 0; border-radius: 18px; background: var(--bg); border: 1.5px solid var(--border); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: crosshair; }
-  .flashcard.writing { justify-content: flex-start; padding-top: 58px; }
-  .flashcard.writing .write-pad { display: block; }
-  .flashcard.writing .q-text.is-mean { font-size: 2rem; margin-bottom: 4px; }
+  /* 손글씨 패드: 왼쪽 = 문제·정답, 오른쪽 = 쓰는 칸 */
+  .write-pad, .write-compare { display: none; }
+  .flashcard.writing { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 2fr); grid-template-rows: auto 1fr; column-gap: 18px; row-gap: 6px; align-items: center; justify-items: center; padding: 58px 18px 18px; }
+  .flashcard.writing .q-text { grid-column: 1; grid-row: 1; align-self: end; text-align: center; }
+  .flashcard.writing .q-text.is-mean { font-size: clamp(1.4rem, 3.2vw, 2rem); margin: 0; }
   .flashcard.writing.answered .q-text { transform: none; }
-  .app-container.landscape .flashcard.writing .write-pad { max-width: min(460px, calc(100vh - 360px)); }
+  .flashcard.writing .ans-text { display: none !important; }
+  .flashcard.writing .write-compare { grid-column: 1; grid-row: 2; align-self: start; display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 10px; }
+  .flashcard.writing .write-pad { grid-column: 2; grid-row: 1 / span 2; display: block; width: 100%; max-width: none; margin: 0; }
+  .wc-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; }
+  .wc-hanja { font-size: clamp(4.5rem, 12vw, 8.5rem); line-height: 1.05; font-weight: 400; color: var(--border); margin-top: 4px; transition: color 0.2s; }
+  .flashcard.wc-revealed .wc-hanja { color: var(--primary); }
+  .wc-mean { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-top: 4px; text-align: center; word-break: keep-all; }
+  .write-pad { position: relative; aspect-ratio: 1 / 1; border-radius: 18px; background: var(--bg); border: 1.5px solid var(--border); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: crosshair; }
   .write-grid { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
   .write-grid path { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 2 2; fill: none; vector-effect: non-scaling-stroke; }
   .write-grid path.diag { opacity: 0.55; }
-  .write-ghost { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; line-height: 1; color: var(--primary); opacity: 0; pointer-events: none; font-family: "Apple SD Gothic Neo","Noto Sans CJK KR","Malgun Gothic",serif; transition: opacity 0.25s; }
-  .write-pad.revealed .write-ghost { opacity: 0.22; }
-  .write-pad.revealed.ghost-off .write-ghost { opacity: 0; }
-  .ghost-in { animation: ghostIn 0.35s ease both; }
-  @keyframes ghostIn { from { transform: scale(1.06); } to { transform: none; } }
-  #write-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+  #write-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   .write-placeholder { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); opacity: 0.7; pointer-events: none; transition: opacity 0.2s; }
   .write-placeholder.gone { opacity: 0; }
-  .write-answer { position: absolute; top: 10px; left: 12px; font-size: 2rem; line-height: 1; color: var(--primary); font-weight: 600; opacity: 0; transform: translateY(6px); transition: opacity 0.25s, transform 0.25s; pointer-events: none; }
-  .write-pad.revealed .write-answer { opacity: 1; transform: none; }
   .write-tools { position: absolute; right: 8px; top: 8px; display: flex; gap: 6px; }
   .write-tools button { width: 38px; height: 38px; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 11px; background: var(--card); border: 1px solid var(--border); color: var(--text-muted); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
   .write-tools button:active { transform: scale(0.92); }
-  #wp-ghost { display: none; }
-  .write-pad.revealed #wp-ghost { display: flex; color: var(--primary); }
-  .write-pad.revealed.ghost-off #wp-ghost { color: var(--text-muted); }
   .write-toggle { display: inline-flex; align-items: center; gap: 5px; }
   .write-toggle.on { background: var(--secondary); border-color: rgba(49,130,246,0.45); color: var(--primary) !important; }
+  /* 쓰는 동안 화면 글자 선택 막기 */
+  body.writing-on #quiz-play, body.writing-on #quiz-play * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  body.writing-on #quiz-play textarea, body.writing-on #quiz-play input { -webkit-user-select: text; user-select: text; }
+  /* 가로 모드: 카드를 오른쪽으로 (쓰는 칸이 화면 오른쪽 끝에 오도록) */
+  @media (min-width: 768px) {
+    .app-container.landscape #quiz-play:has(.flashcard.writing) .quiz-flashcard-area { order: 2; flex: 1.6; }
+    .app-container.landscape #quiz-play:has(.flashcard.writing) .quiz-controls-area { order: 1; }
+    .app-container.landscape .flashcard.writing .write-pad { width: min(100%, calc(100vh - 330px)); justify-self: end; }
+  }
+
+  /* 겹치는 한자 */
+  .sub-seg button { white-space: nowrap; }
+  .dup-head .rv-desc b { color: var(--text); }
+  .dup-actions { margin-bottom: 12px; }
+  .dup-actions button { width: auto; margin: 0; padding: 12px 16px; font-size: 0.9rem; }
+  .dup-filter { display: inline-flex; background: var(--bg); border-radius: 10px; padding: 3px; gap: 2px; }
+  .dup-filter button { width: auto; margin: 0; padding: 7px 12px; font-size: 0.82rem; font-weight: 700; background: transparent; color: var(--text-muted); border-radius: 8px; }
+  .dup-filter button.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .dup-card { display: flex; gap: 16px; align-items: flex-start; padding: 16px 18px; }
+  .dup-hanja { font-size: 2.8rem; line-height: 1; min-width: 56px; text-align: center; padding-top: 4px; color: var(--text); }
+  .dup-body { flex: 1; min-width: 0; }
+  .dup-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; cursor: pointer; }
+  .dup-row + .dup-row { border-top: 1px dashed var(--border); }
+  .dup-row input { width: 18px; height: 18px; margin: 0; }
+  .dup-mean { font-weight: 700; color: var(--text); font-size: 0.95rem; }
+  .dup-src { margin-left: auto; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
+  .dup-btns { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .dup-same { font-size: 0.78rem; font-weight: 600; color: var(--success); margin-top: 6px; }
 
   /* 기록(통계) */
   .rv-tabs button b { font-variant-numeric: tabular-nums; }
@@ -761,6 +786,27 @@
     </div>
   </div>
 
+  <!-- 관리 > 겹치는 한자 -->
+  <div id="dups" class="content">
+    <div class="sub-seg">
+      <button data-sub="manage" onclick="switchTab('manage')">단어 수정</button>
+      <button data-sub="input" onclick="switchTab('input')">단어 추가</button>
+      <button data-sub="dups" onclick="switchTab('dups')">겹치는 한자</button>
+    </div>
+    <div class="setup-group dup-head">
+      <div class="setup-title">겹치는 한자</div>
+      <p class="rv-desc" id="dup-summary"></p>
+      <div class="dup-actions">
+        <button class="btn-primary" id="btn-dup-auto" onclick="autoUnifyDups()">표기만 다른 훈음 자동 통일</button>
+      </div>
+      <div class="dup-filter">
+        <button data-f="diff" onclick="setDupFilter('diff')">훈음이 다른 것</button>
+        <button data-f="all" onclick="setDupFilter('all')">전체</button>
+      </div>
+    </div>
+    <div id="dup-list"></div>
+  </div>
+
   <!-- 한자 목록 탭 -->
   <div id="hanja-list" class="content">
     <div class="setup-group">
@@ -811,6 +857,7 @@
     <div class="sub-seg">
       <button data-sub="manage" onclick="switchTab('manage')">단어 수정</button>
       <button data-sub="input" onclick="switchTab('input')">단어 추가</button>
+      <button data-sub="dups" onclick="switchTab('dups')">겹치는 한자</button>
     </div>
     <div class="setup-group">
       <div class="setup-title">범위</div>
@@ -840,6 +887,7 @@
     <div class="sub-seg">
       <button data-sub="manage" onclick="switchTab('manage')">단어 수정</button>
       <button data-sub="input" onclick="switchTab('input')">단어 추가</button>
+      <button data-sub="dups" onclick="switchTab('dups')">겹치는 한자</button>
     </div>
     <div class="prompt-box">
       <div style="font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:12px;">💡 AI 데이터 생성용 프롬프트</div>
@@ -911,14 +959,16 @@
           <button class="hide-btn" id="btn-hide-word" onclick="hideWord()" title="이 한자 숨기기">숨김</button>
           <div class="q-text" id="play-q"></div>
           <div class="ans-text" id="play-a"></div>
+          <div class="write-compare" id="write-compare" aria-live="polite">
+            <div class="wc-label" id="wc-label">정답</div>
+            <div class="wc-hanja" id="wc-hanja">?</div>
+            <div class="wc-mean" id="wc-mean"></div>
+          </div>
           <div class="write-pad" id="write-pad">
             <svg class="write-grid" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 0V100M0 50H100"/><path class="diag" d="M0 0L100 100M100 0L0 100"/></svg>
-            <div class="write-ghost" id="write-ghost" aria-hidden="true"></div>
             <canvas id="write-canvas" aria-label="손글씨 칸"></canvas>
             <div class="write-placeholder" id="write-placeholder">여기에 써 보세요</div>
-            <div class="write-answer" id="write-answer"></div>
             <div class="write-tools">
-              <button type="button" id="wp-ghost" onclick="wpToggleGhost()" aria-label="정답 겹쳐 보기" title="정답 겹쳐 보기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c1-2.5 5-7 10-7s9 4.5 10 7c-1 2.5-5 7-10 7S3 14.5 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
               <button type="button" id="wp-undo" onclick="wpUndo()" aria-label="한 획 지우기" title="한 획 지우기 (두 손가락 탭 · Z)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
               <button type="button" id="wp-clear" onclick="wpClear()" aria-label="모두 지우기" title="모두 지우기 (X)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
             </div>
@@ -1057,7 +1107,7 @@ let qType = 'hanja';
 const TARGET_CHUNK_SIZE = 25;
 
 /* ▼ 앱 버전: 새 파일을 올릴 때마다 바뀜. 열려 있는 앱이 GitHub의 최신 버전과 비교해 업데이트를 알려줌 */
-const APP_VERSION = '2026.10.15-6';
+const APP_VERSION = '2026.10.16-1';
 
 /* ▼▼▼ 내 '한자DB' 시트의 웹 앱 주소 ▼▼▼
    여기에 넣어두면 어느 기기에서 열어도 자동으로 연결됩니다.
@@ -1210,13 +1260,16 @@ function updateStartInfo() {
   const type = (document.querySelector('input[name="qType"]:checked') || {}).value;
   const target = (document.querySelector('input[name="qTarget"]:checked') || {}).value;
   const order = (document.querySelector('input[name="qOrder"]:checked') || {}).value;
-  const all = filterByTarget(wordList.filter(w => ids.has(String(w.id)) && !w.hidden), target, type);
+  const pool = dedupeByHanja(wordList.filter(w => ids.has(String(w.id)) && !w.hidden));
+  const all = filterByTarget(pool, target, type);
+  const dupCut = wordList.filter(w => ids.has(String(w.id)) && !w.hidden).length - pool.length;
   const list = target === 'rec' && recLimit ? all.slice(0, recLimit) : all;
   const ranges = new Set(all.map(w => w.source)).size;
+  const dupTag = dupCut > 0 ? ` · 겹치는 한자 ${dupCut}개 합침` : '';
   const tag = { rec: ` · 추천 ${recLevel}단계${order === 'rand' ? '' : ' · 필요한 순'}`, wrong: ' · 틀린 한자', star: ' · 별표' }[target] || '';
   const recRow = document.getElementById('opt-rec-row');
   if (recRow) { const show = target === 'rec'; if (show && recRow.style.display === 'none') replayAnim(recRow, 'sets-in'); recRow.style.display = show ? '' : 'none'; if (show) renderRecTiers(); }
-  info.innerHTML = ids.size ? `<b>${list.length}</b>문제${target === 'rec' && all.length > list.length ? ` <span class="si-of">/ ${all.length}</span>` : ''} · 범위 ${ranges}개${tag}` : '범위를 선택하세요';
+  info.innerHTML = ids.size ? `<b>${list.length}</b>문제${target === 'rec' && all.length > list.length ? ` <span class="si-of">/ ${all.length}</span>` : ''} · 범위 ${ranges}개${tag}${dupTag}` : '범위를 선택하세요';
   const empty = !list.length;
   document.getElementById('btn-start-quiz').disabled = empty;
   document.getElementById('btn-start-study').disabled = empty;
@@ -1253,6 +1306,8 @@ function loadData() {
   try { tombstones = JSON.parse(localStorage.getItem(LS.tomb) || '[]').map(String); } catch(e) { tombstones = []; }
   reindexNumbers();
   const fixedOnLoad = repairDuplicateIds();
+  groupCache.len = -1;
+  const synced = syncDuplicateStats();
   persistLocal(); // 로딩 시에는 시트로 보내지 않음 (단, id 복구가 있었으면 아래에서 저장)
 
   if (localStorage.getItem('hanja_layout') === 'landscape') document.getElementById('app-container').classList.add('landscape');
@@ -1265,7 +1320,7 @@ function loadData() {
   renderSources();
   renderWrongNotes();
   setSyncStatus(Cloud.enabled() ? 'loading' : 'local');
-  if (fixedOnLoad) saveToStorage();
+  if (fixedOnLoad || synced) saveToStorage();
   if (Cloud.enabled()) syncNow().finally(() => maybeAutoImport());
   else maybeAutoImport();
 }
@@ -1385,7 +1440,7 @@ async function resolveConflict() {
 function applyRemote(r) {
   wordList = (Array.isArray(r.words) ? r.words : []).map(normalizeWord);
   tombstones = (Array.isArray(r.tombstones) ? r.tombstones : []).map(String);
-  const fixed = repairDuplicateIds();
+  const fixed = repairDuplicateIds() + syncDuplicateStats();
   reindexNumbers();
   persistLocal();
   Cloud.setVer(r.updatedAt);
@@ -1951,6 +2006,7 @@ function applyGroups(chosen, { doUpdate, doTomb, saveRules }) {
     list.forEach((w, i) => w.num = i + 1);
   });
 
+  syncDuplicateStats();
   saveToStorage();
   renderSources();
   renderWrongNotes();
@@ -2202,6 +2258,7 @@ function saveNewWords() {
     }
   });
   
+  syncDuplicateStats();
   saveToStorage();
   document.getElementById('input-text').value = '';
   notify(`한자 ${addCount}개를 추가했어요`);
@@ -2607,7 +2664,8 @@ function getFilteredList() {
   const qTarget = document.querySelector('input[name="qTarget"]:checked').value;
   qType = document.querySelector('input[name="qType"]:checked').value;
   
-  let list = filterByTarget(wordList.filter(w => selectedIds.has(String(w.id)) && !w.hidden), qTarget, qType);
+  let list = filterByTarget(dedupeByHanja(wordList.filter(w => selectedIds.has(String(w.id)) && !w.hidden)
+    .sort((a, b) => a.source !== b.source ? a.source.localeCompare(b.source, 'ko', { numeric: true }) : a.num - b.num)), qTarget, qType);
   if(list.length === 0) {
     notify({ rec: '이 강도에서 추천할 한자가 없어요 · 강도를 낮춰 보세요', wrong: '틀린 한자가 없어요', star: '별표한 한자가 없어요' }[qTarget] || '조건에 맞는 한자가 없어요');
     return null;
@@ -2637,7 +2695,7 @@ function handleStudyClick(event, el) { el.classList.toggle('state-1'); }
 // 대상별 거르기 (학습 탭·복습 탭 공통)
 function filterByTarget(list, target, mode) {
   if (target === 'wrong') return list.filter(w => mode === 'hanja' ? w.wrongMean : w.wrongHanja);
-  if (target === 'rec') return list.filter(w => isRec(w, mode));
+  if (target === 'rec') return recSelect(list, mode);
   if (target === 'star') { const S = getStarSet(); return list.filter(w => S.has(String(w.id))); }
   return list;
 }
@@ -2770,7 +2828,7 @@ function startQuiz() {
 
 let recAtStart = null;   // 퀴즈 시작 때 추천이던 한자 (결과 화면에서 '졸업' 계산용)
 function beginQuiz(list) {
-  recAtStart = new Set(list.filter(w => isRec(w, qType)).map(w => w.id));
+  recAtStart = new Set(recSelect(list, qType).map(w => w.id));
   currentQuiz = list;
   currentIndex = 0;
   cardAnim = 'next';
@@ -2882,7 +2940,7 @@ function statsHTML() {
 }
 
 function startReviewQuiz(type) {
-  let list = filterByTarget(wordList.filter(w => !w.hidden), reviewMode, type);
+  let list = filterByTarget(dedupeByHanja(wordList.filter(w => !w.hidden)), reviewMode, type);
   if (!list.length) return notify('풀 한자가 없어요');
   qType = type;
   document.querySelectorAll('input[name="qType"]').forEach(r => r.checked = r.value === type);
@@ -2900,11 +2958,12 @@ function startReviewQuiz(type) {
 
 function recLine() {
   if (!recAtStart) return '';
+  const recNow = new Set(recSelect(currentQuiz, qType).map(w => w.id));
   const seen = new Set(quizHistory.filter(h => h.type === 'mark').map(h => h.id));
   let out = 0, inn = 0;
   currentQuiz.forEach(w => {
     if (!seen.has(w.id)) return;
-    const now = isRec(w, qType), was = recAtStart.has(w.id);
+    const now = recNow.has(w.id), was = recAtStart.has(w.id);
     if (was && !now) out++; else if (!was && now) inn++;
   });
   if (!out && !inn) return '';
@@ -3014,8 +3073,9 @@ function loadQuestion() {
   const qText = document.getElementById('play-q');
   const aText = document.getElementById('play-a');
   const qIsHanja = (qType === 'hanja');
-  qText.innerText = qIsHanja ? item.hanja : item.mean;
-  aText.innerText = qIsHanja ? item.mean : item.hanja;
+  const allMeans = meansOf(item).join(' / ');
+  qText.innerText = qIsHanja ? item.hanja : allMeans;
+  aText.innerText = qIsHanja ? allMeans : item.hanja;
   qText.className = 'q-text ' + (qIsHanja ? 'is-hanja' : 'is-mean');
   aText.className = 'ans-text ' + (qIsHanja ? 'is-mean' : 'is-hanja');
   
@@ -3152,7 +3212,7 @@ function prevQuestion() {
     return;
   }
   const w = wordList.find(x => x.id === last.id);
-  if (w) Object.assign(w, last.prev);
+  if (w) { if (last.type === 'mark') restoreGroup(w, last.prev); else Object.assign(w, last.prev); }
   if (last.type === 'mark') addLog(last.day || TODAY(), -1, last.correct ? -1 : 0);
   saveToStorage(); renderWrongNotes();
   if (last.type === 'hide') renderSources();
@@ -3172,6 +3232,7 @@ function setResult(w, isCorrect) {
   w[key] = st;
   if (qType === 'hanja') { w.wrongMean = !isCorrect; w.okMean = isCorrect; }
   else { w.wrongHanja = !isCorrect; w.okHanja = isCorrect; }
+  shareState(w);
 }
 const snapshot = w => ({ wrongMean: w.wrongMean, wrongHanja: w.wrongHanja, okMean: w.okMean, okHanja: w.okHanja,
                          sM: { ...(w.sM || EMPTY_STAT()) }, sH: { ...(w.sH || EMPTY_STAT()) } });
@@ -3245,10 +3306,12 @@ function complexity(h) {
    · 아직 안 풀어 본 한자는 추천하지 않음 (대상 '전체'로 풀면 됨)
    · 날짜가 없는 옛 기록(업데이트 전 기록)은 오래됐다고 단정하지 않고 낮게 봄
    추천 강도: 3 집중(need ≥ 0.8) · 2 균형(≥ 0.6) · 1 넓게(≥ 0.4) */
+// min = 이 정도는 복습이 필요해야 함, top = 고른 범위 한자 중 많아야 이만큼(비율)까지만
+// → 단계끼리, 그리고 1단계와 '전체' 사이에 항상 뚜렷한 차이가 남
 const REC_LEVELS = {
-  1: { min: 0.4, name: '넓게', desc: '흐려지기 시작했거나 아직 몇 번 안 푼 한자까지' },
-  2: { min: 0.6, name: '균형', desc: '잊어가고 있거나 자주 틀리는 한자' },
-  3: { min: 0.8, name: '집중', desc: '지금 꼭 다시 봐야 하는 한자만' }
+  1: { min: 0.35, top: 0.5,  name: '넓게', desc: '고른 범위의 절반 이내 · 흐려지기 시작한 한자까지' },
+  2: { min: 0.55, top: 0.25, name: '균형', desc: '고른 범위의 4분의 1 이내 · 잊어가거나 자주 틀리는 한자' },
+  3: { min: 0.75, top: 0.1,  name: '집중', desc: '고른 범위의 10분의 1 이내 · 지금 꼭 봐야 하는 한자만' }
 };
 let recLevel = Number(localStorage.getItem('hanja_rec_level') || 2);
 function setRecLevel(n) {
@@ -3290,7 +3353,16 @@ function weakInfo(w, mode) {
   if (!reasons.length) reasons.push(`${st.s}번 중 ${st.s - st.w}번 맞힘`);
   return { unseen: false, need, recall, half, days, cx, reasons: reasons.slice(0, 2), st };
 }
-// 지금 강도(기본: 설정값)에서 추천 대상인지
+// 범위 안에서 추천 고르기: 필요도 순으로 줄 세운 뒤 기준과 비율 상한을 둘 다 적용
+function recSelect(pool, mode, level = recLevel) {
+  const L = REC_LEVELS[level];
+  const cap = Math.max(1, Math.round(pool.length * L.top));
+  return pool.map(w => ({ w, i: weakInfo(w, mode) }))
+    .filter(x => !x.i.unseen && x.i.need >= L.min)
+    .sort((a, b) => (b.i.need + 0.02 * b.i.cx) - (a.i.need + 0.02 * a.i.cx))
+    .slice(0, cap).map(x => x.w);
+}
+// 한 단어만 볼 때 (기준만 적용)
 function isRec(w, mode, level = recLevel) {
   const i = weakInfo(w, mode);
   if (i.unseen) return false;
@@ -3315,8 +3387,8 @@ function renderRecTiers() {
     const ids = new Set();
     document.querySelectorAll('.source-cb:checked').forEach(cb => cb.value.split(',').forEach(id => ids.add(id)));
     const type = (document.querySelector('input[name="qType"]:checked') || {}).value || 'hanja';
-    const pool = wordList.filter(w => ids.has(String(w.id)) && !w.hidden);
-    setup.innerHTML = recTierHTML(n => pool.filter(w => isRec(w, type, n)).length);
+    const pool = dedupeByHanja(wordList.filter(w => ids.has(String(w.id)) && !w.hidden));
+    setup.innerHTML = recTierHTML(n => recSelect(pool, type, n).length);
     document.getElementById('rec-tier-desc').textContent = REC_LEVELS[recLevel].desc;
     document.querySelectorAll('#rec-limit-seg button').forEach(b => b.classList.toggle('active', Number(b.dataset.n) === recLimit));
   }
@@ -3326,6 +3398,138 @@ function renderRecTiers() {
     rv.innerHTML = recTierHTML(n => live.filter(w => isRec(w, 'hanja', n) || isRec(w, 'mean', n)).length);
     document.getElementById('rec-tier-review-desc').textContent = REC_LEVELS[recLevel].desc;
   }
+}
+
+/* ---------- 같은 한자 묶음 ----------
+   여러 범위에 같은 한자가 있으면 채점 기록(맞힘·틀림·통계)과 별표를 함께 씀.
+   퀴즈에서는 한 번만 나오고, 훈음이 범위마다 다르면 '스승 사 / 군사 사'처럼 합쳐서 보여줌 */
+const hkey = w => str(w.hanja);
+let groupCache = { ref: null, len: -1, map: new Map() };
+function groupMap() {
+  if (groupCache.ref !== wordList || groupCache.len !== wordList.length) {
+    const map = new Map();
+    wordList.forEach(w => { const k = hkey(w); if (!map.has(k)) map.set(k, []); map.get(k).push(w); });
+    groupCache = { ref: wordList, len: wordList.length, map };
+  }
+  return groupCache.map;
+}
+const groupOf = w => groupMap().get(hkey(w)) || [w];
+// 이 한자의 모든 훈음 (이 단어 것 먼저, 숨김 제외, 중복 제거)
+function meansOf(w) {
+  const out = [w.mean];
+  groupOf(w).forEach(x => { if (x !== w && !x.hidden && x.mean && !out.includes(x.mean)) out.push(x.mean); });
+  return out.filter(Boolean);
+}
+// 같은 한자 중 첫 번째만 남김 (목록 순서 유지)
+function dedupeByHanja(list) {
+  const seen = new Set();
+  return list.filter(w => { const k = hkey(w); if (seen.has(k)) return false; seen.add(k); return true; });
+}
+// 채점 상태(맞힘·틀림·통계)를 같은 한자 전체에 맞춤
+const SHARED_KEYS = ['wrongMean', 'wrongHanja', 'okMean', 'okHanja', 'sM', 'sH'];
+function shareState(w) {
+  groupOf(w).forEach(x => {
+    if (x === w) return;
+    SHARED_KEYS.forEach(k => { x[k] = (k === 'sM' || k === 'sH') ? { ...(w[k] || EMPTY_STAT()) } : w[k]; });
+  });
+}
+function restoreGroup(w, prev) {
+  Object.assign(w, prev);
+  shareState(w);
+}
+// 처음 한 번, 그리고 한자를 추가·가져온 뒤: 같은 한자끼리 가장 최근 기록으로 맞춤
+function syncDuplicateStats() {
+  let changed = 0;
+  groupMap().forEach(ws => {
+    if (ws.length < 2) return;
+    const pick = key => ws.reduce((a, b) => {
+      const sa = a[key] || EMPTY_STAT(), sb = b[key] || EMPTY_STAT();
+      return (sb.t > sa.t || (sb.t === sa.t && sb.s > sa.s)) ? b : a;
+    });
+    const bM = pick('sM'), bH = pick('sH');
+    ws.forEach(x => {
+      const before = JSON.stringify([x.sM, x.sH, x.wrongMean, x.okMean, x.wrongHanja, x.okHanja]);
+      x.sM = { ...(bM.sM || EMPTY_STAT()) }; x.wrongMean = bM.wrongMean; x.okMean = bM.okMean;
+      x.sH = { ...(bH.sH || EMPTY_STAT()) }; x.wrongHanja = bH.wrongHanja; x.okHanja = bH.okHanja;
+      if (JSON.stringify([x.sM, x.sH, x.wrongMean, x.okMean, x.wrongHanja, x.okHanja]) !== before) changed++;
+    });
+  });
+  return changed;
+}
+
+/* ---------- 관리 > 겹치는 한자 정리 ---------- */
+let dupFilter = 'diff';
+const normMean = m => str(m).replace(/[\s·.,()（）\[\]]/g, '');
+function dupGroups() {
+  const out = [];
+  groupMap().forEach((ws, k) => {
+    const live = ws.filter(w => !w.hidden);
+    if (live.length < 2) return;
+    const means = [...new Set(live.map(w => w.mean))];
+    out.push({ k, ws: live, means, diff: means.length > 1, cosmetic: means.length > 1 && new Set(means.map(normMean)).size === 1 });
+  });
+  return out.sort((a, b) => (b.diff - a.diff) || a.k.localeCompare(b.k));
+}
+function setDupFilter(f) { dupFilter = f; renderDups(); }
+function renderDups() {
+  const groups = dupGroups();
+  const diff = groups.filter(g => g.diff), cos = groups.filter(g => g.cosmetic);
+  document.getElementById('dup-summary').innerHTML =
+    `여러 범위에 같은 한자가 <b>${groups.length}자</b> 있어요. 퀴즈에서는 한 번만 나오고, 맞힘·틀림 기록과 별표도 함께 써요.` +
+    (diff.length ? ` 그중 <b>${diff.length}자</b>는 범위마다 훈음이 달라서 퀴즈에서 합쳐서 보여줘요(예: 스승 사 / 군사 사). 하나로 맞추거나 그대로 둘 수 있어요.` : ' 훈음도 모두 같아요.');
+  const auto = document.getElementById('btn-dup-auto');
+  auto.textContent = `표기만 다른 훈음 자동 통일${cos.length ? ` (${cos.length}자)` : ''}`;
+  auto.style.display = cos.length ? '' : 'none';
+  document.querySelectorAll('.dup-filter button').forEach(b => b.classList.toggle('active', b.dataset.f === dupFilter));
+  const list = dupFilter === 'diff' ? diff : groups;
+  const box = document.getElementById('dup-list');
+  if (!list.length) { box.innerHTML = `<div class="setup-group st-empty" style="text-align:center;">${dupFilter === 'diff' ? '훈음이 다른 겹치는 한자가 없어요 👍' : '겹치는 한자가 없어요'}</div>`; return; }
+  box.innerHTML = list.map((g, gi) => {
+    const counts = {};
+    g.ws.forEach(w => counts[w.mean] = (counts[w.mean] || 0) + 1);
+    const best = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+    return `<div class="setup-group dup-card" data-k="${esc(g.k)}">
+      <div class="dup-hanja">${esc(g.k)}</div>
+      <div class="dup-body">
+        ${g.ws.map(w => `<label class="dup-row">
+          ${g.diff ? `<input type="radio" name="dup-${gi}" value="${esc(w.mean)}" ${w.mean === best ? 'checked' : ''}>` : ''}
+          <span class="dup-mean">${esc(w.mean)}</span><span class="dup-src">${esc(w.source)}</span></label>`).join('')}
+        ${g.diff ? `<div class="dup-btns">
+          <button class="btn-primary btn-small" onclick="unifyDup(${gi}, 'pick')">고른 훈음으로 통일</button>
+          <button class="btn-outline btn-small" onclick="unifyDup(${gi}, 'merge')">모두 합치기</button>
+        </div>` : '<div class="dup-same">훈음 같음 · 기록 공유 중</div>'}
+      </div>
+    </div>`;
+  }).join('');
+  box._groups = list;
+}
+function applyMeans(changes, label) {
+  // changes: [[word, newMean]]
+  const before = changes.map(([w]) => [w, w.mean, w.userEdited]);
+  changes.forEach(([w, m]) => { if (w.mean !== m) { w.mean = m; if (w.origin === 'friend') w.userEdited = true; } });
+  saveToStorage(); renderDups(); renderSources(); renderWrongNotes();
+  notify(label, { action: { label: '되돌리기', run: () => {
+    before.forEach(([w, m, u]) => { w.mean = m; w.userEdited = u; });
+    saveToStorage(); renderDups(); renderSources(); renderWrongNotes();
+  } } });
+}
+function unifyDup(gi, how) {
+  const g = document.getElementById('dup-list')._groups[gi];
+  if (!g) return;
+  let mean;
+  if (how === 'merge') mean = g.means.join(' / ');
+  else { const r = document.querySelector(`input[name="dup-${gi}"]:checked`); if (!r) return; mean = r.value; }
+  applyMeans(groupOf(g.ws[0]).map(w => [w, mean]), `${g.k} → ${mean}`);
+}
+function autoUnifyDups() {
+  const changes = [];
+  dupGroups().filter(g => g.cosmetic).forEach(g => {
+    const counts = {};
+    g.ws.forEach(w => counts[w.mean] = (counts[w.mean] || 0) + 1);
+    const best = Object.entries(counts).sort((a, b) => b[1] - a[1] || b[0].length - a[0].length)[0][0];   // 같으면 띄어쓰기 있는 쪽
+    groupOf(g.ws[0]).forEach(w => changes.push([w, best]));
+  });
+  if (changes.length) applyMeans(changes, `표기를 통일했어요`);
 }
 
 /* ---------- 날짜별 풀이 기록: { 날짜번호: [푼 수, 맞힌 수] } ---------- */
@@ -3365,10 +3569,12 @@ const isStarred = id => getStarSet().has(String(id));
 function toggleStar(id, opts = {}) {
   const set = getStarSet(), k = String(id);
   const on = !set.has(k);
-  if (on) set.add(k); else set.delete(k);
+  const w0 = wordList.find(w => String(w.id) === k);
+  const ids = w0 ? groupOf(w0).map(x => String(x.id)) : [k];
+  ids.forEach(x => { if (on) set.add(x); else set.delete(x); });
   putStarSet(set);
   saveToStorage();
-  document.querySelectorAll(`[data-star-id="${k}"]`).forEach(b => { b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); if (on) replayAnim(b, 'star-pop'); });
+  document.querySelectorAll(ids.map(x => `[data-star-id="${x}"]`).join(',')).forEach(b => { b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); if (on) replayAnim(b, 'star-pop'); });
   if (!opts.silent) notify(on ? '별표했어요' : '별표를 뺐어요', { duration: 1200 });
   renderWrongNotes();
   if (isVisible('hanja-list')) drawHanjaList();
@@ -3726,7 +3932,7 @@ function qpMove(toCorrect) {
     for (let i = quizHistory.length - 1; i >= 0; i--) {
       const h = quizHistory[i];
       if (h.type === 'mark' && h.id === id) {
-        if (h.prev) Object.assign(w, h.prev);
+        if (h.prev) restoreGroup(w, h.prev);
         if (h.correct !== toCorrect) addLog(h.day || TODAY(), 0, toCorrect ? 1 : -1);
         h.correct = toCorrect; break;
       }
@@ -3854,7 +4060,7 @@ function quitQuiz() {
 }
 
 function switchTab(tabId) {
-  const tabKey = tabId === 'input' ? 'manage' : tabId;   // '단어 추가'는 '관리' 탭 안에 있음
+  const tabKey = (tabId === 'input' || tabId === 'dups') ? 'manage' : tabId;   // 단어 추가·겹치는 한자는 '관리' 탭 안에 있음
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabKey));
   document.querySelectorAll('.sub-seg button').forEach(b => b.classList.toggle('active', b.dataset.sub === tabId));
   document.querySelectorAll('.content').forEach(c => { c.classList.remove('active'); c.style.display = ''; });
@@ -3862,12 +4068,14 @@ function switchTab(tabId) {
   if(tabId === 'manage') renderManageTab();
   if(tabId === 'quiz-setup') renderSources();
   if(tabId === 'hanja-list') renderHanjaList();
+  if(tabId === 'dups') renderDups();
 }
 
 /* ---------- 손글씨 쓰기 (훈음 → 한자) ----------
    · 애플펜슬을 한 번 쓰면 그다음부터 손가락·손바닥 터치는 무시 (손바닥 거치기 OK)
    · 펜 압력에 따라 굵기 변화, 두 손가락 탭 = 한 획 지우기
-   · 정답을 보면 내 글씨 뒤에 정답 한자가 흐리게 겹쳐 보임 → 모양 비교 */
+   · 쓰는 칸은 카드 오른쪽(오른손잡이 기준), 정답은 왼쪽에 크게 나와서 나란히 비교
+   · 펜으로 쓰는 동안 화면 글자가 선택(블록 지정)되지 않게 막음 */
 let writeMode = localStorage.getItem('hanja_write_mode') === 'on';
 const wp = { strokes: [], cur: null, penSeen: false, ghost: true, ready: false };
 
@@ -3881,6 +4089,7 @@ function applyWriteMode(animate) {
   const on = writeMode && writeAvailable() && currentIndex < currentQuiz.length;
   const card = document.querySelector('#quiz-play .flashcard');
   card.classList.toggle('writing', on);
+  document.body.classList.toggle('writing-on', on);
   const btn = document.getElementById('btn-write');
   btn.style.display = writeAvailable() ? '' : 'none';
   btn.classList.toggle('on', writeMode);
@@ -3920,13 +4129,16 @@ function wpInit() {
     evs.forEach(ev => wp.cur.push(ptOf(ev)));
     wpDrawLast(false);
   });
-  const end = () => { wp.cur = null; };
+  const end = () => { if (wp.cur) { const { cv, g } = wpCtx(); wpTail(g, cv.width, wp.cur); } wp.cur = null; };
   cv.addEventListener('pointerup', end);
   cv.addEventListener('pointercancel', end);
-  // 두 손가락 탭 = 한 획 지우기
+  // 두 손가락 탭 = 한 획 지우기 / 칸 안의 터치는 기본 동작(글자 선택·확대·스크롤)을 막음
   let twoAt = 0, twoMoved = false;
-  cv.addEventListener('touchstart', e => { if (e.touches.length === 2) { twoAt = Date.now(); twoMoved = false; } }, { passive: true });
-  cv.addEventListener('touchmove', e => { if (e.touches.length === 2) twoMoved = true; }, { passive: true });
+  cv.addEventListener('touchstart', e => {
+    e.preventDefault();
+    if (e.touches.length === 2) { twoAt = Date.now(); twoMoved = false; }
+  }, { passive: false });
+  cv.addEventListener('touchmove', e => { e.preventDefault(); if (e.touches.length === 2) twoMoved = true; }, { passive: false });
   cv.addEventListener('touchend', e => {
     if (twoAt && e.touches.length === 0) {
       if (!twoMoved && Date.now() - twoAt < 350) { if (wp.cur === null && !wp.penSeen) wp.strokes.pop(); wpUndo(); }
@@ -3935,6 +4147,13 @@ function wpInit() {
   });
   if (window.ResizeObserver) new ResizeObserver(() => wpResize()).observe(document.getElementById('write-pad'));
 }
+
+// 쓰기 중에는 화면 어디서든 글자 선택·길게 누르기 메뉴가 뜨지 않게
+document.addEventListener('selectstart', e => {
+  const t = e.target && e.target.nodeType === 1 ? e.target : (e.target && e.target.parentElement);
+  if (document.body.classList.contains('writing-on') && !(t && t.closest('textarea, input'))) e.preventDefault();
+});
+document.addEventListener('contextmenu', e => { if (e.target.closest && e.target.closest('.write-pad')) e.preventDefault(); });
 
 function wpCtx() {
   const cv = document.getElementById('write-canvas');
@@ -3950,7 +4169,6 @@ function wpResize() {
   if (!w) return;
   const dpr = window.devicePixelRatio || 1;
   if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(w * dpr); }
-  document.getElementById('write-ghost').style.fontSize = (w * 0.78) + 'px';
   wpRedraw();
 }
 // 좌표는 칸 크기 기준 0~1로 저장 → 화면 크기가 바뀌어도 그대로 다시 그림. 굵기 = 칸의 1/48 × 필압
@@ -3959,20 +4177,34 @@ function wpSeg(g, W, a, b) {
   g.lineWidth = wpWidth(W, (a[2] + b[2]) / 2);
   g.beginPath(); g.moveTo(a[0] * W, a[1] * W); g.lineTo(b[0] * W, b[1] * W); g.stroke();
 }
-function wpDrawStroke(g, W, st, from) {
+// 점들 사이를 중간점 기준 곡선으로 이어서 부드럽게 (꺾임·마디 없이)
+const wpMid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2];
+function wpCurve(g, W, st, i) {
+  const p0 = i === 1 ? st[0] : wpMid(st[i - 2], st[i - 1]);
+  const p1 = st[i - 1], p2 = wpMid(st[i - 1], st[i]);
+  g.lineWidth = wpWidth(W, p1[2]);
+  g.beginPath(); g.moveTo(p0[0] * W, p0[1] * W); g.quadraticCurveTo(p1[0] * W, p1[1] * W, p2[0] * W, p2[1] * W); g.stroke();
+}
+function wpTail(g, W, st) {
+  if (st.length < 2) return;
+  wpSeg(g, W, wpMid(st[st.length - 2], st[st.length - 1]), st[st.length - 1]);
+}
+function wpDrawStroke(g, W, st, from, finished = true) {
   if (st.length === 1) {
     const p = st[0];
     g.beginPath(); g.arc(p[0] * W, p[1] * W, wpWidth(W, p[2]) / 2, 0, Math.PI * 2);
     g.fillStyle = g.strokeStyle; g.fill();
     return;
   }
-  for (let i = Math.max(1, from); i < st.length; i++) wpSeg(g, W, st[i - 1], st[i]);
+  for (let i = Math.max(1, from); i < st.length; i++) wpCurve(g, W, st, i);
+  if (finished) wpTail(g, W, st);
 }
 function wpDrawLast(first) {
   const { cv, g } = wpCtx();
   const st = wp.cur;
   if (!st) return;
-  wpDrawStroke(g, cv.width, st, first ? 0 : Math.max(1, st.length - 8));
+  wpDrawStroke(g, cv.width, st, first ? 0 : (st.d || 1), false);
+  st.d = st.length;
 }
 function wpRedraw() {
   const { cv, g } = wpCtx();
@@ -3986,27 +4218,24 @@ function wpClear(silent) {
   document.getElementById('write-placeholder').classList.remove('gone');
   if (!silent) replayAnim(document.getElementById('write-canvas'), 'pop-in');
 }
-function wpToggleGhost() {
-  wp.ghost = !wp.ghost;
-  document.getElementById('write-pad').classList.toggle('ghost-off', !wp.ghost);
-}
 // 새 문제: 지우고 정답 숨기기
 function wpReset() {
   wpClear(true);
-  const pad = document.getElementById('write-pad');
-  pad.classList.remove('revealed');
-  document.getElementById('write-ghost').textContent = '';
-  document.getElementById('write-answer').textContent = '';
+  const card = document.querySelector('#quiz-play .flashcard');
+  card.classList.remove('wc-revealed');
+  document.getElementById('wc-hanja').textContent = '?';
+  document.getElementById('wc-mean').textContent = '';
   applyWriteMode(false);
 }
 // 정답 공개: 흐린 정답을 겹쳐서 보여줌
 function wpReveal(item) {
   if (!document.querySelector('#quiz-play .flashcard').classList.contains('writing')) return false;
-  const pad = document.getElementById('write-pad');
-  document.getElementById('write-ghost').textContent = glyphOf(item.hanja) || item.hanja;
-  document.getElementById('write-answer').textContent = item.hanja;
-  pad.classList.add('revealed');
-  replayAnim(document.getElementById('write-ghost'), 'ghost-in');
+  const card = document.querySelector('#quiz-play .flashcard');
+  const h = document.getElementById('wc-hanja');
+  h.textContent = item.hanja;
+  document.getElementById('wc-mean').textContent = '';
+  card.classList.add('wc-revealed');
+  replayAnim(h, 'rise-in');
   return true;
 }
 
