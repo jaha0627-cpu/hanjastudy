@@ -431,6 +431,8 @@
   body.dark-mode .star-btn svg path { stroke: #64748b; }
   body.dark-mode .star-btn.on svg path { fill: #FFC53D; stroke: #F5A524; }
 
+  .app-footer { text-align: center; padding: 18px 0 calc(18px + env(safe-area-inset-bottom, 0px)); font-size: 0.72rem; font-weight: 600; color: var(--text-muted); opacity: 0.6; letter-spacing: 0.2px; }
+
   .quiz-done-msg { font-size: 1.1rem; font-weight: 600; color: var(--text-muted); margin-top: 8px; word-break: keep-all; }
   
   .quiz-extra-wrapper { margin: 8px 0; }
@@ -858,6 +860,7 @@
       <button class="btn-outline" id="qp-retry" style="margin:14px 0 0;" onclick="retryWrongInQuiz()">틀린 것만 다시 풀기</button>
     </div>
   </div>
+  <div class="app-footer"><span id="app-version"></span></div>
 </div>
 
 <!-- 세트 나누기 시트 -->
@@ -945,6 +948,9 @@ let wordList = [];
 let tombstones = [];          // 삭제한 외부 소스 단어의 extKey (재추가 방지)
 let qType = 'hanja';
 const TARGET_CHUNK_SIZE = 25;
+
+/* ▼ 앱 버전: 새 파일을 올릴 때마다 바뀜. 열려 있는 앱이 GitHub의 최신 버전과 비교해 업데이트를 알려줌 */
+const APP_VERSION = '2026.10.15-3';
 
 /* ▼▼▼ 내 '한자DB' 시트의 웹 앱 주소 ▼▼▼
    여기에 넣어두면 어느 기기에서 열어도 자동으로 연결됩니다.
@@ -3520,7 +3526,36 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-window.onload = loadData;
+/* ---------- 새 버전 확인 ----------
+   GitHub에 올라간 index.html을 캐시 없이 읽어서 APP_VERSION을 비교.
+   다르면 화면 아래에 '새 버전이 있어요 · 새로고침' 표시 → 누르면 저장된 옛 파일을 건너뛰고 새로 받음 */
+let lastVersionCheck = 0, updateNotified = '';
+async function checkForUpdate(force) {
+  if (!/^https?:/.test(location.protocol)) return;
+  if (!force && Date.now() - lastVersionCheck < 5 * 60 * 1000) return;
+  lastVersionCheck = Date.now();
+  try {
+    const res = await fetch(location.pathname + '?vcheck=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return;
+    const m = (await res.text()).match(/const APP_VERSION = '([^']+)'/);
+    if (!m || m[1] === APP_VERSION || m[1] === updateNotified) return;
+    updateNotified = m[1];
+    showToast(`새 버전이 있어요 (${m[1]})`, { duration: 20000, action: { label: '새로고침', run: () => applyUpdate(m[1]) } });
+  } catch (e) { /* 오프라인 등은 조용히 넘어감 */ }
+}
+function applyUpdate(v) {
+  if (typeof flushAdvance === 'function') flushAdvance();
+  location.replace(location.pathname + '?v=' + encodeURIComponent(v));
+}
+function initVersion() {
+  document.getElementById('app-version').textContent = 'v' + APP_VERSION;
+  // 새로고침용으로 붙은 ?v= 는 주소창에서 지워서 깔끔하게 (다시 받지는 않음)
+  if (/[?&]v=/.test(location.search)) history.replaceState(null, '', location.pathname + location.hash);
+  setTimeout(() => checkForUpdate(true), 3000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdate(); });
+}
+
+window.onload = () => { loadData(); initVersion(); };
 </script>
 </body>
 </html>
