@@ -330,6 +330,107 @@
   .ui-dialog-btns.stack { flex-direction: column; }
   @keyframes fadeOut { to { opacity: 0; } }
 
+  /* ---------- 별표 ---------- */
+  .star-btn { width: 36px; height: 36px; margin: 0; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; background: transparent; color: var(--border); flex-shrink: 0; transition: color 0.15s, background 0.15s; }
+  .star-btn svg path { fill: transparent; stroke: #B0B8C1; stroke-width: 1.7; stroke-linejoin: round; transition: fill 0.15s, stroke 0.15s; }
+  .star-btn:hover { background: var(--bg); }
+  .star-btn.on svg path { fill: #FFC53D; stroke: #F5A524; }
+  .star-pop { animation: starPop 0.32s cubic-bezier(.3,1.6,.6,1); }
+  @keyframes starPop { 0% { transform: scale(0.7); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  .card-star { position: absolute; top: 12px; left: 12px; z-index: 2; width: 40px; height: 40px; }
+  .card-star svg { width: 22px; height: 22px; }
+  .row-star { align-self: center; margin-left: 4px; }
+  .manage-row .icon-star { width: 40px; height: 40px; border: 1px solid var(--border); background: var(--card); }
+  .hl-cell { position: relative; }
+  .hl-cell.starred::after { content: '★'; position: absolute; top: 4px; right: 7px; font-size: 0.75rem; color: #F5A524; }
+
+  /* ---------- 대상 4칸 ---------- */
+  .opt-row .radio-group.seg label { padding: 11px 4px; }
+
+  /* ---------- 복습 탭 ---------- */
+  .rv-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .rv-tabs button { margin: 0; padding: 14px 8px 12px; border-radius: 16px; background: var(--card); border: 1.5px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text-muted); transition: border-color 0.18s, background 0.18s, color 0.18s; }
+  .rv-tabs button b { font-size: 1.5rem; font-weight: 800; color: var(--text); line-height: 1.1; }
+  .rv-tabs button span { font-size: 0.8rem; font-weight: 700; }
+  .rv-tabs button.active { border-color: var(--primary); background: var(--secondary); color: var(--primary); }
+  .rv-tabs button.active b { color: var(--primary); }
+  .rv-head { padding: 16px 18px; }
+  .rv-desc { font-size: 0.88rem; color: var(--text-muted); margin: 0 0 12px; line-height: 1.55; word-break: keep-all; }
+  .rv-head .wrong-cta button b { margin-left: 4px; font-weight: 800; }
+  .rv-src { display: flex; align-items: center; gap: 8px; font-size: 1rem !important; }
+  .rv-src span { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); background: var(--bg); padding: 2px 8px; border-radius: 999px; }
+  .rv-item { align-items: flex-start !important; }
+  .rv-hanja { font-size: 2.8rem !important; padding-top: 2px; }
+  #wrong-list-container:not([data-mode="wrong"]) .rv-hanja { color: var(--text) !important; }
+  .rv-mean { font-size: 1.02rem; font-weight: 700; color: var(--text); }
+  .rv-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { display: inline-block; font-size: 0.74rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+  .chip-mean { background: rgba(246,158,83,0.14); color: #C2621B; }
+  .chip-hanja { background: rgba(139,92,246,0.12); color: #7C3AED; }
+  .rv-hint { font-size: 0.85rem; color: var(--text-muted); white-space: pre-wrap; }
+  .rv-ex { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+
+  .chip-cx { background: rgba(100,116,139,0.12); color: var(--text-muted); }
+  .weak-meter { display: flex; gap: 2px; margin-top: 8px; }
+  .weak-meter i { width: 4px; height: 10px; border-radius: 2px; background: var(--border); }
+  .weak-meter.lv1 i:nth-child(1), .weak-meter.lv2 i:nth-child(-n+2), .weak-meter.lv3 i { background: #F59E0B; }
+  .weak-meter.lv3 i { background: var(--danger); }
+  .rv-limit { display: flex; align-items: center; gap: 10px; margin: -2px 0 12px; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); }
+  .rv-limit-seg { display: inline-flex; background: var(--bg); border-radius: 10px; padding: 3px; gap: 2px; }
+  .rv-limit-seg button { width: auto; margin: 0; padding: 6px 11px; font-size: 0.8rem; font-weight: 700; background: transparent; color: var(--text-muted); border-radius: 8px; }
+  .rv-limit-seg button.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .sum-rec { display: flex; justify-content: center; gap: 14px; margin: -4px 0 14px; font-size: 0.85rem; font-weight: 600; }
+  .sum-rec .good { color: var(--success); } .sum-rec .bad { color: #D97706; }
+  .sum-rec b { font-weight: 800; }
+
+  /* ---------- 범위 카드: 나누기 버튼 ---------- */
+  .src-split { width: 48px; align-self: stretch; margin: 0; padding: 0; border-radius: 0; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; border-left: 1px solid var(--border); opacity: 0.75; }
+  .src-split:hover { opacity: 1; color: var(--primary); }
+  .src-split:active { transform: none; background: var(--bg); }
+
+  /* ---------- 세트 나누기 시트 ---------- */
+  .split-modal { display: flex; flex-direction: column; max-height: 90vh; padding-bottom: 0 !important; }
+  .split-kicker { font-size: 0.75rem; font-weight: 700; color: var(--primary); }
+  .split-title { font-size: 1.2rem; font-weight: 800; color: var(--text); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .split-sub { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
+  .split-presets { display: flex; gap: 8px; margin: 4px 0 8px; flex-wrap: wrap; }
+  .split-presets > button { width: auto; margin: 0; padding: 9px 14px; font-size: 0.85rem; font-weight: 700; border-radius: 999px; background: var(--card); border: 1px solid var(--border); color: var(--text); }
+  .split-presets > button.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .split-every { display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: 999px; background: var(--card); overflow: hidden; }
+  .split-every button { width: auto; margin: 0; padding: 9px 12px; font-size: 0.95rem; font-weight: 800; background: transparent; color: var(--text-muted); border-radius: 0; }
+  .split-every .split-every-label { color: var(--text); font-size: 0.85rem; padding: 9px 4px; }
+  .split-every .split-every-label b { color: var(--primary); margin-right: 2px; }
+  .split-hint { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px; }
+  .split-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 10px 12px; min-height: 160px; }
+  .split-head { display: flex; align-items: center; gap: 8px; padding: 10px 2px 6px; }
+  .split-head:first-child { padding-top: 2px; }
+  .split-tag { width: auto; margin: 0; padding: 5px 10px; display: inline-flex; align-items: center; gap: 5px; font-size: 0.82rem; font-weight: 800; border-radius: 8px; color: #fff; background: var(--c); }
+  .split-tag svg { opacity: 0.8; }
+  .split-count { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
+  .split-merge { width: auto; margin: 0 0 0 auto; order: 3; padding: 5px 9px; display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 700; background: var(--bg); color: var(--text-muted); border-radius: 8px; }
+  .split-merge svg { width: 13px; height: 13px; }
+  .split-unit { position: relative; padding: 9px 10px 9px 16px; border-radius: 10px; background: var(--bg); }
+  .split-unit::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 4px; border-radius: 4px; background: var(--c); }
+  .split-unit .su-main { font-size: 1rem; font-weight: 600; color: var(--text); line-height: 1.45; word-break: keep-all; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .split-unit .su-mean { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-left: 4px; }
+  .split-unit .su-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 3px; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
+  .split-unit .su-hanja { letter-spacing: 1px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .split-gap { position: relative; display: block; width: 100%; height: 22px; margin: 0; padding: 0; background: transparent; border-radius: 6px; }
+  .split-gap-line { position: absolute; left: 10px; right: 10px; top: 50%; border-top: 1.5px dashed transparent; transition: border-color 0.15s; }
+  .split-gap-btn { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.9); display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; font-size: 0.72rem; font-weight: 700; color: var(--primary); background: var(--card); border: 1px solid rgba(49,130,246,0.35); border-radius: 999px; opacity: 0; transition: opacity 0.15s, transform 0.15s; white-space: nowrap; }
+  .split-gap-btn svg { width: 12px; height: 12px; }
+  .split-gap:hover .split-gap-line, .split-gap:focus-visible .split-gap-line { border-color: rgba(49,130,246,0.45); }
+  .split-gap:hover .split-gap-btn, .split-gap:focus-visible .split-gap-btn { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  @media (hover: none) { .split-gap .split-gap-btn { opacity: 0.55; } .split-gap .split-gap-line { border-color: rgba(49,130,246,0.18); } }
+  .split-foot { position: sticky; bottom: 0; display: flex; align-items: center; gap: 8px; padding: 12px 0 calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--bg); }
+  .split-foot button { width: auto; margin: 0; padding: 13px 20px; }
+  .split-summary { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .split-summary b { font-size: 0.95rem; color: var(--text); }
+  .split-summary span { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  body.dark-mode .chip-mean { color: #FDBA74; } body.dark-mode .chip-hanja { color: #C4B5FD; }
+  body.dark-mode .star-btn svg path { stroke: #64748b; }
+  body.dark-mode .star-btn.on svg path { fill: #FFC53D; stroke: #F5A524; }
+
   .quiz-done-msg { font-size: 1.1rem; font-weight: 600; color: var(--text-muted); margin-top: 8px; word-break: keep-all; }
   
   .quiz-extra-wrapper { margin: 8px 0; }
@@ -500,7 +601,7 @@
   <div class="tabs" id="main-tabs">
     <div class="tab active" data-tab="quiz-setup" onclick="switchTab('quiz-setup')">학습</div>
     <div class="tab" data-tab="hanja-list" onclick="switchTab('hanja-list')">한자목록</div>
-    <div class="tab" data-tab="wrong-notes" onclick="switchTab('wrong-notes')">오답노트</div>
+    <div class="tab" data-tab="wrong-notes" onclick="switchTab('wrong-notes')">복습</div>
     <div class="tab" data-tab="manage" onclick="switchTab('manage')">관리</div>
   </div>
 
@@ -537,7 +638,9 @@
             <div class="opt-label">대상</div>
             <div class="radio-group seg">
               <label><input type="radio" name="qTarget" value="all" checked onchange="saveQuizOpts()"> <span>전체</span></label>
-              <label><input type="radio" name="qTarget" value="wrong" onchange="saveQuizOpts()"> <span>틀린 한자만</span></label>
+              <label><input type="radio" name="qTarget" value="rec" onchange="saveQuizOpts()"> <span>추천</span></label>
+              <label><input type="radio" name="qTarget" value="wrong" onchange="saveQuizOpts()"> <span>틀림</span></label>
+              <label><input type="radio" name="qTarget" value="star" onchange="saveQuizOpts()"> <span>별표</span></label>
             </div>
           </div>
         </div>
@@ -580,17 +683,30 @@
 
   <!-- 2. 오답 노트 탭 -->
   <div id="wrong-notes" class="content">
-    <div class="setup-group">
-      <div class="setup-title">오답노트</div>
-      <p style="font-size: 0.9rem; color:var(--text-muted); margin-top:-6px;" id="wrong-count-msg"></p>
+    <div class="rv-tabs" role="tablist">
+      <button data-rv="rec" role="tab" onclick="setReviewMode('rec')"><b id="rv-n-rec">0</b><span>추천</span></button>
+      <button data-rv="wrong" role="tab" onclick="setReviewMode('wrong')"><b id="rv-n-wrong">0</b><span>틀림</span></button>
+      <button data-rv="star" role="tab" onclick="setReviewMode('star')"><b id="rv-n-star">0</b><span>별표</span></button>
+    </div>
+    <div class="setup-group rv-head">
+      <p class="rv-desc" id="wrong-count-msg"></p>
+      <div class="rv-limit" id="rv-limit">
+        <span>약한 순으로</span>
+        <div class="rv-limit-seg">
+          <button data-n="10" onclick="setRecLimit(10)">10개</button>
+          <button data-n="20" onclick="setRecLimit(20)">20개</button>
+          <button data-n="30" onclick="setRecLimit(30)">30개</button>
+          <button data-n="0" onclick="setRecLimit(0)">전체</button>
+        </div>
+      </div>
       <div class="wrong-cta" id="wrong-cta">
-        <button class="btn-primary" id="btn-wrong-quiz-hanja" onclick="startWrongQuiz('hanja')">한자 → 훈음 틀린 것 풀기</button>
-        <button class="btn-study" id="btn-wrong-quiz-mean" onclick="startWrongQuiz('mean')">훈음 → 한자 틀린 것 풀기</button>
+        <button class="btn-primary" id="btn-wrong-quiz-hanja" onclick="startReviewQuiz('hanja')">한자 → 훈음</button>
+        <button class="btn-study" id="btn-wrong-quiz-mean" onclick="startReviewQuiz('mean')">훈음 → 한자</button>
       </div>
     </div>
     <div id="wrong-list-container"></div>
-    <div style="margin-top: 40px; text-align: right;">
-      <button class="btn-outline btn-small" id="btn-clear-wrong" style="display:none; color: var(--danger);" onclick="clearWrongNotes()">틀린 기록 전체 삭제</button>
+    <div style="margin-top: 32px; text-align: right;">
+      <button class="btn-outline btn-small" id="btn-clear-wrong" style="display:none; color: var(--danger);" onclick="clearWrongNotes()">틀린 기록 지우기</button>
     </div>
   </div>
 
@@ -694,6 +810,7 @@
     <div class="quiz-layout">
       <div class="quiz-flashcard-area">
         <div class="flashcard">
+          <button type="button" class="star-btn card-star" id="btn-card-star" aria-label="별표" title="별표 (S)" onclick="event.stopPropagation(); toggleQuizStar()"></button>
           <button class="hide-btn" id="btn-hide-word" onclick="hideWord()" title="이 한자 숨기기">숨김</button>
           <div class="q-text" id="play-q"></div>
           <div class="ans-text" id="play-a"></div>
@@ -739,6 +856,36 @@
       <div class="qp-list" id="qp-list"></div>
       <div id="qp-actions"></div>
       <button class="btn-outline" id="qp-retry" style="margin:14px 0 0;" onclick="retryWrongInQuiz()">틀린 것만 다시 풀기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 세트 나누기 시트 -->
+<div class="modal-backdrop" id="split-sheet" onclick="if(event.target === this) closeSplitEditor()">
+  <div class="modal split-modal" role="dialog" aria-modal="true" aria-labelledby="split-title">
+    <div class="modal-head">
+      <div style="min-width:0;">
+        <div class="split-kicker">세트 나누기</div>
+        <span id="split-title" class="split-title"></span>
+        <div class="split-sub" id="split-sub"></div>
+      </div>
+      <button class="icon-btn" onclick="closeSplitEditor()" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="split-presets" id="split-presets">
+      <button data-p="auto" onclick="splitPreset('auto')">자동</button>
+      <div class="split-every">
+        <button onclick="splitEvery(-1)" aria-label="줄이기">−</button>
+        <button class="split-every-label" onclick="splitPreset('every')"><b id="split-every-n">3</b><span id="split-every-unit">문장씩</span></button>
+        <button onclick="splitEvery(1)" aria-label="늘리기">+</button>
+      </div>
+      <button data-p="none" onclick="splitPreset('none')">나누지 않기</button>
+    </div>
+    <div class="split-hint">문장 사이를 눌러 자르고, 세트 이름을 눌러 바꿀 수 있어요.</div>
+    <div class="split-list" id="split-list"></div>
+    <div class="split-foot">
+      <div class="split-summary" id="split-summary"></div>
+      <button class="btn-outline" onclick="closeSplitEditor()">취소</button>
+      <button class="btn-primary" onclick="saveSplit()">저장</button>
     </div>
   </div>
 </div>
@@ -849,9 +996,24 @@ function repairDuplicateIds() {
   return fixed;
 }
 
+// 시트의 wrongMean/wrongHanja 칸 형식: '상태|푼 횟수|틀린 횟수|연속 맞힘|마지막 날짜'
+//   상태 = true(틀림) / ok(맞힘) / false(안 풂)
+const TODAY = () => Math.floor(Date.now() / 86400000);
+function parseCell(v) {
+  const p = str(v).split('|');
+  return { state: (p[0] || '').toLowerCase(), s: +p[1] || 0, w: +p[2] || 0, k: +p[3] || 0, t: +p[4] || 0 };
+}
+function readStat(obj, raw, wrong, ok) {
+  if (obj && typeof obj === 'object') return { s: +obj.s || 0, w: +obj.w || 0, k: +obj.k || 0, t: +obj.t || 0 };
+  const c = parseCell(raw);
+  if (c.s) return { s: c.s, w: c.w, k: c.k, t: c.t };
+  // 예전 데이터(통계 없음): 마지막 결과만 1회 기록으로 간주
+  return wrong ? { s: 1, w: 1, k: 0, t: 0 } : ok ? { s: 1, w: 0, k: 1, t: 0 } : { s: 0, w: 0, k: 0, t: 0 };
+}
+
 function normalizeWord(w, i) {
   const extOrder = (w.extOrder === '' || w.extOrder === null || w.extOrder === undefined) ? null : Number(w.extOrder);
-  return {
+  const out = {
     id: Number(w.id) || newId(),
     num: Number(w.num) || i + 1,
     hanja: str(w.hanja),
@@ -859,11 +1021,10 @@ function normalizeWord(w, i) {
     source: str(w.source) || '기타범위',
     ex: str(w.ex),
     hint: str(w.hint),
-    wrongMean: toBool(w.wrongMean),
-    wrongHanja: toBool(w.wrongHanja),
-    // 맞힘 기록: 시트에는 wrongMean/wrongHanja 칸에 'ok'로 저장 (Code.gs 수정 없이 3단계 상태 보관)
-    okMean: toBool(w.okMean) || str(w.wrongMean).toLowerCase() === 'ok',
-    okHanja: toBool(w.okHanja) || str(w.wrongHanja).toLowerCase() === 'ok',
+    wrongMean: typeof w.wrongMean === 'boolean' ? w.wrongMean : toBool(parseCell(w.wrongMean).state),
+    wrongHanja: typeof w.wrongHanja === 'boolean' ? w.wrongHanja : toBool(parseCell(w.wrongHanja).state),
+    okMean: toBool(w.okMean) || parseCell(w.wrongMean).state === 'ok',
+    okHanja: toBool(w.okHanja) || parseCell(w.wrongHanja).state === 'ok',
     hidden: toBool(w.hidden),
     origin: str(w.origin),          // '' = 직접 입력, 'friend' = 외부 소스
     extKey: str(w.extKey),          // 외부 소스 식별키 (소스id|한자)
@@ -871,14 +1032,22 @@ function normalizeWord(w, i) {
     extOrder: Number.isFinite(extOrder) ? extOrder : null,
     userEdited: toBool(w.userEdited) // 직접 고친 단어는 원본 변경으로 덮지 않음
   };
+  // 통계: sM = 한자→훈음, sH = 훈음→한자
+  out.sM = readStat(w.sM, w.wrongMean, out.wrongMean, out.okMean);
+  out.sH = readStat(w.sH, w.wrongHanja, out.wrongHanja, out.okHanja);
+  return out;
 }
 
 function serializeWord(w) {
   const o = {};
   WORD_FIELDS.forEach(k => { o[k] = (w[k] === null || w[k] === undefined) ? '' : w[k]; });
   o.id = String(w.id);
-  o.wrongMean = w.wrongMean ? true : (w.okMean ? 'ok' : false);
-  o.wrongHanja = w.wrongHanja ? true : (w.okHanja ? 'ok' : false);
+  const cell = (wrong, ok, st) => {
+    const state = wrong ? 'true' : (ok ? 'ok' : 'false');
+    return st && st.s ? `${state}|${st.s}|${st.w}|${st.k}|${st.t}` : state;
+  };
+  o.wrongMean = cell(w.wrongMean, w.okMean, w.sM);
+  o.wrongHanja = cell(w.wrongHanja, w.okHanja, w.sH);
   return o;
 }
 
@@ -925,11 +1094,12 @@ function updateStartInfo() {
   const ids = new Set();
   document.querySelectorAll('.source-cb:checked').forEach(cb => cb.value.split(',').forEach(id => ids.add(id)));
   const type = (document.querySelector('input[name="qType"]:checked') || {}).value;
-  const wrongOnly = (document.querySelector('input[name="qTarget"]:checked') || {}).value === 'wrong';
-  let list = wordList.filter(w => ids.has(String(w.id)) && !w.hidden);
-  if (wrongOnly) list = list.filter(w => type === 'hanja' ? w.wrongMean : w.wrongHanja);
+  const target = (document.querySelector('input[name="qTarget"]:checked') || {}).value;
+  const order = (document.querySelector('input[name="qOrder"]:checked') || {}).value;
+  const list = filterByTarget(wordList.filter(w => ids.has(String(w.id)) && !w.hidden), target, type);
   const ranges = new Set(list.map(w => w.source)).size;
-  info.innerHTML = ids.size ? `<b>${list.length}</b>문제 · 범위 ${ranges}개${wrongOnly ? ' · 틀린 한자만' : ''}` : '범위를 선택하세요';
+  const tag = { rec: order === 'rand' ? ' · 추천' : ' · 추천 · 약한 순', wrong: ' · 틀린 한자', star: ' · 별표' }[target] || '';
+  info.innerHTML = ids.size ? `<b>${list.length}</b>문제 · 범위 ${ranges}개${tag}` : '범위를 선택하세요';
   const empty = !list.length;
   document.getElementById('btn-start-quiz').disabled = empty;
   document.getElementById('btn-start-study').disabled = empty;
@@ -1991,25 +2161,14 @@ function renderSources() {
     const activeWords = wordList.filter(w => w.source === src && !w.hidden).sort((a,b) => (a.num || 0) - (b.num || 0));
     if(activeWords.length === 0) return;
     
-    const { groupKeys, groups } = groupBySentence(activeWords);
-    let sets = [], currentSetWords = [], currentSetStart = 1, currentWordCount = 0;
-
-    groupKeys.forEach((key, index) => {
-      const sentenceNum = index + 1;
-      const wordsInSentence = groups[key];
-      currentSetWords.push(...wordsInSentence);
-      currentWordCount += wordsInSentence.length;
-      if (currentWordCount >= TARGET_CHUNK_SIZE || index === groupKeys.length - 1) {
-        sets.push({ start: currentSetStart, end: sentenceNum, words: currentSetWords, count: currentWordCount });
-        currentSetWords = []; currentWordCount = 0; currentSetStart = sentenceNum + 1;
-      }
-    });
+    const { sets, custom } = buildSets(src, activeWords);
+    const splitBtn = `<button type="button" class="src-split" data-src="${esc(src)}" onclick="openSplitEditor(this.dataset.src)" aria-label="세트 나누기" title="세트 나누기">${SCISSORS_SVG}</button>`;
 
     const safeSrc = 'src_' + sIdx;
     const card = document.createElement('div');
     card.className = 'src-card';
     const multi = sets.length > 1;
-    const meta = multi ? `${activeWords.length}단어 · 세트 ${sets.length}개` : `${activeWords.length}단어`;
+    const meta = multi ? `${activeWords.length}단어 · 세트 ${sets.length}개${custom ? ' · 직접 나눔' : ''}` : `${activeWords.length}단어`;
 
     if (!multi) {
       const ids = sets[0].words.map(w => w.id).join(',');
@@ -2020,6 +2179,7 @@ function renderSources() {
             <input type="checkbox" class="source-cb" value="${ids}" ${isChecked ? 'checked' : ''} onchange="saveCheckedState()">
             <div class="src-text"><div class="src-name">${esc(src)}</div><div class="src-meta">${meta}</div></div>
           </label>
+          ${splitBtn}
         </div>`;
       container.appendChild(card);
       return;
@@ -2030,13 +2190,13 @@ function renderSources() {
     let allChecked = !!lastChecked, someChecked = false, childrenHtml = '';
     sets.forEach((setObj, setIdx) => {
       const ids = setObj.words.map(w => w.id).join(',');
-      const sentenceRange = setObj.start === setObj.end ? `문장 ${setObj.start}` : `문장 ${setObj.start}~${setObj.end}`;
+      const sentenceRange = setObj.rangeLabel;
       const isChecked = lastChecked ? lastChecked.includes(ids) : false;
       if (!isChecked) allChecked = false; else someChecked = true;
       childrenHtml += `
         <label class="src-set">
           <input type="checkbox" class="source-cb child-cb-${safeSrc}" value="${ids}" ${isChecked ? 'checked' : ''} onchange="checkParentState('${safeSrc}'); saveCheckedState();">
-          <span class="src-set-name">세트 ${setIdx + 1}</span>
+          <span class="src-set-name">${setObj.name ? esc(setObj.name) : `세트 ${setIdx + 1}`}</span>
           <span class="src-set-meta">${sentenceRange} · ${setObj.count}단어</span>
         </label>`;
     });
@@ -2048,6 +2208,7 @@ function renderSources() {
           <input type="checkbox" class="parent-cb" data-target="${safeSrc}" ${(someChecked && allChecked) ? 'checked' : ''} onchange="toggleSetChildren(this); saveCheckedState();">
           <div class="src-text"><div class="src-name">${esc(src)}</div><div class="src-meta">${meta}</div></div>
         </label>
+        ${splitBtn}
         <button type="button" class="src-toggle" onclick="toggleSetVisibility('${toggleId}', this)" aria-label="세트 펼치기">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
         </button>
@@ -2103,6 +2264,7 @@ function loadManageScope() {
              <textarea id="edit-hint-${item.id}" class="hint-area" rows="1" placeholder="힌트" oninput="autoGrow(this)" onchange="updateWord(${item.id})" aria-label="힌트">${esc(item.hint)}</textarea>
            </div>
            <div class="mr-actions">
+             ${starBtn(item.id, 'icon-star')}
              <button class="icon-btn" onclick="toggleHiddenManage(${item.id})" title="${item.hidden ? '숨김 해제' : '숨기기'}" aria-label="${item.hidden ? '숨김 해제' : '숨기기'}">${item.hidden ? '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c1-2.5 5-7 10-7s9 4.5 10 7c-1 2.5-5 7-10 7S3 14.5 2 12z"/><circle cx="12" cy="12" r="3"/></svg>' : '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.1A10 10 0 0 1 12 5c5 0 9 4.5 10 7a12.6 12.6 0 0 1-2.9 4.1M6.6 6.6C4.5 8 3 10 2 12c1 2.5 5 7 10 7a9.7 9.7 0 0 0 4.2-.9"/></svg>'}</button>
              <button class="icon-btn danger" onclick="deleteWord(${item.id})" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
            </div>
@@ -2130,6 +2292,8 @@ async function renameScope() {
   
   let updatedCount = 0;
   wordList.forEach(w => { if(w.source === oldSrc) { w.source = newSrc; updatedCount++; } });
+  const sp = getSplit(oldSrc);
+  if (sp) { putSplit(oldSrc, null); if (!getSplit(newSrc)) putSplit(newSrc, sp); }
   const rules = getRules();
   Object.values(rules).forEach(r => { if (r.target === oldSrc) r.target = newSrc; r.exclude = (r.exclude || []).map(x => x === oldSrc ? newSrc : x); });
   putRules(rules);
@@ -2204,52 +2368,91 @@ async function deleteScope(src) {
    const removed = [];
    wordList.forEach((w, idx) => { if (w.source === src) removed.push({ w, idx }); });
    rememberDeleted(removed.map(r => r.w));
+   putSplit(src, null);
    wordList = wordList.filter(w => w.source !== src);
    saveToStorage(); renderManageTab(); renderSources(); renderWrongNotes();
    notify(`'${src}' 삭제`, { action: { label: '되돌리기', run: () => undoDelete(removed, tombBefore) } });
 }
 
+let reviewMode = localStorage.getItem('hanja_review_mode') || 'rec';
+let recLimit = Number(localStorage.getItem('hanja_rec_limit') || 20);
+function setRecLimit(n) { recLimit = n; localStorage.setItem('hanja_rec_limit', String(n)); renderWrongNotes(); }
+function setReviewMode(m) { reviewMode = m; localStorage.setItem('hanja_review_mode', m); renderWrongNotes(); }
+
+// 복습 탭: 추천 / 틀림 / 별표 (기존 함수 이름 유지 — 여러 곳에서 호출)
 function renderWrongNotes() {
   const container = document.getElementById('wrong-list-container');
+  if (!container) return;
+  const live = wordList.filter(w => !w.hidden);
+  const S = getStarSet();
+  const pick = {
+    rec:   w => isRec(w, 'hanja') || isRec(w, 'mean'),
+    wrong: w => w.wrongMean || w.wrongHanja,
+    star:  w => S.has(String(w.id))
+  };
+  ['rec', 'wrong', 'star'].forEach(m => {
+    document.getElementById('rv-n-' + m).textContent = live.filter(pick[m]).length;
+  });
+  document.querySelectorAll('.rv-tabs button').forEach(b => b.classList.toggle('active', b.dataset.rv === reviewMode));
+
+  const items = live.filter(pick[reviewMode]);
+  const cap = n => (reviewMode === 'rec' && recLimit) ? Math.min(n, recLimit) : n;
+  const cntA = cap(filterByTarget(live, reviewMode, 'hanja').length);
+  const cntB = cap(filterByTarget(live, reviewMode, 'mean').length);
+  document.getElementById('rv-limit').style.display = reviewMode === 'rec' && items.length ? '' : 'none';
+  document.querySelectorAll('.rv-limit-seg button').forEach(b => b.classList.toggle('active', Number(b.dataset.n) === recLimit));
   const msg = document.getElementById('wrong-count-msg');
-  const btnClear = document.getElementById('btn-clear-wrong');
-  container.innerHTML = '';
-  
-  const wrongItems = wordList.filter(w => (w.wrongMean || w.wrongHanja) && !w.hidden);
-  if(wrongItems.length === 0) {
-    msg.innerText = '틀린 한자가 없어요.';
-    btnClear.style.display = 'none';
-    updateWrongCta();
-    return;
-  }
-  msg.innerText = `틀린 한자 ${wrongItems.length}개`;
-  btnClear.style.display = 'inline-block';
-  updateWrongCta();
-  
+  const desc = {
+    rec: '푼 횟수에 비해 자주 틀렸거나 최근에 틀린 한자예요. 틀린 비율이 높을수록, 획이 많고 복잡할수록, 오래 안 풀었을수록 앞에 와요. 3번 연속 맞히면 빠져요.',
+    wrong: '마지막으로 풀었을 때 틀린 한자예요.',
+    star: '별표한 한자예요. 퀴즈 카드나 목록의 ☆로 추가할 수 있어요.'
+  }[reviewMode];
+  msg.textContent = items.length ? desc : { rec: '추천할 한자가 없어요. 퀴즈를 풀수록 약한 한자가 쌓여요.', wrong: '틀린 한자가 없어요.', star: '별표한 한자가 없어요. 퀴즈 카드나 목록의 ☆를 눌러 추가하세요.' }[reviewMode];
+  const ba = document.getElementById('btn-wrong-quiz-hanja'), bb = document.getElementById('btn-wrong-quiz-mean');
+  ba.innerHTML = `한자 → 훈음 <b>${cntA}</b>`; ba.disabled = !cntA;
+  bb.innerHTML = `훈음 → 한자 <b>${cntB}</b>`; bb.disabled = !cntB;
+  document.getElementById('wrong-cta').style.display = items.length ? '' : 'none';
+  document.getElementById('btn-clear-wrong').style.display = reviewMode === 'wrong' && items.length ? 'inline-block' : 'none';
+
+  if (!items.length) { container.innerHTML = ''; return; }
+  const score = w => Math.max((weakInfo(w, 'hanja') || { score: -1e9 }).score * (isRec(w, 'hanja') ? 1 : 0), (weakInfo(w, 'mean') || { score: -1e9 }).score * (isRec(w, 'mean') ? 1 : 0));
   let html = '';
-  const sources = [...new Set(wrongItems.map(w => w.source))];
+  const sources = [...new Set(items.map(w => w.source))];
   sources.forEach(src => {
-    const items = wrongItems.filter(w => w.source === src).sort((a,b) => a.num - b.num);
-    html += `<div class="sentence-group"><div class="sentence-header" style="background:rgba(240,68,82,0.05); color:var(--danger);">${esc(src)} <span style="font-size:0.85rem; font-weight:normal; color:var(--text-muted); margin-left:4px;">(${items.length}개)</span></div><ul class="study-list">`;
-    items.forEach(item => {
+    let list = items.filter(w => w.source === src);
+    list = reviewMode === 'rec' ? list.sort((a, b) => score(b) - score(a)) : list.sort((a, b) => a.num - b.num);
+    html += `<div class="sentence-group rv-group"><div class="sentence-header rv-src">${esc(src)}<span>${list.length}</span></div><ul class="study-list">`;
+    list.forEach(item => {
       let badges = '';
-      if(item.wrongMean) badges += '<span class="badge badge-mean">훈음 틀림</span>';
-      if(item.wrongHanja) badges += '<span class="badge badge-hanja">한자 틀림</span>';
+      let meter = '';
+      if (reviewMode === 'rec') {
+        const a = weakInfo(item, 'hanja'), b = weakInfo(item, 'mean');
+        if (a && a.rec) badges += `<span class="chip chip-mean">한자→훈음 · ${a.reason}</span>`;
+        if (b && b.rec) badges += `<span class="chip chip-hanja">훈음→한자 · ${b.reason}</span>`;
+        if ((a && a.complex) || (b && b.complex)) badges += `<span class="chip chip-cx">복잡한 글자</span>`;
+        const lv = Math.max(a && a.rec ? a.level : 0, b && b.rec ? b.level : 0);
+        meter = `<div class="weak-meter lv${lv}" title="약함 정도" aria-label="약함 정도 ${lv}/3"><i></i><i></i><i></i></div>`;
+      } else {
+        if (item.wrongMean) badges += '<span class="chip chip-mean">훈음 틀림</span>';
+        if (item.wrongHanja) badges += '<span class="chip chip-hanja">한자 틀림</span>';
+      }
       html += `
-        <li class="study-card">
-          <div class="study-num">${item.num}</div>
-          <div class="study-hanja" style="font-size:3.2rem; color:var(--danger); font-weight:500;">${esc(item.hanja)}</div>
+        <li class="study-card rv-item">
+          <div class="study-num">${item.num}${meter}</div>
+          <div class="study-hanja rv-hanja">${esc(item.hanja)}</div>
           <div class="study-info-area">
-            <div class="study-mean" style="padding:0; margin-bottom:4px; display:block;">${esc(item.mean)}</div>
-            <div>${badges}</div>
-            ${item.hint ? `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">${esc(item.hint)}</div>` : ''}
-            ${item.ex ? `<div style="font-size:0.9rem; margin-top:4px; font-weight:600; color:var(--text);">${esc(item.ex)}</div>` : ''}
+            <div class="rv-mean">${esc(item.mean)}</div>
+            ${badges ? `<div class="rv-badges">${badges}</div>` : ''}
+            ${item.hint ? `<div class="rv-hint">${esc(item.hint)}</div>` : ''}
+            ${item.ex ? `<div class="rv-ex">${esc(item.ex)}</div>` : ''}
           </div>
+          ${starBtn(item.id, 'row-star')}
         </li>`;
     });
     html += `</ul></div>`;
   });
   container.innerHTML = html;
+  container.dataset.mode = reviewMode;
 }
 
 async function clearWrongNotes() {
@@ -2273,12 +2476,12 @@ function getFilteredList() {
   const qTarget = document.querySelector('input[name="qTarget"]:checked').value;
   qType = document.querySelector('input[name="qType"]:checked').value;
   
-  let list = wordList.filter(w => selectedIds.has(String(w.id)) && !w.hidden);
-  if(qTarget === 'wrong') {
-    if(qType === 'hanja') list = list.filter(w => w.wrongMean);
-    else list = list.filter(w => w.wrongHanja);
+  let list = filterByTarget(wordList.filter(w => selectedIds.has(String(w.id)) && !w.hidden), qTarget, qType);
+  if(list.length === 0) {
+    notify({ rec: '추천할 한자가 없어요 · 퀴즈를 풀수록 쌓여요', wrong: '틀린 한자가 없어요', star: '별표한 한자가 없어요' }[qTarget] || '조건에 맞는 한자가 없어요');
+    return null;
   }
-  if(list.length === 0) { notify('조건에 맞는 한자가 없어요'); return null; }
+  list._target = qTarget;
   return list;
 }
 
@@ -2300,8 +2503,22 @@ function setAllStudyState(state) {
 
 function handleStudyClick(event, el) { el.classList.toggle('state-1'); }
 
+// 대상별 거르기 (학습 탭·복습 탭 공통)
+function filterByTarget(list, target, mode) {
+  if (target === 'wrong') return list.filter(w => mode === 'hanja' ? w.wrongMean : w.wrongHanja);
+  if (target === 'rec') return list.filter(w => isRec(w, mode));
+  if (target === 'star') { const S = getStarSet(); return list.filter(w => S.has(String(w.id))); }
+  return list;
+}
+// 추천은 약한 한자부터
+function sortByWeakness(list, mode) {
+  const sc = new Map(list.map(w => [w.id, (weakInfo(w, mode) || { score: 0 }).score]));
+  return list.sort((a, b) => sc.get(b.id) - sc.get(a.id));
+}
+
 function sortForPlay(list) {
   const isRandom = document.querySelector('input[name="qOrder"]:checked').value === 'rand';
+  if (!isRandom && list._target === 'rec') return sortByWeakness(list, qType);
   if(isRandom) {
     for (let i = list.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [list[i], list[j]] = [list[j], list[i]]; }
   } else {
@@ -2353,6 +2570,7 @@ function startStudy() {
                </div>
             </div>
           </div>
+          ${starBtn(item.id, 'row-star')}
         </li>`;
     });
     html += '</ul>';
@@ -2381,7 +2599,9 @@ function startQuiz() {
   beginQuiz(sortForPlay(list));
 }
 
+let recAtStart = null;   // 퀴즈 시작 때 추천이던 한자 (결과 화면에서 '졸업' 계산용)
 function beginQuiz(list) {
+  recAtStart = new Set(list.filter(w => isRec(w, qType)).map(w => w.id));
   currentQuiz = list;
   currentIndex = 0;
   cardAnim = 'next';
@@ -2391,24 +2611,29 @@ function beginQuiz(list) {
   loadQuestion();
 }
 
-// 오답노트에서 바로: 모든 범위의 틀린 한자
-function startWrongQuiz(type) {
-  const list = wordList.filter(w => !w.hidden && (type === 'hanja' ? w.wrongMean : w.wrongHanja))
-    .sort((a, b) => a.source !== b.source ? a.source.localeCompare(b.source, 'ko', { numeric: true }) : a.num - b.num);
-  if (!list.length) return notify('틀린 한자가 없어요');
+// 복습 탭에서 바로: 모든 범위 대상
+function startReviewQuiz(type) {
+  let list = filterByTarget(wordList.filter(w => !w.hidden), reviewMode, type);
+  if (!list.length) return notify('풀 한자가 없어요');
   qType = type;
   document.querySelectorAll('input[name="qType"]').forEach(r => r.checked = r.value === type);
+  list = reviewMode === 'rec' ? sortByWeakness(list, type)
+       : list.sort((a, b) => a.source !== b.source ? a.source.localeCompare(b.source, 'ko', { numeric: true }) : a.num - b.num);
+  if (reviewMode === 'rec' && recLimit) list = list.slice(0, recLimit);
   beginQuiz(list);
 }
 
-function updateWrongCta() {
-  const a = wordList.filter(w => !w.hidden && w.wrongMean).length;
-  const b = wordList.filter(w => !w.hidden && w.wrongHanja).length;
-  const ba = document.getElementById('btn-wrong-quiz-hanja'), bb = document.getElementById('btn-wrong-quiz-mean');
-  if (!ba) return;
-  ba.textContent = `한자 → 훈음 틀린 것 ${a}개 풀기`; ba.disabled = !a;
-  bb.textContent = `훈음 → 한자 틀린 것 ${b}개 풀기`; bb.disabled = !b;
-  document.getElementById('wrong-cta').style.display = (a || b) ? '' : 'none';
+function recLine() {
+  if (!recAtStart) return '';
+  const seen = new Set(quizHistory.filter(h => h.type === 'mark').map(h => h.id));
+  let out = 0, inn = 0;
+  currentQuiz.forEach(w => {
+    if (!seen.has(w.id)) return;
+    const now = isRec(w, qType), was = recAtStart.has(w.id);
+    if (was && !now) out++; else if (!was && now) inn++;
+  });
+  if (!out && !inn) return '';
+  return `<div class="sum-rec">${out ? `<span class="good">추천에서 빠짐 <b>${out}</b></span>` : ''}${inn ? `<span class="bad">새로 추천 <b>${inn}</b></span>` : ''}</div>`;
 }
 
 function quizSummaryHTML() {
@@ -2427,12 +2652,29 @@ function quizSummaryHTML() {
       <div class="no"><b>${no}</b><span>틀림</span></div>
       <div><b>${skipped}</b><span>건너뜀</span></div>
     </div>
+    ${recLine()}
     ${wrongWords.length ? `<div class="sum-wrong">${wrongWords.slice(0, 40).map(w => `<span title="${esc(w.mean)}">${esc(w.hanja)}</span>`).join('')}${wrongWords.length > 40 ? `<em>+${wrongWords.length - 40}</em>` : ''}</div>` : ''}
     <div class="sum-btns">
       ${no ? `<button class="btn-primary" onclick="retryWrongInQuiz()">틀린 ${no}문제 다시</button>` : ''}
       <button class="btn-study" onclick="restartQuiz()">처음부터 다시</button>
       <button class="btn-outline" onclick="quitQuiz()">끝내기</button>
     </div>`;
+}
+
+function toggleQuizStar() {
+  const item = currentQuiz[currentIndex];
+  if (item) toggleStar(item.id);
+}
+function updateCardStar() {
+  const b = document.getElementById('btn-card-star');
+  const item = currentQuiz[currentIndex];
+  b.style.display = item ? '' : 'none';
+  if (!item) return;
+  b.innerHTML = STAR_SVG;
+  b.dataset.starId = item.id;
+  const on = isStarred(item.id);
+  b.classList.toggle('on', on);
+  b.setAttribute('aria-pressed', on);
 }
 
 function updateQuizNav() {
@@ -2478,14 +2720,17 @@ function loadQuestion() {
     document.getElementById('play-a').style.display = 'none';
     document.getElementById('btn-hide-word').style.display = 'none';
     document.getElementById('quiz-panel').style.display = 'none';
+    document.getElementById('btn-card-star').style.display = 'none';
     ['btn-show-ans','grade-btns','btn-show-hint','quiz-ex-text','quiz-hint-text','quiz-hint-edit-area'].forEach(id => document.getElementById(id).style.display = 'none');
     return;
   }
   document.getElementById('btn-hide-word').style.display = '';
   document.getElementById('quiz-panel').style.display = '';
   const item = currentQuiz[currentIndex];
+  updateCardStar();
   document.getElementById('quiz-progress').innerText = `${currentIndex + 1} / ${currentQuiz.length}`;
-  document.getElementById('quiz-source').innerText = `${item.source} [No.${item.num}]`;
+  const wi = weakInfo(item, qType);
+  document.getElementById('quiz-source').innerText = `${item.source} [No.${item.num}]` + (wi && wi.rec ? ` · ${wi.reason}` : '');
   document.getElementById('quiz-progress-bar').style.width = (currentIndex / currentQuiz.length * 100) + '%';
   
   const qText = document.getElementById('play-q');
@@ -2573,8 +2818,7 @@ function markAnswer(isCorrect) {
   if (!item) return;
   const w = wordList.find(w => w.id === item.id);
   if (w) {
-    quizHistory.push({ type: 'mark', id: w.id, correct: isCorrect, index: currentIndex,
-                       prev: { wrongMean: w.wrongMean, wrongHanja: w.wrongHanja, okMean: w.okMean, okHanja: w.okHanja } });
+    quizHistory.push({ type: 'mark', id: w.id, correct: isCorrect, index: currentIndex, prev: snapshot(w) });
     setResult(w, isCorrect);
     cardAnim = isCorrect ? 'ok' : 'no';
   }
@@ -2638,9 +2882,16 @@ function prevQuestion() {
 
 // 채점 결과를 단어에 기록 (현재 퀴즈 유형 기준)
 function setResult(w, isCorrect) {
+  const key = qType === 'hanja' ? 'sM' : 'sH';
+  const st = { ...(w[key] || { s: 0, w: 0, k: 0, t: 0 }) };
+  st.s++; if (!isCorrect) { st.w++; st.k = 0; } else st.k++;
+  st.t = TODAY();
+  w[key] = st;
   if (qType === 'hanja') { w.wrongMean = !isCorrect; w.okMean = isCorrect; }
   else { w.wrongHanja = !isCorrect; w.okHanja = isCorrect; }
 }
+const snapshot = w => ({ wrongMean: w.wrongMean, wrongHanja: w.wrongHanja, okMean: w.okMean, okHanja: w.okHanja,
+                         sM: { ...w.sM }, sH: { ...w.sH } });
 
 // 건너뛰기: 채점하지 않고 n문제 앞으로 이동 (남은 문제보다 많으면 마지막 문제까지만)
 function jumpQuestion(n) {
@@ -2653,6 +2904,285 @@ function jumpQuestion(n) {
   currentIndex += step;
   loadQuestion();
   if (step > 1) showToast(`${step}문제 건너뛰었어요 · ${currentIndex + 1}번째 문제`);
+}
+
+/* ---------- 글자 복잡도 (획수 추정) ----------
+   글자를 작은 캔버스에 그려서 획의 테두리 길이를 잼 → 획이 많고 복잡할수록 큼.
+   내 단어장 한자들 사이의 순위(0~1)로 바꿔서 씀. 한 번 잰 값은 기억해 둠 */
+const cxRaw = new Map((() => { try { return Object.entries(JSON.parse(localStorage.getItem('hanja_cx_v1') || '{}')); } catch(e) { return []; } })());
+let cxSaveTimer = null;
+function saveCxCache() {
+  clearTimeout(cxSaveTimer);
+  cxSaveTimer = setTimeout(() => { try { localStorage.setItem('hanja_cx_v1', JSON.stringify(Object.fromEntries(cxRaw))); } catch(e) {} }, 1000);
+}
+let cxCanvas = null, cxRankCache = { n: -1, map: new Map() };
+function glyphOf(h) { const m = String(h || '').match(/[\u3400-\u9FFF\uF900-\uFAFF]/); return m ? m[0] : ''; }
+function rawComplexity(ch) {
+  if (!ch) return 0;
+  if (cxRaw.has(ch)) return cxRaw.get(ch);
+  const N = 48;
+  if (!cxCanvas) { cxCanvas = document.createElement('canvas'); cxCanvas.width = cxCanvas.height = N; }
+  const g = cxCanvas.getContext('2d', { willReadFrequently: true });
+  g.clearRect(0, 0, N, N);
+  g.fillStyle = '#000';
+  g.font = '42px "Apple SD Gothic Neo","Noto Sans CJK KR","Noto Serif CJK KR","Malgun Gothic",serif';
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText(ch, N / 2, N / 2 + 2);
+  const d = g.getImageData(0, 0, N, N).data;
+  const on = (x, y) => x >= 0 && y >= 0 && x < N && y < N && d[(y * N + x) * 4 + 3] > 110;
+  let edge = 0;
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    if (on(x, y) && (!on(x + 1, y) || !on(x - 1, y) || !on(x, y + 1) || !on(x, y - 1))) edge++;
+  }
+  cxRaw.set(ch, edge);
+  saveCxCache();
+  return edge;
+}
+// 0(가장 단순) ~ 1(가장 복잡): 내 단어장 안에서의 순위
+function complexity(h) {
+  const ch = glyphOf(h);
+  if (!ch) return 0;
+  if (cxRankCache.n !== wordList.length) {
+    const uniq = [...new Set(wordList.map(w => glyphOf(w.hanja)).filter(Boolean))];
+    const vals = uniq.map(c => [c, rawComplexity(c)]).sort((a, b) => a[1] - b[1]);
+    const map = new Map();
+    vals.forEach(([c], i) => map.set(c, vals.length > 1 ? i / (vals.length - 1) : 0));
+    cxRankCache = { n: wordList.length, map };
+  }
+  return cxRankCache.map.has(ch) ? cxRankCache.map.get(ch) : 0;
+}
+
+/* ---------- 추천: 약한 한자 ----------
+   점수 = 틀린 비율(제곱에 가깝게 → 높으면 크게, 낮으면 작게) + 최근 틀림 + 글자 복잡도
+          + 오래 안 풂 − 연속 맞힘
+   추천 기준: 연속 맞힘 3번 미만이면서
+     · 지금 틀린 상태이거나
+     · 틀린 비율이 기준 이상 (기본 40%, 획이 많고 복잡한 글자일수록 최대 28%까지 낮아짐) */
+function weakInfo(w, mode) {
+  const st = mode === 'mean' ? w.sH : w.sM;
+  if (!st || !st.s) return null;
+  const wrongNow = mode === 'mean' ? w.wrongHanja : w.wrongMean;
+  const rate = (st.w + 0.5) / (st.s + 1);           // 횟수가 적을 때 과장되지 않게 보정
+  const days = st.t ? Math.max(0, TODAY() - st.t) : 0;
+  const cx = complexity(w.hanja);
+  const rateTerm = 130 * Math.pow(rate, 1.6);        // 비율이 높을수록 가파르게, 낮을수록 약하게
+  const cxW = Math.pow(cx, 1.5);                     // 복잡한 글자에서 주로 효과가 나게
+  const score = rateTerm + (wrongNow ? 22 : 0) + cxW * 30 + Math.min(days, 14) * 1.2 - st.k * 14;
+  const threshold = 0.4 - 0.12 * cxW;
+  const rec = st.k < 3 && (wrongNow || rate >= threshold);
+  let reason;
+  if (st.w === 0) reason = `${st.s}번 모두 맞힘`;
+  else if (wrongNow && st.s === 1) reason = '처음 풀 때 틀림';
+  else reason = `${st.s}번 중 ${st.w}번 틀림`;
+  const level = score >= 95 ? 3 : score >= 60 ? 2 : 1;   // 약함 정도 (막대 3칸)
+  return { rec, score, reason, rate, st, cx, level, complex: cx >= 0.75 };
+}
+const isRec = (w, mode) => { const i = weakInfo(w, mode); return !!(i && i.rec); };
+
+/* ---------- 별표 (시트 동기화 데이터에 함께 저장) ---------- */
+const STAR_PREFIX = '__star__|';
+function getStarSet() {
+  const t = tombstones.find(x => x.startsWith(STAR_PREFIX));
+  return new Set(t ? t.slice(STAR_PREFIX.length).split(',').filter(Boolean) : []);
+}
+function putStarSet(set) {
+  const alive = new Set(wordList.map(w => String(w.id)));
+  tombstones = tombstones.filter(x => !x.startsWith(STAR_PREFIX));
+  const ids = [...set].filter(id => alive.has(id));
+  if (ids.length) tombstones.push(STAR_PREFIX + ids.join(','));
+}
+const isStarred = id => getStarSet().has(String(id));
+function toggleStar(id, opts = {}) {
+  const set = getStarSet(), k = String(id);
+  const on = !set.has(k);
+  if (on) set.add(k); else set.delete(k);
+  putStarSet(set);
+  saveToStorage();
+  document.querySelectorAll(`[data-star-id="${k}"]`).forEach(b => { b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); if (on) replayAnim(b, 'star-pop'); });
+  if (!opts.silent) notify(on ? '별표했어요' : '별표를 뺐어요', { duration: 1200 });
+  renderWrongNotes();
+  if (isVisible('hanja-list')) drawHanjaList();
+  updateStartInfo();
+  return on;
+}
+const STAR_SVG = '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>';
+const starBtn = (id, cls = '') => `<button type="button" class="star-btn ${cls}${isStarred(id) ? ' on' : ''}" data-star-id="${id}" aria-pressed="${isStarred(id)}" aria-label="별표" title="별표" onclick="event.stopPropagation(); toggleStar(${id})">${STAR_SVG}</button>`;
+
+/* ---------- 세트 나누기 (범위마다 저장, 시트 동기화) ---------- */
+const SPLIT_PREFIX = '__split__|';
+function getSplit(src) {
+  for (const t of tombstones) {
+    if (!t.startsWith(SPLIT_PREFIX)) continue;
+    try { const o = JSON.parse(t.slice(SPLIT_PREFIX.length)); if (o.src === src) return o; } catch(e) {}
+  }
+  return null;
+}
+function putSplit(src, data) {
+  tombstones = tombstones.filter(t => {
+    if (!t.startsWith(SPLIT_PREFIX)) return true;
+    try { return JSON.parse(t.slice(SPLIT_PREFIX.length)).src !== src; } catch(e) { return true; }
+  });
+  if (data) tombstones.push(SPLIT_PREFIX + JSON.stringify({ src, cuts: data.cuts || [], names: data.names || {} }));
+}
+// 나눌 수 있는 단위: 문장 묶음 (문장이 하나뿐이면 한자 하나하나)
+function rangeUnits(words) {
+  const { groupKeys, groups, labels } = groupBySentence(words);
+  if (groupKeys.length > 1) return { kind: 'sentence', units: groupKeys.map(k => ({ words: groups[k], label: labels[k] })) };
+  return { kind: 'word', units: words.map(w => ({ words: [w], label: '' })) };
+}
+function autoCuts(units) {
+  const cuts = []; let n = 0;
+  units.forEach((u, i) => {
+    if (i > 0 && n >= TARGET_CHUNK_SIZE) { cuts.push(String(u.words[0].id)); n = 0; }
+    n += u.words.length;
+  });
+  return cuts;
+}
+function buildSets(src, words) {
+  const { kind, units } = rangeUnits(words);
+  const split = getSplit(src);
+  const cutSet = new Set(split ? split.cuts.map(String) : autoCuts(units));
+  const names = (split && split.names) || {};
+  const sets = [];
+  let cur = null;
+  units.forEach((u, i) => {
+    const firstId = String(u.words[0].id);
+    if (!cur || cutSet.has(firstId)) {
+      cur = { start: i + 1, end: i + 1, words: [], count: 0, key: firstId, name: names[firstId] || '' };
+      sets.push(cur);
+    }
+    cur.end = i + 1; cur.words.push(...u.words); cur.count += u.words.length;
+  });
+  sets.forEach(st => {
+    st.rangeLabel = kind === 'sentence'
+      ? (st.start === st.end ? `문장 ${st.start}` : `문장 ${st.start}~${st.end}`)
+      : (st.start === st.end ? `${st.start}번` : `${st.start}~${st.end}번`);
+  });
+  return { sets, kind, custom: !!split };
+}
+
+const SCISSORS_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/></svg>';
+const SET_COLORS = ['#3182F6', '#12B5B0', '#8B5CF6', '#F59E0B', '#EC4899', '#10B981', '#6366F1', '#EF4444'];
+
+let splitState = null;   // { src, kind, units, cuts:Set, names:{}, mode:'auto'|'custom', every }
+
+function openSplitEditor(src) {
+  const words = wordList.filter(w => w.source === src && !w.hidden).sort((a, b) => (a.num || 0) - (b.num || 0));
+  if (!words.length) return;
+  const { kind, units } = rangeUnits(words);
+  if (units.length < 2) return notify('나눌 단위가 하나뿐이에요');
+  const split = getSplit(src);
+  splitState = {
+    src, kind, units,
+    cuts: new Set(split ? split.cuts.map(String) : autoCuts(units)),
+    names: { ...((split && split.names) || {}) },
+    mode: split ? 'custom' : 'auto',
+    every: kind === 'sentence' ? 3 : 10
+  };
+  document.getElementById('split-title').textContent = src;
+  document.getElementById('split-sub').textContent = `한자 ${words.length}개 · ${kind === 'sentence' ? '문장' : '한자'} ${units.length}개`;
+  document.getElementById('split-every-unit').textContent = kind === 'sentence' ? '문장씩' : '자씩';
+  renderSplit();
+  document.getElementById('split-sheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSplitEditor() {
+  document.getElementById('split-sheet').classList.remove('open');
+  document.body.style.overflow = '';
+  splitState = null;
+}
+
+function splitPreset(kind) {
+  const st = splitState; if (!st) return;
+  if (kind === 'auto') { st.cuts = new Set(autoCuts(st.units)); st.mode = 'auto'; }
+  else if (kind === 'none') { st.cuts = new Set(); st.mode = 'custom'; }
+  else if (kind === 'every') {
+    st.cuts = new Set(st.units.filter((u, i) => i > 0 && i % st.every === 0).map(u => String(u.words[0].id)));
+    st.mode = 'custom';
+  }
+  renderSplit();
+}
+function splitEvery(delta) {
+  const st = splitState; if (!st) return;
+  st.every = Math.max(1, Math.min(st.units.length - 1, st.every + delta));
+  splitPreset('every');
+}
+function toggleCut(i) {
+  const st = splitState; if (!st || i <= 0) return;
+  const id = String(st.units[i].words[0].id);
+  if (st.cuts.has(id)) st.cuts.delete(id); else st.cuts.add(id);
+  st.mode = 'custom';
+  renderSplit(i);
+}
+async function renameSet(firstId, index) {
+  const st = splitState; if (!st) return;
+  const v = await uiDialog({
+    title: `세트 ${index} 이름`, message: '비워 두면 "세트 ' + index + '"로 표시돼요.',
+    input: { placeholder: `예: ${index}주차` },
+    buttons: [{ label: '취소', value: null, style: 'outline', cancel: true }, { label: '저장', value: true, style: 'primary' }]
+  });
+  if (v === null || v === true) return;
+  const name = String(v).trim();
+  if (name) st.names[firstId] = name; else delete st.names[firstId];
+  st.mode = 'custom';
+  renderSplit();
+}
+
+function renderSplit(focusIndex) {
+  const st = splitState; if (!st) return;
+  document.querySelectorAll('#split-presets [data-p]').forEach(b => b.classList.toggle('active', st.mode === 'auto' && b.dataset.p === 'auto'));
+  document.getElementById('split-every-n').textContent = st.every;
+  let setNo = 0, html = '', counts = [];
+  st.units.forEach((u, i) => {
+    const firstId = String(u.words[0].id);
+    const isStart = i === 0 || st.cuts.has(firstId);
+    if (isStart) {
+      setNo++;
+      // 이 세트 크기 미리 계산
+      let n = 0;
+      for (let j = i; j < st.units.length; j++) { if (j > i && st.cuts.has(String(st.units[j].words[0].id))) break; n += st.units[j].words.length; }
+      counts.push(n);
+      const color = SET_COLORS[(setNo - 1) % SET_COLORS.length];
+      const name = st.names[firstId];
+      html += `<div class="split-head${i === focusIndex ? ' fresh' : ''}" style="--c:${color}">
+        ${i > 0 ? `<button class="split-merge" onclick="toggleCut(${i})" aria-label="위 세트와 합치기" title="위 세트와 합치기">${SCISSORS_SVG}<span>합치기</span></button>` : ''}
+        <button class="split-tag" onclick="renameSet('${firstId}', ${setNo})">${name ? esc(name) : `세트 ${setNo}`}<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg></button>
+        <span class="split-count">${n}자</span>
+      </div>`;
+    } else {
+      html += `<button class="split-gap" onclick="toggleCut(${i})" aria-label="여기서 나누기"><span class="split-gap-line"></span><span class="split-gap-btn">${SCISSORS_SVG}여기서 나누기</span></button>`;
+    }
+    const color = SET_COLORS[(setNo - 1) % SET_COLORS.length];
+    const preview = u.words.slice(0, 8).map(w => esc(w.hanja)).join('') + (u.words.length > 8 ? '…' : '');
+    html += `<div class="split-unit" style="--c:${color}">
+      <div class="su-main">${st.kind === 'sentence' ? esc(u.label || '예문 없음') : `${esc(u.words[0].hanja)} <span class="su-mean">${esc(u.words[0].mean)}</span>`}</div>
+      ${st.kind === 'sentence' ? `<div class="su-meta"><span class="su-hanja">${preview}</span><span>${u.words.length}자</span></div>` : ''}
+    </div>`;
+  });
+  const list = document.getElementById('split-list');
+  list.innerHTML = html;
+  document.getElementById('split-summary').innerHTML =
+    `<b>세트 ${counts.length}개</b><span>${counts.join(' · ')}자</span>`;
+  if (typeof focusIndex === 'number') {
+    const el = list.querySelector('.split-head.fresh');
+    if (el) replayAnim(el, 'pop-in');
+  }
+}
+
+function saveSplit() {
+  const st = splitState; if (!st) return;
+  if (st.mode === 'auto' && !Object.keys(st.names).length) putSplit(st.src, null);
+  else {
+    const valid = new Set(st.units.map(u => String(u.words[0].id)));
+    const names = {};
+    Object.entries(st.names).forEach(([k, v]) => { if (k === String(st.units[0].words[0].id) || st.cuts.has(k)) names[k] = v; });
+    putSplit(st.src, { cuts: [...st.cuts].filter(id => valid.has(id)), names });
+  }
+  const src = st.src;
+  saveToStorage();
+  closeSplitEditor();
+  renderSources();
+  notify(`'${src}' 세트를 저장했어요`);
 }
 
 /* ---------- 하던 곳부터 이어 풀기 ----------
@@ -2684,7 +3214,8 @@ function saveQuizSession() {
     pos.has(e.id) ? pos.get(e.id) : -1,
     e.type === 'mark' ? (e.correct ? 1 : 0) : e.type === 'skip' ? (e.count || 1) : 0,
     e.prev ? flagsToBits(e.prev) : 0,
-    e.index
+    e.index,
+    e.prev && e.prev.sM ? [e.prev.sM.s, e.prev.sM.w, e.prev.sM.k, e.prev.sM.t, e.prev.sH.s, e.prev.sH.w, e.prev.sH.k, e.prev.sH.t] : 0
   ]).filter(x => x[1] >= 0);
   const sources = [...new Set(currentQuiz.map(w => w.source))];
   const obj = { v: 1, t: qType, o: currentQuiz.map(w => String(w.id)), i: currentIndex, h,
@@ -2721,6 +3252,7 @@ function renderResumeBox() {
 }
 
 function resumeQuiz() {
+  recAtStart = null;
   const sess = getQuizSession();
   if (!sess) return;
   const byId = new Map(wordList.map(w => [String(w.id), w]));
@@ -2745,7 +3277,9 @@ function resumeQuiz() {
     const idx = typeof e[4] === 'number' && remap.has(e[4]) ? remap.get(e[4]) : remap.get(e[1]);
     if (e[0] === 's') return { type: 'skip', id: w.id, index: idx, count: e[2] };
     if (e[0] === 'h') return { type: 'hide', id: w.id, index: idx, prev: bitsToFlags(e[3], true) };
-    return { type: 'mark', id: w.id, correct: e[2] === 1, index: idx, prev: bitsToFlags(e[3], false) };
+    const prev = bitsToFlags(e[3], false);
+    if (Array.isArray(e[5])) { const a = e[5]; prev.sM = { s: a[0], w: a[1], k: a[2], t: a[3] }; prev.sH = { s: a[4], w: a[5], k: a[6], t: a[7] }; }
+    return { type: 'mark', id: w.id, correct: e[2] === 1, index: idx, prev };
   });
   qpSelected.clear(); qpFilter('all', true);
   showPlayScreen('quiz-play');
@@ -2817,11 +3351,12 @@ function qpMove(toCorrect) {
   qpSelected.forEach(id => {
     const w = wordList.find(x => x.id === id);
     if (!w) return;
-    setResult(w, toCorrect);
-    // 해당 단어의 마지막 채점 기록도 같이 고쳐서 현황판·이전 문제와 맞춤
+    // 해당 단어의 마지막 채점을 취소하고 다시 채점 (통계가 두 번 세지지 않게)
     for (let i = quizHistory.length - 1; i >= 0; i--) {
-      if (quizHistory[i].type === 'mark' && quizHistory[i].id === id) { quizHistory[i].correct = toCorrect; break; }
+      const h = quizHistory[i];
+      if (h.type === 'mark' && h.id === id) { if (h.prev) Object.assign(w, h.prev); h.correct = toCorrect; break; }
     }
+    setResult(w, toCorrect);
   });
   qpSelected.clear();
   saveToStorage(); renderWrongNotes();
@@ -2879,6 +3414,7 @@ function drawHanjaList() {
   const src = document.getElementById('hl-source').value;
   const mode = document.querySelector('input[name="hlMode"]:checked').value;
   const covered = document.getElementById('hl-cover').checked;
+  const S = getStarSet();
   const sources = src ? [src] : [...new Set(wordList.filter(w => !w.hidden).map(w => w.source))];
   let ok = 0, no = 0, total = 0, html = '';
   sources.forEach(s => {
@@ -2889,7 +3425,7 @@ function drawHanjaList() {
       const isNo = mode === 'hanja' ? w.wrongMean : w.wrongHanja;
       const isOk = !isNo && (mode === 'hanja' ? w.okMean : w.okHanja);
       total++; if (isNo) no++; else if (isOk) ok++;
-      return `<div class="hl-cell${isNo ? ' no' : isOk ? ' ok' : ''}" data-h="${esc(w.hanja)}" data-m="${esc(w.mean)}" onclick="this.classList.toggle('show')"><div class="hc">${esc(w.hanja)}</div><div class="hu">${esc(w.mean)}</div></div>`;
+      return `<div class="hl-cell${isNo ? ' no' : isOk ? ' ok' : ''}${S.has(String(w.id)) ? ' starred' : ''}" data-h="${esc(w.hanja)}" data-m="${esc(w.mean)}" onclick="this.classList.toggle('show')"><div class="hc">${esc(w.hanja)}</div><div class="hu">${esc(w.mean)}</div></div>`;
     }).join('') + '</div>';
   });
   const body = document.getElementById('hl-body');
@@ -2965,8 +3501,10 @@ function switchTab(tabId) {
 document.addEventListener('keydown', function(e) {
   if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
   if(e.key === 'Escape' && document.getElementById('sync-modal').classList.contains('open')) { closeSyncModal(); return; }
+  if(e.key === 'Escape' && document.getElementById('split-sheet').classList.contains('open')) { closeSplitEditor(); return; }
   if(document.getElementById('quiz-play').style.display !== 'block') return;
   if(e.code === 'Backspace') { e.preventDefault(); prevQuestion(); return; }
+  if(e.code === 'KeyS') { e.preventDefault(); toggleQuizStar(); return; }
   if(e.key === 'Escape') { e.preventDefault(); quitQuiz(); return; }
 
   const btnAns = document.getElementById('btn-show-ans');
