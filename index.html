@@ -371,6 +371,23 @@
   .rv-ex { font-size: 0.9rem; font-weight: 600; color: var(--text); }
 
   .chip-cx { background: rgba(100,116,139,0.12); color: var(--text-muted); }
+  .chip-soft { opacity: 0.7; }
+
+  /* 추천 강도 */
+  .rec-row { align-items: flex-start !important; }
+  .rec-row .opt-label { padding-top: 14px; }
+  .rec-tier-wrap { flex: 1; min-width: 0; }
+  .rec-tier { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .rec-tier button { margin: 0; padding: 9px 6px 8px; border-radius: 12px; background: var(--bg); border: 1.5px solid transparent; display: flex; flex-direction: column; align-items: center; gap: 1px; color: var(--text-muted); transition: background 0.18s, border-color 0.18s, color 0.18s; }
+  .rec-tier .rt-top { font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+  .rec-tier .rt-top b { display: inline-flex; width: 18px; height: 18px; align-items: center; justify-content: center; border-radius: 6px; font-size: 0.72rem; background: var(--border); color: var(--text); }
+  .rec-tier .rt-n { font-size: 0.78rem; font-weight: 700; opacity: 0.85; }
+  .rec-tier button.active { background: var(--secondary); border-color: rgba(49,130,246,0.45); color: var(--primary); }
+  .rec-tier button.active .rt-top b { background: var(--primary); color: #fff; }
+  .rec-tier button[data-lv="3"].active { background: rgba(240,68,82,0.08); border-color: rgba(240,68,82,0.4); color: var(--danger); }
+  .rec-tier button[data-lv="3"].active .rt-top b { background: var(--danger); }
+  .rec-tier-desc { font-size: 0.76rem; font-weight: 600; color: var(--text-muted); margin-top: 6px; padding-left: 2px; }
+  .rv-tier { margin: 0 0 12px; }
   .weak-meter { display: flex; gap: 2px; margin-top: 8px; }
   .weak-meter i { width: 4px; height: 10px; border-radius: 2px; background: var(--border); }
   .weak-meter.lv1 i:nth-child(1), .weak-meter.lv2 i:nth-child(-n+2), .weak-meter.lv3 i { background: #F59E0B; }
@@ -645,6 +662,13 @@
               <label><input type="radio" name="qTarget" value="star" onchange="saveQuizOpts()"> <span>별표</span></label>
             </div>
           </div>
+          <div class="opt-row rec-row" id="opt-rec-row">
+            <div class="opt-label">강도</div>
+            <div class="rec-tier-wrap">
+              <div class="rec-tier" id="rec-tier-setup"></div>
+              <div class="rec-tier-desc" id="rec-tier-desc"></div>
+            </div>
+          </div>
         </div>
 
         <div class="start-bar">
@@ -692,8 +716,12 @@
     </div>
     <div class="setup-group rv-head">
       <p class="rv-desc" id="wrong-count-msg"></p>
+      <div class="rec-tier-wrap rv-tier" id="rv-tier-wrap">
+        <div class="rec-tier" id="rec-tier-review"></div>
+        <div class="rec-tier-desc" id="rec-tier-review-desc"></div>
+      </div>
       <div class="rv-limit" id="rv-limit">
-        <span>약한 순으로</span>
+        <span>필요한 순으로</span>
         <div class="rv-limit-seg">
           <button data-n="10" onclick="setRecLimit(10)">10개</button>
           <button data-n="20" onclick="setRecLimit(20)">20개</button>
@@ -950,7 +978,7 @@ let qType = 'hanja';
 const TARGET_CHUNK_SIZE = 25;
 
 /* ▼ 앱 버전: 새 파일을 올릴 때마다 바뀜. 열려 있는 앱이 GitHub의 최신 버전과 비교해 업데이트를 알려줌 */
-const APP_VERSION = '2026.10.15-3';
+const APP_VERSION = '2026.10.15-5';
 
 /* ▼▼▼ 내 '한자DB' 시트의 웹 앱 주소 ▼▼▼
    여기에 넣어두면 어느 기기에서 열어도 자동으로 연결됩니다.
@@ -1005,6 +1033,7 @@ function repairDuplicateIds() {
 // 시트의 wrongMean/wrongHanja 칸 형식: '상태|푼 횟수|틀린 횟수|연속 맞힘|마지막 날짜'
 //   상태 = true(틀림) / ok(맞힘) / false(안 풂)
 const TODAY = () => Math.floor(Date.now() / 86400000);
+const EMPTY_STAT = () => ({ s: 0, w: 0, k: 0, t: 0 });
 function parseCell(v) {
   const p = str(v).split('|');
   return { state: (p[0] || '').toLowerCase(), s: +p[1] || 0, w: +p[2] || 0, k: +p[3] || 0, t: +p[4] || 0 };
@@ -1104,7 +1133,9 @@ function updateStartInfo() {
   const order = (document.querySelector('input[name="qOrder"]:checked') || {}).value;
   const list = filterByTarget(wordList.filter(w => ids.has(String(w.id)) && !w.hidden), target, type);
   const ranges = new Set(list.map(w => w.source)).size;
-  const tag = { rec: order === 'rand' ? ' · 추천' : ' · 추천 · 약한 순', wrong: ' · 틀린 한자', star: ' · 별표' }[target] || '';
+  const tag = { rec: ` · 추천 ${recLevel}단계${order === 'rand' ? '' : ' · 필요한 순'}`, wrong: ' · 틀린 한자', star: ' · 별표' }[target] || '';
+  const recRow = document.getElementById('opt-rec-row');
+  if (recRow) { const show = target === 'rec'; if (show && recRow.style.display === 'none') replayAnim(recRow, 'sets-in'); recRow.style.display = show ? '' : 'none'; if (show) renderRecTiers(); }
   info.innerHTML = ids.size ? `<b>${list.length}</b>문제 · 범위 ${ranges}개${tag}` : '범위를 선택하세요';
   const empty = !list.length;
   document.getElementById('btn-start-quiz').disabled = empty;
@@ -1797,7 +1828,8 @@ function applyGroups(chosen, { doUpdate, doTomb, saveRules }) {
   const makeWord = (g, fw, extKey) => ({
     id: newId(), num: 9999, hanja: fw.hanja, mean: fw.mean, source: g.target, ex: fw.ex, hint: '',
     wrongMean: false, wrongHanja: false, hidden: false,
-    origin: 'friend', extKey, extSource: g.id, extOrder: fw.order, userEdited: false
+    origin: 'friend', extKey, extSource: g.id, extOrder: fw.order, userEdited: false,
+    sM: EMPTY_STAT(), sH: EMPTY_STAT()
   });
 
   if (saveRules) {
@@ -2083,7 +2115,8 @@ function saveNewWords() {
         hanja: parts[0], mean: parts[1],
         source: parts[2] || "기타범위", ex: parts[3] || "",
         wrongMean: false, wrongHanja: false, hidden: false, hint: "",
-        origin: '', extKey: '', extSource: '', extOrder: null, userEdited: false
+        origin: '', extKey: '', extSource: '', extOrder: null, userEdited: false,
+        sM: EMPTY_STAT(), sH: EMPTY_STAT()
       });
       addCount++;
     }
@@ -2406,14 +2439,16 @@ function renderWrongNotes() {
   const cntA = cap(filterByTarget(live, reviewMode, 'hanja').length);
   const cntB = cap(filterByTarget(live, reviewMode, 'mean').length);
   document.getElementById('rv-limit').style.display = reviewMode === 'rec' && items.length ? '' : 'none';
+  document.getElementById('rv-tier-wrap').style.display = reviewMode === 'rec' ? '' : 'none';
+  if (reviewMode === 'rec') renderRecTiers();
   document.querySelectorAll('.rv-limit-seg button').forEach(b => b.classList.toggle('active', Number(b.dataset.n) === recLimit));
   const msg = document.getElementById('wrong-count-msg');
   const desc = {
-    rec: '푼 횟수에 비해 자주 틀렸거나 최근에 틀린 한자예요. 틀린 비율이 높을수록, 획이 많고 복잡할수록, 오래 안 풀었을수록 앞에 와요. 3번 연속 맞히면 빠져요.',
+    rec: '푼 기록으로 지금 기억하고 있을 확률을 추정해서, 복습이 필요한 한자를 골라요. 틀린 한자뿐 아니라 맞혔어도 오래 안 봤거나 몇 번 안 푼 한자, 획이 많은 한자도 들어가요.',
     wrong: '마지막으로 풀었을 때 틀린 한자예요.',
     star: '별표한 한자예요. 퀴즈 카드나 목록의 ☆로 추가할 수 있어요.'
   }[reviewMode];
-  msg.textContent = items.length ? desc : { rec: '추천할 한자가 없어요. 퀴즈를 풀수록 약한 한자가 쌓여요.', wrong: '틀린 한자가 없어요.', star: '별표한 한자가 없어요. 퀴즈 카드나 목록의 ☆를 눌러 추가하세요.' }[reviewMode];
+  msg.textContent = items.length ? desc : { rec: '이 강도에서는 추천할 한자가 없어요. 강도를 낮추면 더 넓게 볼 수 있어요.', wrong: '틀린 한자가 없어요.', star: '별표한 한자가 없어요. 퀴즈 카드나 목록의 ☆를 눌러 추가하세요.' }[reviewMode];
   const ba = document.getElementById('btn-wrong-quiz-hanja'), bb = document.getElementById('btn-wrong-quiz-mean');
   ba.innerHTML = `한자 → 훈음 <b>${cntA}</b>`; ba.disabled = !cntA;
   bb.innerHTML = `훈음 → 한자 <b>${cntB}</b>`; bb.disabled = !cntB;
@@ -2421,7 +2456,7 @@ function renderWrongNotes() {
   document.getElementById('btn-clear-wrong').style.display = reviewMode === 'wrong' && items.length ? 'inline-block' : 'none';
 
   if (!items.length) { container.innerHTML = ''; return; }
-  const score = w => Math.max((weakInfo(w, 'hanja') || { score: -1e9 }).score * (isRec(w, 'hanja') ? 1 : 0), (weakInfo(w, 'mean') || { score: -1e9 }).score * (isRec(w, 'mean') ? 1 : 0));
+  const score = w => Math.max(isRec(w, 'hanja') ? weakInfo(w, 'hanja').need : -1, isRec(w, 'mean') ? weakInfo(w, 'mean').need : -1);
   let html = '';
   const sources = [...new Set(items.map(w => w.source))];
   sources.forEach(src => {
@@ -2432,12 +2467,18 @@ function renderWrongNotes() {
       let badges = '';
       let meter = '';
       if (reviewMode === 'rec') {
-        const a = weakInfo(item, 'hanja'), b = weakInfo(item, 'mean');
-        if (a && a.rec) badges += `<span class="chip chip-mean">한자→훈음 · ${a.reason}</span>`;
-        if (b && b.rec) badges += `<span class="chip chip-hanja">훈음→한자 · ${b.reason}</span>`;
-        if ((a && a.complex) || (b && b.complex)) badges += `<span class="chip chip-cx">복잡한 글자</span>`;
-        const lv = Math.max(a && a.rec ? a.level : 0, b && b.rec ? b.level : 0);
-        meter = `<div class="weak-meter lv${lv}" title="약함 정도" aria-label="약함 정도 ${lv}/3"><i></i><i></i><i></i></div>`;
+        const modes = [['hanja', '한자→훈음', 'chip-mean'], ['mean', '훈음→한자', 'chip-hanja']].filter(([m]) => isRec(item, m));
+        let lv = 0, recall = null;
+        modes.forEach(([m, label, cls]) => {
+          const i = weakInfo(item, m);
+          badges += i.unseen
+            ? `<span class="chip ${cls} chip-soft">${label} · 처음</span>`
+            : `<span class="chip ${cls}">${label} · ${i.reasons.join(' · ')}</span>`;
+          lv = Math.max(lv, recTier(item, m));
+          if (i.recall !== null) recall = recall === null ? i.recall : Math.min(recall, i.recall);
+        });
+        meter = `<div class="weak-meter lv${lv}" title="복습 필요도" aria-label="복습 필요도 ${lv}/3"><i></i><i></i><i></i></div>`;
+        badges += `<span class="chip chip-cx">${recall === null ? '처음 보는 한자' : `기억 예상 ${Math.round(recall * 100)}%`}</span>`;
       } else {
         if (item.wrongMean) badges += '<span class="chip chip-mean">훈음 틀림</span>';
         if (item.wrongHanja) badges += '<span class="chip chip-hanja">한자 틀림</span>';
@@ -2484,7 +2525,7 @@ function getFilteredList() {
   
   let list = filterByTarget(wordList.filter(w => selectedIds.has(String(w.id)) && !w.hidden), qTarget, qType);
   if(list.length === 0) {
-    notify({ rec: '추천할 한자가 없어요 · 퀴즈를 풀수록 쌓여요', wrong: '틀린 한자가 없어요', star: '별표한 한자가 없어요' }[qTarget] || '조건에 맞는 한자가 없어요');
+    notify({ rec: '이 강도에서 추천할 한자가 없어요 · 강도를 낮춰 보세요', wrong: '틀린 한자가 없어요', star: '별표한 한자가 없어요' }[qTarget] || '조건에 맞는 한자가 없어요');
     return null;
   }
   list._target = qTarget;
@@ -2518,7 +2559,7 @@ function filterByTarget(list, target, mode) {
 }
 // 추천은 약한 한자부터
 function sortByWeakness(list, mode) {
-  const sc = new Map(list.map(w => [w.id, (weakInfo(w, mode) || { score: 0 }).score]));
+  const sc = new Map(list.map(w => { const i = weakInfo(w, mode); return [w.id, i.need + 0.02 * i.cx]; }));
   return list.sort((a, b) => sc.get(b.id) - sc.get(a.id));
 }
 
@@ -2599,9 +2640,41 @@ let quizHistory = [];  // 채점·숨김·건너뛰기 기록 (이전 문제 / �
 let qpFilterMode = 'all';
 const qpSelected = new Set();
 
+// 퀴즈 상단에 보여줄 '이번 퀴즈 설정' (범위 · 대상 · 순서 · 유형)
+let quizCtx = null;
+const TARGET_LABEL = { all: '전체', rec: '추천', wrong: '틀림', star: '별표' };
+
+// 범위 이름: 일부 세트만 골랐으면 세트 이름까지, 많으면 'A 외 N개'
+function rangeLabelOf(list) {
+  const ids = new Set(list.map(w => String(w.id)));
+  const srcs = [...new Set(list.map(w => w.source))].sort((a, b) => a.localeCompare(b, 'ko', { numeric: true }));
+  const parts = srcs.map(src => {
+    const active = wordList.filter(w => w.source === src && !w.hidden);
+    if (active.every(w => ids.has(String(w.id)))) return src;
+    const { sets } = buildSets(src, active.sort((a, b) => (a.num || 0) - (b.num || 0)));
+    const names = sets.map((st, i) => ({ st, name: st.name || `세트 ${i + 1}` }))
+      .filter(({ st }) => st.words.every(w => ids.has(String(w.id)))).map(x => x.name);
+    return names.length && names.length < sets.length ? `${src} ${names.length > 2 ? names[0] + ' 외 ' + (names.length - 1) + '개' : names.join('·')}` : src;
+  });
+  if (parts.length <= 2) return parts.join(', ');
+  return `${parts[0]} 외 ${parts.length - 1}개`;
+}
+
+function ctxText() {
+  if (!quizCtx) return '';
+  return [quizCtx.range, quizCtx.target, quizCtx.order, quizCtx.type].filter(Boolean).join(' · ');
+}
+
 function startQuiz() {
   const list = getFilteredList();
   if(!list) return;
+  const isRandom = document.querySelector('input[name="qOrder"]:checked').value === 'rand';
+  quizCtx = {
+    range: rangeLabelOf(list),
+    target: list._target === 'rec' ? `추천 ${recLevel}단계` : (TARGET_LABEL[list._target] || '전체'),
+    order: isRandom ? '랜덤' : (list._target === 'rec' ? '필요한 순' : '번호순'),
+    type: qType === 'hanja' ? '한자→훈음' : '훈음→한자'
+  };
   beginQuiz(sortForPlay(list));
 }
 
@@ -2626,6 +2699,12 @@ function startReviewQuiz(type) {
   list = reviewMode === 'rec' ? sortByWeakness(list, type)
        : list.sort((a, b) => a.source !== b.source ? a.source.localeCompare(b.source, 'ko', { numeric: true }) : a.num - b.num);
   if (reviewMode === 'rec' && recLimit) list = list.slice(0, recLimit);
+  quizCtx = {
+    range: '모든 범위',
+    target: reviewMode === 'rec' ? `추천 ${recLevel}단계${recLimit ? ` ${list.length}개` : ''}` : TARGET_LABEL[reviewMode],
+    order: reviewMode === 'rec' ? '필요한 순' : '번호순',
+    type: type === 'hanja' ? '한자→훈음' : '훈음→한자'
+  };
   beginQuiz(list);
 }
 
@@ -2735,8 +2814,9 @@ function loadQuestion() {
   const item = currentQuiz[currentIndex];
   updateCardStar();
   document.getElementById('quiz-progress').innerText = `${currentIndex + 1} / ${currentQuiz.length}`;
-  const wi = weakInfo(item, qType);
-  document.getElementById('quiz-source').innerText = `${item.source} [No.${item.num}]` + (wi && wi.rec ? ` · ${wi.reason}` : '');
+  const srcEl = document.getElementById('quiz-source');
+  srcEl.innerText = ctxText() || item.source;
+  srcEl.title = srcEl.innerText;
   document.getElementById('quiz-progress-bar').style.width = (currentIndex / currentQuiz.length * 100) + '%';
   
   const qText = document.getElementById('play-q');
@@ -2897,7 +2977,7 @@ function setResult(w, isCorrect) {
   else { w.wrongHanja = !isCorrect; w.okHanja = isCorrect; }
 }
 const snapshot = w => ({ wrongMean: w.wrongMean, wrongHanja: w.wrongHanja, okMean: w.okMean, okHanja: w.okHanja,
-                         sM: { ...w.sM }, sH: { ...w.sH } });
+                         sM: { ...(w.sM || EMPTY_STAT()) }, sH: { ...(w.sH || EMPTY_STAT()) } });
 
 // 건너뛰기: 채점하지 않고 n문제 앞으로 이동 (남은 문제보다 많으면 마지막 문제까지만)
 function jumpQuestion(n) {
@@ -2958,32 +3038,95 @@ function complexity(h) {
   return cxRankCache.map.has(ch) ? cxRankCache.map.get(ch) : 0;
 }
 
-/* ---------- 추천: 약한 한자 ----------
-   점수 = 틀린 비율(제곱에 가깝게 → 높으면 크게, 낮으면 작게) + 최근 틀림 + 글자 복잡도
-          + 오래 안 풂 − 연속 맞힘
-   추천 기준: 연속 맞힘 3번 미만이면서
-     · 지금 틀린 상태이거나
-     · 틀린 비율이 기준 이상 (기본 40%, 획이 많고 복잡한 글자일수록 최대 28%까지 낮아짐) */
-function weakInfo(w, mode) {
-  const st = mode === 'mean' ? w.sH : w.sM;
-  if (!st || !st.s) return null;
-  const wrongNow = mode === 'mean' ? w.wrongHanja : w.wrongMean;
-  const rate = (st.w + 0.5) / (st.s + 1);           // 횟수가 적을 때 과장되지 않게 보정
-  const days = st.t ? Math.max(0, TODAY() - st.t) : 0;
-  const cx = complexity(w.hanja);
-  const rateTerm = 130 * Math.pow(rate, 1.6);        // 비율이 높을수록 가파르게, 낮을수록 약하게
-  const cxW = Math.pow(cx, 1.5);                     // 복잡한 글자에서 주로 효과가 나게
-  const score = rateTerm + (wrongNow ? 22 : 0) + cxW * 30 + Math.min(days, 14) * 1.2 - st.k * 14;
-  const threshold = 0.4 - 0.12 * cxW;
-  const rec = st.k < 3 && (wrongNow || rate >= threshold);
-  let reason;
-  if (st.w === 0) reason = `${st.s}번 모두 맞힘`;
-  else if (wrongNow && st.s === 1) reason = '처음 풀 때 틀림';
-  else reason = `${st.s}번 중 ${st.w}번 틀림`;
-  const level = score >= 95 ? 3 : score >= 60 ? 2 : 1;   // 약함 정도 (막대 3칸)
-  return { rec, score, reason, rate, st, cx, level, complex: cx >= 0.75 };
+/* ---------- 추천: 기억 모델 ----------
+   한자마다 '지금 기억하고 있을 확률'을 추정해서, 복습이 필요한 정도(need, 0~1)를 계산.
+   · 반감기(기억이 절반으로 줄어드는 기간, 일): 연속으로 맞힐수록 길어지고(×1.9씩),
+     정답률이 높을수록 길어지고, 복잡한 글자일수록 짧아짐
+   · 기억 확률 = 0.5 ^ (마지막으로 푼 뒤 지난 날 / 반감기)
+   · 푼 횟수가 적으면 아직 확신할 수 없으니 필요도를 올림
+   · 지금 틀린 상태면 가장 높게
+   · 아직 안 풀어 본 한자는 '넓게(1단계)'에만 포함
+   추천 강도: 3 집중(need ≥ 0.75) · 2 균형(≥ 0.5) · 1 넓게(≥ 0.25 + 안 풀어 본 한자) */
+const REC_LEVELS = {
+  1: { min: 0.25, name: '넓게', desc: '조금이라도 흐려졌거나 아직 덜 본 한자까지' },
+  2: { min: 0.5,  name: '균형', desc: '잊어가고 있거나 자주 틀리는 한자' },
+  3: { min: 0.75, name: '집중', desc: '지금 꼭 다시 봐야 하는 한자만' }
+};
+let recLevel = Number(localStorage.getItem('hanja_rec_level') || 2);
+function setRecLevel(n) {
+  recLevel = n;
+  localStorage.setItem('hanja_rec_level', String(n));
+  renderRecTiers();
+  renderWrongNotes();
+  updateStartInfo();
 }
-const isRec = (w, mode) => { const i = weakInfo(w, mode); return !!(i && i.rec); };
+
+function weakInfo(w, mode) {
+  const st = (mode === 'mean' ? w.sH : w.sM) || { s: 0, w: 0, k: 0, t: 0 };
+  const wrongNow = mode === 'mean' ? w.wrongHanja : w.wrongMean;
+  const cx = complexity(w.hanja);
+  const cxW = Math.pow(cx, 1.5);
+  if (!st.s) {
+    return { unseen: true, need: 0.3 + 0.08 * cxW, recall: null, half: 0, days: 0, cx,
+             reasons: ['아직 안 풀어 봄'].concat(cx >= 0.75 ? ['복잡한 글자'] : []), st };
+  }
+  const acc = (st.s - st.w + 1) / (st.s + 2);                    // 보정한 정답률
+  const days = st.t ? Math.max(0, TODAY() - st.t) : 7;           // 기록 날짜가 없으면 1주 전으로 간주
+  let half = 0.8 * Math.pow(1.9, Math.min(st.k, 8)) * (0.5 + acc) * (1 - 0.35 * cxW);
+  half = Math.max(0.3, half);
+  let recall = Math.pow(0.5, days / half);
+  if (wrongNow) recall = Math.min(recall, 0.2);                  // 방금 틀렸으면 기억하고 있다고 보기 어려움
+  const unsure = 0.6 * Math.pow(0.5, st.s);                      // 1번 0.3 · 2번 0.15 · 3번 0.08 …
+  let need = 1 - recall * (1 - unsure) + 0.05 * cxW;
+  if (wrongNow) need = Math.max(need, 0.8 + 0.2 * (st.w / st.s));
+  need = Math.min(1, Math.max(0, need));
+
+  // 사람이 읽는 이유 (중요한 것부터 최대 2개)
+  const reasons = [];
+  if (wrongNow) reasons.push(st.s === 1 ? '처음 풀 때 틀림' : `${st.s}번 중 ${st.w}번 틀림`);
+  if (!wrongNow && days >= 2 && days >= half * 1.2) reasons.push(`${days}일 동안 안 봄`);
+  if (!wrongNow && st.w / st.s >= 0.34) reasons.push(`${st.s}번 중 ${st.w}번 틀림`);
+  if (!wrongNow && st.s <= 2) reasons.push(`아직 ${st.s}번만 풂`);
+  if (cx >= 0.75) reasons.push('복잡한 글자');
+  if (!reasons.length) reasons.push(`${st.s}번 중 ${st.s - st.w}번 맞힘`);
+  return { unseen: false, need, recall, half, days, cx, reasons: reasons.slice(0, 2), st };
+}
+// 지금 강도(기본: 설정값)에서 추천 대상인지
+function isRec(w, mode, level = recLevel) {
+  const i = weakInfo(w, mode);
+  if (i.unseen) return level === 1;
+  return i.need >= REC_LEVELS[level].min;
+}
+// 이 한자가 들어가는 가장 높은 강도 (0이면 추천 아님)
+function recTier(w, mode) {
+  const i = weakInfo(w, mode);
+  if (i.unseen) return 1;
+  return i.need >= 0.75 ? 3 : i.need >= 0.5 ? 2 : i.need >= 0.25 ? 1 : 0;
+}
+
+// 강도 선택 버튼 (학습 탭·복습 탭 공통)
+function recTierHTML(countFor) {
+  return [1, 2, 3].map(n => `<button data-lv="${n}" class="${n === recLevel ? 'active' : ''}" onclick="setRecLevel(${n})">
+      <span class="rt-top"><b>${n}</b>${REC_LEVELS[n].name}</span><span class="rt-n">${countFor(n)}</span>
+    </button>`).join('');
+}
+function renderRecTiers() {
+  const setup = document.getElementById('rec-tier-setup');
+  if (setup) {
+    const ids = new Set();
+    document.querySelectorAll('.source-cb:checked').forEach(cb => cb.value.split(',').forEach(id => ids.add(id)));
+    const type = (document.querySelector('input[name="qType"]:checked') || {}).value || 'hanja';
+    const pool = wordList.filter(w => ids.has(String(w.id)) && !w.hidden);
+    setup.innerHTML = recTierHTML(n => pool.filter(w => isRec(w, type, n)).length);
+    document.getElementById('rec-tier-desc').textContent = REC_LEVELS[recLevel].desc;
+  }
+  const rv = document.getElementById('rec-tier-review');
+  if (rv) {
+    const live = wordList.filter(w => !w.hidden);
+    rv.innerHTML = recTierHTML(n => live.filter(w => isRec(w, 'hanja', n) || isRec(w, 'mean', n)).length);
+    document.getElementById('rec-tier-review-desc').textContent = REC_LEVELS[recLevel].desc;
+  }
+}
 
 /* ---------- 별표 (시트 동기화 데이터에 함께 저장) ---------- */
 const STAR_PREFIX = '__star__|';
@@ -3224,7 +3367,7 @@ function saveQuizSession() {
     e.prev && e.prev.sM ? [e.prev.sM.s, e.prev.sM.w, e.prev.sM.k, e.prev.sM.t, e.prev.sH.s, e.prev.sH.w, e.prev.sH.k, e.prev.sH.t] : 0
   ]).filter(x => x[1] >= 0);
   const sources = [...new Set(currentQuiz.map(w => w.source))];
-  const obj = { v: 1, t: qType, o: currentQuiz.map(w => String(w.id)), i: currentIndex, h,
+  const obj = { v: 1, t: qType, o: currentQuiz.map(w => String(w.id)), i: currentIndex, h, ctx: quizCtx || undefined,
                 at: Date.now(), label: sources.length > 1 ? `${sources[0]} 외 ${sources.length - 1}개` : sources[0] };
   // 시트 칸 한도(약 5만 자) 안에 들어가도록 오래된 기록부터 줄임
   while (JSON.stringify(obj).length > 45000 && obj.h.length) obj.h = obj.h.slice(Math.ceil(obj.h.length / 4));
@@ -3247,7 +3390,7 @@ function renderResumeBox() {
     <div class="resume-card">
       <div class="resume-info">
         <div class="resume-title">풀던 퀴즈가 있어요</div>
-        <div class="resume-meta">${esc(sess.label || '')} · ${sess.t === 'mean' ? '훈음 → 한자' : '한자 → 훈음'}</div>
+        <div class="resume-meta">${esc(sess.ctx ? [sess.ctx.range, sess.ctx.target, sess.ctx.order, sess.ctx.type].filter(Boolean).join(' · ') : `${sess.label || ''} · ${sess.t === 'mean' ? '훈음 → 한자' : '한자 → 훈음'}`)}</div>
         <div class="resume-meta"><b>${sess.i + 1} / ${sess.o.length}</b>번째 · 맞힘 ${ok} · 틀림 ${no} · ${whenText}</div>
       </div>
       <div class="resume-btns">
@@ -3275,6 +3418,7 @@ function resumeQuiz() {
   if (!list.length) { discardQuizSession(true); return notify('이어 풀 수 있는 한자가 없어요'); }
 
   qType = sess.t === 'mean' ? 'mean' : 'hanja';
+  quizCtx = sess.ctx || { range: sess.label || '', target: '', order: '', type: qType === 'hanja' ? '한자→훈음' : '훈음→한자' };
   document.querySelectorAll('input[name="qType"]').forEach(r => r.checked = r.value === qType);
   currentQuiz = list;
   currentIndex = Math.min(index, list.length);
@@ -3380,6 +3524,7 @@ function retryWrongInQuiz() {
     .sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
   currentIndex = 0;
   quizHistory = [];
+  if (quizCtx) quizCtx = { ...quizCtx, target: '틀린 것 다시', order: '' };
   qpFilter('all', true);
   loadQuestion();
   window.scrollTo({ top: 0, behavior: 'smooth' });
