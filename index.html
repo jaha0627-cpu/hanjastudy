@@ -391,15 +391,23 @@
   .rec-limit { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
   .si-of { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
 
-  /* 손글씨 패드: 왼쪽 = 문제·정답, 오른쪽 = 쓰는 칸 */
-  .write-pad, .write-compare { display: none; }
-  .flashcard.writing { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 2fr); grid-template-rows: auto 1fr; column-gap: 18px; row-gap: 6px; align-items: center; justify-items: center; padding: 58px 18px 18px; }
-  .flashcard.writing .q-text { grid-column: 1; grid-row: 1; align-self: end; text-align: center; }
-  .flashcard.writing .q-text.is-mean { font-size: clamp(1.4rem, 3.2vw, 2rem); margin: 0; }
-  .flashcard.writing.answered .q-text { transform: none; }
-  .flashcard.writing .ans-text { display: none !important; }
-  .flashcard.writing .write-compare { grid-column: 1; grid-row: 2; align-self: start; display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 10px; }
-  .flashcard.writing .write-pad { grid-column: 2; grid-row: 1 / span 2; display: block; width: 100%; max-width: none; margin: 0; }
+  /* 손글씨: 오른쪽 기둥(도크) = 채점 버튼 + 쓰는 칸 */
+  .write-pad, .write-compare, .write-dock { display: none; }
+  #quiz-play.writing-layout .quiz-layout { display: grid !important; grid-template-columns: minmax(0, 1fr) clamp(230px, 22vw, 270px); grid-template-areas: "card dock" "extras dock"; column-gap: 18px; row-gap: 14px; align-items: start; }
+  #quiz-play.writing-layout .quiz-flashcard-area { grid-area: card; min-width: 0; }
+  #quiz-play.writing-layout .quiz-controls-area { grid-area: extras; min-width: 0; }
+  #quiz-play.writing-layout .write-dock { grid-area: dock; display: flex; flex-direction: column; gap: 12px; position: sticky; top: calc(12px + env(safe-area-inset-top, 0px)); animation: popIn 0.22s ease both; }
+  #quiz-play.writing-layout .flashcard { margin-bottom: 0; min-height: clamp(260px, 34vh, 400px); }
+  #quiz-play.writing-layout .flashcard .q-text.is-mean { font-size: clamp(1.6rem, 3.6vw, 2.6rem); }
+  #quiz-play.writing-layout .flashcard .ans-text.is-hanja { font-size: clamp(5rem, 11vw, 8rem); }
+  .write-dock .quiz-action-slot { margin: 0; height: 64px; }
+  .write-dock .grade-btns { gap: 8px; }
+  .write-dock .write-pad { display: block; width: 100%; aspect-ratio: 1 / 1; margin: 0; box-sizing: border-box; }
+  .write-dock .write-pad .write-placeholder { bottom: 10px; }
+  @media (max-width: 520px) {
+    #quiz-play.writing-layout .quiz-layout { grid-template-columns: 1fr; grid-template-areas: "card" "dock" "extras"; }
+    #quiz-play.writing-layout .write-dock { position: static; }
+  }
   .wc-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; }
   .wc-hanja { font-size: clamp(4.5rem, 12vw, 8.5rem); line-height: 1.05; font-weight: 400; color: var(--border); margin-top: 4px; transition: color 0.2s; }
   .flashcard.wc-revealed .wc-hanja { color: var(--primary); }
@@ -419,12 +427,30 @@
   /* 쓰는 동안 화면 글자 선택 막기 */
   body.writing-on #quiz-play, body.writing-on #quiz-play * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   body.writing-on #quiz-play textarea, body.writing-on #quiz-play input { -webkit-user-select: text; user-select: text; }
-  /* 가로 모드: 카드를 오른쪽으로 (쓰는 칸이 화면 오른쪽 끝에 오도록) */
-  @media (min-width: 768px) {
-    .app-container.landscape #quiz-play:has(.flashcard.writing) .quiz-flashcard-area { order: 2; flex: 1.6; }
-    .app-container.landscape #quiz-play:has(.flashcard.writing) .quiz-controls-area { order: 1; }
-    .app-container.landscape .flashcard.writing .write-pad { width: min(100%, calc(100vh - 330px)); justify-self: end; }
-  }
+
+  /* 한자목록 머리: 범위 · 보기 방식 · 검색 */
+  .hl-panel { padding: 16px 18px; }
+  .hl-top { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .hl-top select { flex: 1; min-width: 0; margin: 0; }
+  .hl-view { display: inline-flex; background: var(--bg); border-radius: 12px; padding: 3px; gap: 2px; flex-shrink: 0; }
+  .hl-view button { width: auto; margin: 0; padding: 9px 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 700; background: transparent; color: var(--text-muted); border-radius: 9px; white-space: nowrap; }
+  .hl-view button.active { background: var(--card); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .hl-legend { margin-bottom: 10px; }
+  .hl-basis { display: inline-flex; background: var(--bg); border-radius: 10px; padding: 3px; gap: 2px; margin-right: 4px; }
+  .hl-basis label { cursor: pointer; }
+  .hl-basis input { display: none; }
+  .hl-basis span { display: inline-block; padding: 6px 10px; font-size: 0.8rem; font-weight: 700; border-radius: 8px; color: var(--text-muted); }
+  .hl-basis label:has(input:checked) span { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  #hanja-list[data-view="list"] .hl-grid-only, #hanja-list:not([data-view="list"]) .hl-list-only { display: none; }
+  .hl-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 10px; }
+  .hl-hidden-filter { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); cursor: pointer; }
+  .hl-hidden-filter input { width: 16px; height: 16px; margin: 0; }
+  .hl-rename { display: flex; gap: 6px; align-items: center; flex: 1; min-width: 220px; max-width: 360px; }
+  .hl-rename input { margin: 0; padding: 9px 12px; font-size: 0.88rem; }
+  .hl-rename button { white-space: nowrap; }
+  .hl-scope-del { text-align: right; margin-top: 10px; }
+  .hl-scope-del button { color: var(--danger); }
+  .hl-cell { cursor: pointer; }
 
   /* 겹치는 한자 */
   .sub-seg button { white-space: nowrap; }
@@ -444,11 +470,15 @@
   .dup-src { margin-left: auto; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
   .dup-btns { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
   .dup-same { font-size: 0.78rem; font-weight: 600; color: var(--success); margin-top: 6px; }
+  .dup-btns { align-items: center; }
+  .dup-preview { flex: 1; min-width: 0; font-size: 0.9rem; font-weight: 700; color: var(--primary); word-break: keep-all; }
+  .dup-preview.empty { color: var(--text-muted); font-weight: 600; }
 
   /* 기록(통계) */
   .rv-tabs button b { font-variant-numeric: tabular-nums; }
   .st-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
-  @media (min-width: 700px) { .st-cards { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 700px) { .app-container.landscape .st-cards { grid-template-columns: repeat(4, 1fr); } }
+  .app-container.landscape #wrong-list-container[data-mode="stats"] { max-width: 760px; margin: 0 auto; }
   .st-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; animation: riseIn 0.3s cubic-bezier(.3,1.25,.6,1) both; }
   .st-card:nth-child(2) { animation-delay: 0.04s; } .st-card:nth-child(3) { animation-delay: 0.08s; } .st-card:nth-child(4) { animation-delay: 0.12s; }
   .st-card span { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
@@ -457,6 +487,15 @@
   .st-card em { font-style: normal; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); }
   .st-box { padding: 18px 20px; }
   .st-title { font-size: 0.95rem; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+  .st-bars2 { display: grid; grid-template-columns: repeat(14, 1fr); gap: 6px; align-items: end; height: 120px; }
+  .st-bars2 .sb { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; min-width: 0; }
+  .st-bars2 .sb i { display: block; width: 100%; max-width: 22px; border-radius: 5px; transition: height 0.5s cubic-bezier(.2,.9,.3,1); }
+  .st-bars2 .sb span { font-size: 0.65rem; font-weight: 600; color: var(--text-muted); }
+  .st-bars2 .sb:nth-child(odd) span { visibility: hidden; }
+  .st-bars2 i.good, .st-legend i.good { background: var(--success); }
+  .st-bars2 i.mid, .st-legend i.mid { background: var(--primary); }
+  .st-bars2 i.low, .st-legend i.low { background: #F59E0B; }
+  .st-bars2 i.none, .st-legend i.none { background: var(--border); }
   .st-bars { width: 100%; height: 120px; display: block; }
   .st-bars text { font-size: 7px; fill: var(--text-muted); font-weight: 600; }
   .st-bars rect { transition: opacity 0.15s; } .st-bars rect:hover { opacity: 0.75; }
@@ -716,7 +755,7 @@
     <div class="tab active" data-tab="quiz-setup" onclick="switchTab('quiz-setup')">학습</div>
     <div class="tab" data-tab="hanja-list" onclick="switchTab('hanja-list')">한자목록</div>
     <div class="tab" data-tab="wrong-notes" onclick="switchTab('wrong-notes')">기록</div>
-    <div class="tab" data-tab="manage" onclick="switchTab('manage')">관리</div>
+    <div class="tab" data-tab="manage" onclick="switchTab('input')">관리</div>
   </div>
 
   <button class="floating-top" id="btn-top" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
@@ -789,7 +828,6 @@
   <!-- 관리 > 겹치는 한자 -->
   <div id="dups" class="content">
     <div class="sub-seg">
-      <button data-sub="manage" onclick="switchTab('manage')">단어 수정</button>
       <button data-sub="input" onclick="switchTab('input')">단어 추가</button>
       <button data-sub="dups" onclick="switchTab('dups')">겹치는 한자</button>
     </div>
@@ -807,29 +845,44 @@
     <div id="dup-list"></div>
   </div>
 
-  <!-- 한자 목록 탭 -->
+  <!-- 한자 목록 탭 (격자 보기 / 목록·수정 보기) -->
   <div id="hanja-list" class="content">
-    <div class="setup-group">
-      <div class="setup-title">전체 한자 목록</div>
-      <select id="hl-source" onchange="hlChange()" style="margin-bottom:12px;"></select>
-      <div class="hl-label">색상 기준</div>
-      <div class="radio-group" style="margin-bottom:14px;">
-        <label><input type="radio" name="hlMode" value="hanja" checked onchange="hlChange()"> <span>한자 → 훈음</span></label>
-        <label><input type="radio" name="hlMode" value="mean" onchange="hlChange()"> <span>훈음 → 한자</span></label>
+    <div class="setup-group hl-panel">
+      <div class="hl-top">
+        <select id="hl-source" onchange="hlChange()"></select>
+        <div class="hl-view" role="tablist" aria-label="보기 방식">
+          <button data-v="grid" onclick="setHlView('grid')" title="격자로 보기"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg>격자</button>
+          <button data-v="list" onclick="setHlView('list')" title="목록으로 보고 수정"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>목록·수정</button>
+        </div>
       </div>
-      <div class="hl-legend">
-        <span><i class="sw ok"></i>맞힘 <b id="hl-ok">0</b></span>
-        <span><i class="sw no"></i>틀림 <b id="hl-no">0</b></span>
-        <span><i class="sw x"></i>안 풂 <b id="hl-rest">0</b></span>
-        <label class="hl-cover"><input type="checkbox" id="hl-cover" onchange="hlChange()"> 뜻 가리기</label>
+      <div class="hl-grid-only">
+        <div class="hl-legend">
+          <div class="hl-basis">
+            <label><input type="radio" name="hlMode" value="hanja" checked onchange="hlChange()"><span>한자→훈음</span></label>
+            <label><input type="radio" name="hlMode" value="mean" onchange="hlChange()"><span>훈음→한자</span></label>
+          </div>
+          <span><i class="sw ok"></i>맞힘 <b id="hl-ok">0</b></span>
+          <span><i class="sw no"></i>틀림 <b id="hl-no">0</b></span>
+          <span><i class="sw x"></i>안 풂 <b id="hl-rest">0</b></span>
+        </div>
       </div>
       <div class="hl-search">
         <input type="text" id="hl-search" placeholder="한자 또는 훈음 검색 (예: 疑 · 의심할 · 의)" oninput="hlApplySearch()" autocomplete="off">
         <button class="btn-outline btn-small" onclick="hlClearSearch()">지우기</button>
       </div>
       <div class="hl-result" id="hl-result"></div>
+      <div class="hl-list-only" id="manage-scope-tools">
+        <div class="hl-tools">
+          <label class="hl-hidden-filter"><input type="checkbox" id="filter-hidden-cb" onchange="loadManageScope()"> 숨긴 한자만</label>
+          <div class="hl-rename" id="hl-rename">
+            <input type="text" id="rename-scope-input" placeholder="범위 이름">
+            <button class="btn-outline btn-small" onclick="renameScope()">이름 바꾸기</button>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="hl-body"></div>
+    <div id="manage-list"></div>
   </div>
 
   <!-- 2. 오답 노트 탭 -->
@@ -852,40 +905,9 @@
     </div>
   </div>
 
-  <!-- 3. 단어 관리 탭 -->
-  <div id="manage" class="content">
-    <div class="sub-seg">
-      <button data-sub="manage" onclick="switchTab('manage')">단어 수정</button>
-      <button data-sub="input" onclick="switchTab('input')">단어 추가</button>
-      <button data-sub="dups" onclick="switchTab('dups')">겹치는 한자</button>
-    </div>
-    <div class="setup-group">
-      <div class="setup-title">범위</div>
-      <select id="manage-source-select" onchange="loadManageScope()" style="margin-bottom:0; background: var(--bg);"></select>
-    </div>
-    
-    <div id="manage-scope-tools" style="display:none; background: var(--card); padding:20px; border-radius:16px; margin-bottom:20px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid var(--border);">
-      <div style="font-size:0.95rem; font-weight:700; margin-bottom:12px; color:var(--text);">현재 선택된 범위 이름 변경</div>
-      <div style="display:flex; gap:10px; margin-bottom:16px;">
-        <input type="text" id="rename-scope-input" placeholder="새로운 범위 이름">
-        <button class="btn-primary" style="width:auto; padding:10px 16px; margin:0; white-space:nowrap; border-radius:10px;" onclick="renameScope()">변경</button>
-      </div>
-      <div>
-        <label style="font-size:0.95rem; cursor:pointer; color:var(--text-muted); font-weight:600;"><input type="checkbox" id="filter-hidden-cb" onchange="loadManageScope()" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"> 숨김 처리된 한자만 보기</label>
-      </div>
-    </div>
-
-    <div id="manage-list"></div>
-    
-    <div style="margin-top: 60px; text-align: right; border-top: 1px dashed var(--border); padding-top: 24px;">
-      <button class="btn-outline btn-small" style="color: var(--text-muted);" onclick="factoryReset()">모든 데이터 초기화</button>
-    </div>
-  </div>
-
   <!-- 4. 한자 추가 탭 -->
   <div id="input" class="content">
     <div class="sub-seg">
-      <button data-sub="manage" onclick="switchTab('manage')">단어 수정</button>
       <button data-sub="input" onclick="switchTab('input')">단어 추가</button>
       <button data-sub="dups" onclick="switchTab('dups')">겹치는 한자</button>
     </div>
@@ -910,6 +932,7 @@
 
     <div style="margin-top: 60px; text-align: right; border-top: 1px dashed var(--border); padding-top: 24px;">
       <button class="btn-outline btn-small" style="color: var(--text-muted);" onclick="openSyncModal('friend')">고급 설정</button>
+      <button class="btn-outline btn-small" style="color: var(--text-muted); margin-left: 6px;" onclick="factoryReset()">모든 데이터 초기화</button>
     </div>
   </div>
 
@@ -998,6 +1021,7 @@
           </div>
         </div>
       </div>
+      <div class="write-dock" id="write-dock" aria-label="손글씨"></div>
     </div>
 
     <div class="quiz-panel" id="quiz-panel">
@@ -1107,7 +1131,7 @@ let qType = 'hanja';
 const TARGET_CHUNK_SIZE = 25;
 
 /* ▼ 앱 버전: 새 파일을 올릴 때마다 바뀜. 열려 있는 앱이 GitHub의 최신 버전과 비교해 업데이트를 알려줌 */
-const APP_VERSION = '2026.10.16-1';
+const APP_VERSION = '2026.10.16-3';
 
 /* ▼▼▼ 내 '한자DB' 시트의 웹 앱 주소 ▼▼▼
    여기에 넣어두면 어느 기기에서 열어도 자동으로 연결됩니다.
@@ -1527,15 +1551,9 @@ function isVisible(id) {
 function refreshViewsAfterRemote() {
   renderWrongNotes();
   if (isVisible('quiz-setup')) renderSources();
-  if (isVisible('hanja-list')) drawHanjaList();
   const focused = document.activeElement;
-  const editingManage = focused && focused.closest && focused.closest('#manage-list');
-  if (isVisible('manage') && !editingManage) {
-    const sel = document.getElementById('manage-source-select');
-    const v = sel.value;
-    renderManageTab();
-    if (v && [...sel.options].some(o => o.value === v)) { sel.value = v; loadManageScope(); }
-  }
+  const editingManage = focused && focused.closest && (focused.closest('#manage-list') || focused.closest('.hl-panel'));
+  if (isVisible('hanja-list') && !editingManage) renderHanjaList();
   if (currentQuiz.length) currentQuiz = currentQuiz.map(q => wordList.find(w => w.id === q.id) || q);
   updateCloudInfo();
   renderFriendList();
@@ -2395,43 +2413,18 @@ function renderSources() {
   });
 }
 
-function renderManageTab() {
-  const sources = [...new Set(wordList.map(w => w.source))];
-  const select = document.getElementById('manage-source-select');
-  select.innerHTML = '<option value="">시험 범위를 선택하세요</option>' + sources.map(src => `<option value="${esc(src)}">${esc(src)}</option>`).join('');
-  document.getElementById('manage-list').innerHTML = '';
-  document.getElementById('manage-scope-tools').style.display = 'none';
-}
+// (예전 '단어 수정' 화면은 한자목록 탭의 '목록·수정' 보기로 합쳐짐)
+function renderManageTab() { renderHanjaList(); }
 
-function loadManageScope() {
-  const src = document.getElementById('manage-source-select').value;
-  if (!src) { 
-    document.getElementById('manage-list').innerHTML = ''; 
-    document.getElementById('manage-scope-tools').style.display = 'none';
-    return; 
-  }
-  document.getElementById('manage-scope-tools').style.display = 'block';
-  document.getElementById('rename-scope-input').value = src;
-  
-  const onlyHidden = document.getElementById('filter-hidden-cb').checked;
-  let list = wordList.filter(w => w.source === src);
-  if(onlyHidden) list = list.filter(w => w.hidden === true);
-  list = list.sort((a,b) => {
-    if(a.hidden === b.hidden) return (a.num || 0) - (b.num || 0);
-    return a.hidden ? 1 : -1;
-  });
-  
-  const { groupKeys, groups, labels } = groupBySentence(list);
-  const container = document.getElementById('manage-list');
-  container.innerHTML = '';
-  
-  groupKeys.forEach(key => {
-    const groupDiv = document.createElement('div');
-    groupDiv.className = 'sentence-group';
-    let html = labels[key] ? `<div class="sentence-header">${esc(labels[key])}</div>` : '';
-    html += '<ul class="study-list">';
-    groups[key].forEach(item => {
-      html += `
+const searchMatch = (w, q) => {
+  if (!q) return true;
+  const nq = q.replace(/\s+/g, '').toLowerCase();
+  const m = str(w.mean).toLowerCase();
+  return str(w.hanja).includes(q) || m.includes(q.toLowerCase()) || m.replace(/\s+/g, '').includes(nq) || str(w.hint).toLowerCase().includes(q.toLowerCase());
+};
+
+function manageRowHTML(item) {
+  return `
          <li class="study-card manage-row${item.hidden ? ' is-hidden' : ''}" id="edit-row-${item.id}">
            <div class="mr-num">${item.num}</div>
            <input type="text" class="mr-hanja" id="edit-hanja-${item.id}" value="${esc(item.hanja)}" onchange="updateWord(${item.id})" aria-label="한자">
@@ -2445,22 +2438,39 @@ function loadManageScope() {
              <button class="icon-btn danger" onclick="deleteWord(${item.id})" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
            </div>
          </li>`;
-    });
-    html += '</ul>';
-    groupDiv.innerHTML = html;
-    container.appendChild(groupDiv);
-  });
+}
 
-  const deleteBtnDiv = document.createElement('div');
+// 목록·수정 보기 그리기 (범위 하나 또는 전체, 검색·숨김 필터 적용)
+function loadManageScope() {
+  const container = document.getElementById('manage-list');
+  if (hlView !== 'list') { container.innerHTML = ''; return; }
+  const src = document.getElementById('hl-source').value;
+  const q = document.getElementById('hl-search').value.trim();
+  const onlyHidden = document.getElementById('filter-hidden-cb').checked;
+  document.getElementById('hl-rename').style.display = src ? '' : 'none';
+  if (src && document.activeElement !== document.getElementById('rename-scope-input')) document.getElementById('rename-scope-input').value = src;
+
+  const sources = src ? [src] : [...new Set(wordList.map(w => w.source))];
+  let html = '', shown = 0;
+  sources.forEach(sr => {
+    let list = wordList.filter(w => w.source === sr && (onlyHidden ? w.hidden : true) && searchMatch(w, q));
+    if (!list.length) return;
+    list.sort((a, b) => a.hidden === b.hidden ? (a.num || 0) - (b.num || 0) : (a.hidden ? 1 : -1));
+    shown += list.length;
+    if (!src) html += `<div class="hl-head">${esc(sr)}<small>${list.length}자</small></div>`;
+    const { groupKeys, groups, labels } = groupBySentence(list);
+    groupKeys.forEach(key => {
+      html += `<div class="sentence-group">${labels[key] ? `<div class="sentence-header">${esc(labels[key])}</div>` : ''}<ul class="study-list">${groups[key].map(manageRowHTML).join('')}</ul></div>`;
+    });
+  });
+  if (src && !q && !onlyHidden) html += `<div class="hl-scope-del"><button data-src="${esc(src)}" onclick="deleteScope(this.dataset.src)" class="btn-outline btn-small">'${esc(src)}' 범위 삭제</button></div>`;
+  container.innerHTML = html || `<div class="setup-group st-empty" style="text-align:center;">${q ? '검색 결과가 없어요' : '표시할 한자가 없어요'}</div>`;
   container.querySelectorAll('textarea.hint-area').forEach(autoGrow);
-  deleteBtnDiv.style.textAlign = 'right';
-  deleteBtnDiv.style.marginTop = '15px';
-  deleteBtnDiv.innerHTML = `<button data-src="${esc(src)}" onclick="deleteScope(this.dataset.src)" class="btn-danger btn-small" style="padding:10px 16px; font-size:0.9rem; border-radius:10px;">[ ${esc(src)} ] 통째로 삭제하기</button>`;
-  container.appendChild(deleteBtnDiv);
+  document.getElementById('hl-result').textContent = q ? `${shown}개 찾음` : '';
 }
 
 async function renameScope() {
-  const oldSrc = document.getElementById('manage-source-select').value;
+  const oldSrc = document.getElementById('hl-source').value;
   const newSrc = document.getElementById('rename-scope-input').value.trim();
   if(!oldSrc || !newSrc || oldSrc === newSrc) return;
   const existing = wordList.some(w => w.source === newSrc);
@@ -2477,9 +2487,8 @@ async function renameScope() {
   if(updatedCount > 0) {
      saveToStorage();
      notify(`'${newSrc}'(으)로 이름을 바꿨어요`);
-     renderManageTab();
-     document.getElementById('manage-source-select').value = newSrc;
-     loadManageScope();
+     localStorage.setItem('hanja_hl_source', newSrc);
+     renderHanjaList();
      renderSources(); renderWrongNotes();
   }
 }
@@ -2518,7 +2527,7 @@ function undoDelete(removed, tombBefore) {
   removed.forEach(({ w, idx }) => wordList.splice(Math.min(idx, wordList.length), 0, w));
   tombstones = tombBefore;
   saveToStorage(); renderSources(); renderWrongNotes();
-  if (isVisible('manage')) { const sel = document.getElementById('manage-source-select'); const v = sel.value; renderManageTab(); sel.value = v; if (v) loadManageScope(); }
+  if (isVisible('hanja-list')) renderHanjaList();
   notify('되돌렸어요', { duration: 1400 });
 }
 
@@ -2856,87 +2865,55 @@ function statsHTML() {
   const log = getLog(), T = TODAY();
   const day = d => log[d] || [0, 0];
   const today = day(T);
-  // 연속 학습일 (오늘 안 했으면 어제까지 기준)
   let streak = 0, d = day(T)[0] ? T : T - 1;
   while (day(d)[0]) { streak++; d--; }
   let n7 = 0, ok7 = 0;
   for (let k = 0; k < 7; k++) { n7 += day(T - k)[0]; ok7 += day(T - k)[1]; }
   const live = wordList.filter(w => !w.hidden);
-  const status = new Map(live.map(w => [w.id, masteryOf(w)]));
-  const done = [...status.values()].filter(v => v === 'done').length;
   const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+  const status = new Map(dedupeByHanja(live).map(w => [hkey(w), masteryOf(w)]));
+  const done = [...status.values()].filter(v => v === 'done').length;
 
-  // 최근 14일 막대
+  // 최근 14일 막대 (HTML이라 화면 폭에 상관없이 깨지지 않음)
   const days14 = Array.from({ length: 14 }, (_, k) => T - 13 + k);
   const max14 = Math.max(10, ...days14.map(x => day(x)[0]));
-  const bars = days14.map((x, k) => {
-    const [n, ok] = day(x), h = n ? Math.max(4, n / max14 * 64) : 2;
+  const bars = days14.map(x => {
+    const [n, ok] = day(x);
     const acc = n ? ok / n : 0;
-    const color = !n ? 'var(--border)' : acc >= 0.8 ? 'var(--success)' : acc >= 0.6 ? 'var(--primary)' : '#F59E0B';
-    const date = new Date(x * 86400000);
-    return `<g><rect x="${k * 20 + 3}" y="${72 - h}" width="14" height="${h}" rx="4" fill="${color}"><title>${date.getUTCMonth() + 1}/${date.getUTCDate()} · ${n}문제${n ? ` · 정답률 ${pct(ok, n)}%` : ''}</title></rect>
-      ${k % 2 === 1 || k === 13 ? `<text x="${k * 20 + 10}" y="86" text-anchor="middle">${date.getUTCDate()}</text>` : ''}</g>`;
+    const cls = !n ? 'none' : acc >= 0.8 ? 'good' : acc >= 0.6 ? 'mid' : 'low';
+    const dt = new Date(x * 86400000);
+    return `<div class="sb" title="${dt.getUTCMonth() + 1}/${dt.getUTCDate()} · ${n}문제${n ? ` · 정답률 ${pct(ok, n)}%` : ''}">
+      <i class="${cls}" style="height:${n ? Math.max(6, n / max14 * 100) : 3}%"></i><span>${dt.getUTCDate()}</span></div>`;
   }).join('');
 
-  // 12주 달력
-  const start = T - new Date(T * 86400000).getUTCDay() - 7 * 11;   // 11주 전 일요일
-  const maxH = Math.max(1, ...Object.values(log).map(v => v[0]));
-  let cells = '';
-  for (let w = 0; w < 12; w++) for (let k = 0; k < 7; k++) {
-    const x = start + w * 7 + k;
-    if (x > T) continue;
-    const n = day(x)[0];
-    const lv = !n ? 0 : n >= maxH * 0.75 ? 4 : n >= maxH * 0.5 ? 3 : n >= maxH * 0.25 ? 2 : 1;
-    const date = new Date(x * 86400000);
-    cells += `<rect x="${w * 15}" y="${k * 15}" width="12" height="12" rx="3" class="hm${lv}${x === T ? ' hm-today' : ''}"><title>${date.getUTCMonth() + 1}/${date.getUTCDate()} · ${n}문제</title></rect>`;
-  }
-
-  // 범위별 숙달도
-  const sources = [...new Set(live.map(w => w.source))];
-  const rows = sources.map(src => {
+  const rows = [...new Set(live.map(w => w.source))].map(src => {
     const ws = live.filter(w => w.source === src);
     const c = { done: 0, learning: 0, none: 0 };
-    ws.forEach(w => c[status.get(w.id)]++);
+    ws.forEach(w => c[status.get(hkey(w)) || 'none']++);
     const t = ws.length;
     return `<div class="ms-row">
-      <div class="ms-top"><span class="ms-name">${esc(src)}</span><span class="ms-pct"><b>${pct(c.done, t)}%</b> 익힘 · ${t}자</span></div>
+      <div class="ms-top"><span class="ms-name">${esc(src)}</span><span class="ms-pct"><b>${pct(c.done, t)}%</b> · ${t}자</span></div>
       <div class="ms-bar"><i class="done" style="width:${c.done / t * 100}%"></i><i class="learning" style="width:${c.learning / t * 100}%"></i></div>
     </div>`;
   }).join('');
 
-  // 지금 가장 약한 한자
-  const weakest = live.map(w => {
-    const a = weakInfo(w, 'hanja'), b = weakInfo(w, 'mean');
-    return { w, need: Math.max(a.unseen ? 0 : a.need, b.unseen ? 0 : b.need) };
-  }).filter(x => x.need >= 0.6).sort((a, b) => b.need - a.need).slice(0, 12);
-
   return `
     <div class="st-cards">
       <div class="st-card"><span>오늘</span><b>${today[0]}<small>문제</small></b><em>${today[0] ? `정답률 ${pct(today[1], today[0])}%` : '아직 안 풂'}</em></div>
-      <div class="st-card"><span>연속 학습</span><b>${streak}<small>일</small></b><em>${streak ? '이어가는 중' : '오늘 시작해 보세요'}</em></div>
+      <div class="st-card"><span>연속</span><b>${streak}<small>일</small></b><em>${streak ? '이어가는 중' : '오늘 시작해 보세요'}</em></div>
       <div class="st-card"><span>최근 7일</span><b>${n7}<small>문제</small></b><em>${n7 ? `정답률 ${pct(ok7, n7)}%` : '기록 없음'}</em></div>
-      <div class="st-card"><span>익힌 한자</span><b>${done}<small>/ ${live.length}</b><em>${pct(done, live.length)}%</em></div>
+      <div class="st-card"><span>익힌 한자</span><b>${done}<small>/ ${status.size}</small></b><em>${pct(done, status.size)}%</em></div>
     </div>
     <div class="setup-group st-box">
       <div class="st-title">최근 2주</div>
-      <svg class="st-bars" viewBox="0 0 280 90" preserveAspectRatio="none">${bars}</svg>
-      <div class="st-legend"><span><i style="background:var(--success)"></i>정답률 80% 이상</span><span><i style="background:var(--primary)"></i>60% 이상</span><span><i style="background:#F59E0B"></i>그 아래</span></div>
-    </div>
-    <div class="setup-group st-box">
-      <div class="st-title">12주 달력</div>
-      <svg class="st-heat" viewBox="0 0 177 102">${cells}</svg>
-      <div class="st-legend right"><span>적게</span><i class="hm1"></i><i class="hm2"></i><i class="hm3"></i><i class="hm4"></i><span>많이</span></div>
+      <div class="st-bars2">${bars}</div>
+      <div class="st-legend"><span><i class="good"></i>정답률 80%↑</span><span><i class="mid"></i>60%↑</span><span><i class="low"></i>그 아래</span></div>
     </div>
     <div class="setup-group st-box">
       <div class="st-title">범위별 익힘</div>
       ${rows || '<div class="st-empty">범위가 없어요</div>'}
-      <div class="st-legend"><span><i style="background:var(--success)"></i>익힘 (2번 이상 연속 맞힘)</span><span><i style="background:var(--primary);opacity:.45"></i>학습 중</span><span><i style="background:var(--border)"></i>안 풂</span></div>
-    </div>
-    ${weakest.length ? `<div class="setup-group st-box">
-      <div class="st-title">지금 가장 약한 한자</div>
-      <div class="st-weak">${weakest.map(x => `<span title="${esc(x.w.mean)}">${esc(x.w.hanja)}</span>`).join('')}</div>
-      <div class="st-hint">학습 탭에서 대상 <b>추천</b>을 고르면 이 한자들부터 나와요.</div>
-    </div>` : ''}`;
+      <div class="st-legend"><span><i class="good"></i>익힘 (2번 이상 연속 맞힘)</span><span><i class="mid" style="opacity:.45"></i>학습 중</span><span><i class="none"></i>안 풂</span></div>
+    </div>`;
 }
 
 function startReviewQuiz(type) {
@@ -3055,7 +3032,7 @@ function loadQuestion() {
     document.getElementById('btn-hide-word').style.display = 'none';
     document.getElementById('quiz-panel').style.display = 'none';
     document.getElementById('btn-card-star').style.display = 'none';
-    document.querySelector('#quiz-play .flashcard').classList.remove('writing');
+    applyWriteMode(false);
     ['btn-show-ans','grade-btns','btn-show-hint','quiz-ex-text','quiz-hint-text','quiz-hint-edit-area'].forEach(id => document.getElementById(id).style.display = 'none');
     return;
   }
@@ -3476,7 +3453,7 @@ function renderDups() {
   const diff = groups.filter(g => g.diff), cos = groups.filter(g => g.cosmetic);
   document.getElementById('dup-summary').innerHTML =
     `여러 범위에 같은 한자가 <b>${groups.length}자</b> 있어요. 퀴즈에서는 한 번만 나오고, 맞힘·틀림 기록과 별표도 함께 써요.` +
-    (diff.length ? ` 그중 <b>${diff.length}자</b>는 범위마다 훈음이 달라서 퀴즈에서 합쳐서 보여줘요(예: 스승 사 / 군사 사). 하나로 맞추거나 그대로 둘 수 있어요.` : ' 훈음도 모두 같아요.');
+    (diff.length ? ` 그중 <b>${diff.length}자</b>는 범위마다 훈음이 달라요. 남길 훈음을 고르세요. 여러 개 고르면 '스승 사 / 군사 사'처럼 함께 적혀요.` : ' 훈음도 모두 같아요.');
   const auto = document.getElementById('btn-dup-auto');
   auto.textContent = `표기만 다른 훈음 자동 통일${cos.length ? ` (${cos.length}자)` : ''}`;
   auto.style.display = cos.length ? '' : 'none';
@@ -3492,11 +3469,11 @@ function renderDups() {
       <div class="dup-hanja">${esc(g.k)}</div>
       <div class="dup-body">
         ${g.ws.map(w => `<label class="dup-row">
-          ${g.diff ? `<input type="radio" name="dup-${gi}" value="${esc(w.mean)}" ${w.mean === best ? 'checked' : ''}>` : ''}
+          ${g.diff ? `<input type="checkbox" name="dup-${gi}" value="${esc(w.mean)}" ${w.mean === best ? 'checked' : ''} onchange="dupPreview(${gi})">` : ''}
           <span class="dup-mean">${esc(w.mean)}</span><span class="dup-src">${esc(w.source)}</span></label>`).join('')}
         ${g.diff ? `<div class="dup-btns">
-          <button class="btn-primary btn-small" onclick="unifyDup(${gi}, 'pick')">고른 훈음으로 통일</button>
-          <button class="btn-outline btn-small" onclick="unifyDup(${gi}, 'merge')">모두 합치기</button>
+          <div class="dup-preview" id="dup-prev-${gi}">→ ${esc(best)}</div>
+          <button class="btn-primary btn-small" onclick="unifyDup(${gi})">모든 범위에 적용</button>
         </div>` : '<div class="dup-same">훈음 같음 · 기록 공유 중</div>'}
       </div>
     </div>`;
@@ -3513,12 +3490,24 @@ function applyMeans(changes, label) {
     saveToStorage(); renderDups(); renderSources(); renderWrongNotes();
   } } });
 }
-function unifyDup(gi, how) {
+// 고른 훈음들 (여러 개면 ' / '로 병기, 같은 훈음은 한 번만)
+function dupChosen(gi) {
+  const vals = [...document.querySelectorAll(`input[name="dup-${gi}"]:checked`)].map(x => x.value);
+  const parts = [];
+  vals.forEach(v => v.split(/\s*\/\s*/).forEach(p => { if (p && !parts.includes(p)) parts.push(p); }));
+  return parts.join(' / ');
+}
+function dupPreview(gi) {
+  const m = dupChosen(gi);
+  const el = document.getElementById(`dup-prev-${gi}`);
+  el.textContent = m ? `→ ${m}` : '→ 하나 이상 고르세요';
+  el.classList.toggle('empty', !m);
+}
+function unifyDup(gi) {
   const g = document.getElementById('dup-list')._groups[gi];
   if (!g) return;
-  let mean;
-  if (how === 'merge') mean = g.means.join(' / ');
-  else { const r = document.querySelector(`input[name="dup-${gi}"]:checked`); if (!r) return; mean = r.value; }
+  const mean = dupChosen(gi);
+  if (!mean) return notify('훈음을 하나 이상 고르세요');
   applyMeans(groupOf(g.ws[0]).map(w => [w, mean]), `${g.k} → ${mean}`);
 }
 function autoUnifyDups() {
@@ -3577,7 +3566,7 @@ function toggleStar(id, opts = {}) {
   document.querySelectorAll(ids.map(x => `[data-star-id="${x}"]`).join(',')).forEach(b => { b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); if (on) replayAnim(b, 'star-pop'); });
   if (!opts.silent) notify(on ? '별표했어요' : '별표를 뺐어요', { duration: 1200 });
   renderWrongNotes();
-  if (isVisible('hanja-list')) drawHanjaList();
+  if (isVisible('hanja-list') && hlView === 'grid') drawHanjaList();
   updateStartInfo();
   return on;
 }
@@ -3972,30 +3961,55 @@ function restartQuiz() {
   loadQuestion();
 }
 
-/* ---------- 한자 목록 ---------- */
+/* ---------- 한자 목록 (격자 보기 / 목록·수정 보기) ---------- */
+let hlView = localStorage.getItem('hanja_hl_view') || 'grid';
+function setHlView(v) {
+  hlView = v;
+  localStorage.setItem('hanja_hl_view', v);
+  hlRender();
+}
 function renderHanjaList() {
   const sel = document.getElementById('hl-source');
-  const sources = [...new Set(wordList.filter(w => !w.hidden).map(w => w.source))];
+  const sources = [...new Set(wordList.map(w => w.source))];
   const saved = localStorage.getItem('hanja_hl_source') || '';
   sel.innerHTML = `<option value="">전체 범위</option>` + sources.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
   sel.value = sources.includes(saved) ? saved : '';
   const savedMode = localStorage.getItem('hanja_hl_mode') || 'hanja';
   document.querySelectorAll('input[name="hlMode"]').forEach(r => r.checked = r.value === savedMode);
-  document.getElementById('hl-cover').checked = localStorage.getItem('hanja_hl_cover') === '1';
-  drawHanjaList();
+  hlRender();
+}
+function hlRender() {
+  const page = document.getElementById('hanja-list');
+  page.dataset.view = hlView;
+  document.querySelectorAll('.hl-view button').forEach(b => b.classList.toggle('active', b.dataset.v === hlView));
+  if (hlView === 'list') { document.getElementById('hl-body').innerHTML = ''; loadManageScope(); }
+  else { document.getElementById('manage-list').innerHTML = ''; drawHanjaList(); }
 }
 
 function hlChange() {
   localStorage.setItem('hanja_hl_source', document.getElementById('hl-source').value);
   localStorage.setItem('hanja_hl_mode', document.querySelector('input[name="hlMode"]:checked').value);
-  localStorage.setItem('hanja_hl_cover', document.getElementById('hl-cover').checked ? '1' : '0');
-  drawHanjaList();
+  hlRender();
+}
+
+// 격자에서 한자를 누르면 목록·수정 보기로 가서 그 줄을 보여줌
+function hlOpenEdit(id) {
+  const w = wordList.find(x => x.id === id);
+  if (!w) return;
+  document.getElementById('hl-search').value = '';
+  document.getElementById('filter-hidden-cb').checked = false;
+  const sel = document.getElementById('hl-source');
+  if (sel.value && sel.value !== w.source) { sel.value = w.source; localStorage.setItem('hanja_hl_source', w.source); }
+  setHlView('list');
+  requestAnimationFrame(() => {
+    const row = document.getElementById(`edit-row-${id}`);
+    if (row) { row.scrollIntoView({ behavior: 'smooth', block: 'center' }); replayAnim(row, 'saved-flash'); }
+  });
 }
 
 function drawHanjaList() {
   const src = document.getElementById('hl-source').value;
   const mode = document.querySelector('input[name="hlMode"]:checked').value;
-  const covered = document.getElementById('hl-cover').checked;
   const S = getStarSet();
   const sources = src ? [src] : [...new Set(wordList.filter(w => !w.hidden).map(w => w.source))];
   let ok = 0, no = 0, total = 0, html = '';
@@ -4007,19 +4021,20 @@ function drawHanjaList() {
       const isNo = mode === 'hanja' ? w.wrongMean : w.wrongHanja;
       const isOk = !isNo && (mode === 'hanja' ? w.okMean : w.okHanja);
       total++; if (isNo) no++; else if (isOk) ok++;
-      return `<div class="hl-cell${isNo ? ' no' : isOk ? ' ok' : ''}${S.has(String(w.id)) ? ' starred' : ''}" data-h="${esc(w.hanja)}" data-m="${esc(w.mean)}" onclick="this.classList.toggle('show')"><div class="hc">${esc(w.hanja)}</div><div class="hu">${esc(w.mean)}</div></div>`;
+      return `<div class="hl-cell${isNo ? ' no' : isOk ? ' ok' : ''}${S.has(String(w.id)) ? ' starred' : ''}" data-h="${esc(w.hanja)}" data-m="${esc(w.mean)}" onclick="hlOpenEdit(${w.id})" title="눌러서 수정"><div class="hc">${esc(w.hanja)}</div><div class="hu">${esc(w.mean)}</div></div>`;
     }).join('') + '</div>';
   });
   const body = document.getElementById('hl-body');
   body.innerHTML = html || '<div class="setup-group" style="text-align:center; color:var(--text-muted);">표시할 한자가 없습니다.</div>';
-  body.classList.toggle('hl-covered', covered);
   document.getElementById('hl-ok').textContent = ok;
   document.getElementById('hl-no').textContent = no;
   document.getElementById('hl-rest').textContent = total - ok - no;
   hlApplySearch(true);
 }
 
+let hlSearchTimer = null;
 function hlApplySearch(noScroll) {
+  if (hlView === 'list') { clearTimeout(hlSearchTimer); hlSearchTimer = setTimeout(loadManageScope, noScroll === true ? 0 : 180); return; }
   const body = document.getElementById('hl-body');
   const q = document.getElementById('hl-search').value.trim();
   const cells = body.querySelectorAll('.hl-cell');
@@ -4060,12 +4075,12 @@ function quitQuiz() {
 }
 
 function switchTab(tabId) {
+  if (tabId === 'manage') tabId = 'input';            // 관리 탭은 '단어 추가'부터
   const tabKey = (tabId === 'input' || tabId === 'dups') ? 'manage' : tabId;   // 단어 추가·겹치는 한자는 '관리' 탭 안에 있음
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabKey));
   document.querySelectorAll('.sub-seg button').forEach(b => b.classList.toggle('active', b.dataset.sub === tabId));
   document.querySelectorAll('.content').forEach(c => { c.classList.remove('active'); c.style.display = ''; });
   document.getElementById(tabId).classList.add('active');
-  if(tabId === 'manage') renderManageTab();
   if(tabId === 'quiz-setup') renderSources();
   if(tabId === 'hanja-list') renderHanjaList();
   if(tabId === 'dups') renderDups();
@@ -4074,7 +4089,7 @@ function switchTab(tabId) {
 /* ---------- 손글씨 쓰기 (훈음 → 한자) ----------
    · 애플펜슬을 한 번 쓰면 그다음부터 손가락·손바닥 터치는 무시 (손바닥 거치기 OK)
    · 펜 압력에 따라 굵기 변화, 두 손가락 탭 = 한 획 지우기
-   · 쓰는 칸은 카드 오른쪽(오른손잡이 기준), 정답은 왼쪽에 크게 나와서 나란히 비교
+   · 오른쪽 기둥 = 채점 버튼(위) + 쓰는 칸(아래), 왼쪽 카드 = 문제·정답 → 오른손이 오른쪽에서만 움직임
    · 펜으로 쓰는 동안 화면 글자가 선택(블록 지정)되지 않게 막음 */
 let writeMode = localStorage.getItem('hanja_write_mode') === 'on';
 const wp = { strokes: [], cur: null, penSeen: false, ghost: true, ready: false };
@@ -4090,6 +4105,7 @@ function applyWriteMode(animate) {
   const card = document.querySelector('#quiz-play .flashcard');
   card.classList.toggle('writing', on);
   document.body.classList.toggle('writing-on', on);
+  placeWriteDock(on);
   const btn = document.getElementById('btn-write');
   btn.style.display = writeAvailable() ? '' : 'none';
   btn.classList.toggle('on', writeMode);
@@ -4099,6 +4115,21 @@ function applyWriteMode(animate) {
     requestAnimationFrame(wpResize);
     if (animate) replayAnim(document.getElementById('write-pad'), 'pop-in');
   }
+}
+
+// 쓰기 모드: 채점 버튼과 쓰는 칸을 오른쪽 기둥으로 옮김 (오른손으로 쓰고 바로 위 버튼으로 채점)
+function placeWriteDock(on) {
+  const play = document.getElementById('quiz-play');
+  const dock = document.getElementById('write-dock');
+  const slot = document.querySelector('.quiz-action-slot');
+  const pad = document.getElementById('write-pad');
+  if (on) {
+    if (slot.parentElement !== dock) { dock.appendChild(slot); dock.appendChild(pad); }
+  } else if (slot.parentElement === dock) {
+    document.querySelector('.quiz-controls-area').prepend(slot);
+    document.querySelector('#quiz-play .flashcard').appendChild(pad);
+  }
+  play.classList.toggle('writing-layout', on);
 }
 
 function wpInit() {
@@ -4227,17 +4258,8 @@ function wpReset() {
   document.getElementById('wc-mean').textContent = '';
   applyWriteMode(false);
 }
-// 정답 공개: 흐린 정답을 겹쳐서 보여줌
-function wpReveal(item) {
-  if (!document.querySelector('#quiz-play .flashcard').classList.contains('writing')) return false;
-  const card = document.querySelector('#quiz-play .flashcard');
-  const h = document.getElementById('wc-hanja');
-  h.textContent = item.hanja;
-  document.getElementById('wc-mean').textContent = '';
-  card.classList.add('wc-revealed');
-  replayAnim(h, 'rise-in');
-  return true;
-}
+// 쓰기 모드에서도 정답은 카드에 평소처럼 크게 표시 (오른쪽 쓰는 칸과 나란히 비교)
+function wpReveal(item) { return false; }
 
 /* ---------- 퀴즈 카드: 탭하면 정답 보기 ---------- */
 (function setupCardTap() {
