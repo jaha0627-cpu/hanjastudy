@@ -1145,7 +1145,7 @@ let qType = 'hanja';
 const TARGET_CHUNK_SIZE = 25;
 
 /* ▼ 앱 버전: 새 파일을 올릴 때마다 바뀜. 열려 있는 앱이 GitHub의 최신 버전과 비교해 업데이트를 알려줌 */
-const APP_VERSION = '2026.10.16-4';
+const APP_VERSION = '2026.10.16-5';
 
 /* ▼▼▼ 내 '한자DB' 시트의 웹 앱 주소 ▼▼▼
    여기에 넣어두면 어느 기기에서 열어도 자동으로 연결됩니다.
@@ -4222,7 +4222,7 @@ function wpResize() {
   if (!w) return;
   const dpr = window.devicePixelRatio || 1;
   if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(w * dpr); }
-  document.getElementById('wc-hanja').style.fontSize = Math.round(w * 0.74) + 'px';
+  document.getElementById('wc-hanja').style.fontSize = Math.round(w * 0.37) + 'px';   // 정답 글자: 칸 한 변의 37%
   wpRedraw();
 }
 // 좌표는 칸 크기 기준 0~1로 저장 → 화면 크기가 바뀌어도 그대로 다시 그림. 굵기 = 칸의 1/48 × 필압
