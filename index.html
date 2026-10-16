@@ -391,19 +391,32 @@
   .rec-limit { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
   .si-of { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
 
-  /* 손글씨: 오른쪽 기둥(도크) = 채점 버튼 + 쓰는 칸 */
+  /* 손글씨: 오른쪽 도크 = 위 채점 버튼, 아래 [정답 칸 | 쓰는 칸] 나란히 (시선 이동 최소) */
   .write-pad, .write-compare, .write-dock { display: none; }
-  #quiz-play.writing-layout .quiz-layout { display: grid !important; grid-template-columns: minmax(0, 1fr) clamp(230px, 22vw, 270px); grid-template-areas: "card dock" "extras dock"; column-gap: 18px; row-gap: 14px; align-items: start; }
+  #quiz-play.writing-layout { --sq: clamp(240px, 23vw, 300px); }
+  #quiz-play.writing-layout .quiz-layout { display: grid !important; grid-template-columns: minmax(0, 1fr) calc(var(--sq) * 2 + 12px); grid-template-areas: "card dock" "extras dock"; column-gap: 18px; row-gap: 14px; align-items: start; }
   #quiz-play.writing-layout .quiz-flashcard-area { grid-area: card; min-width: 0; }
   #quiz-play.writing-layout .quiz-controls-area { grid-area: extras; min-width: 0; }
   #quiz-play.writing-layout .write-dock { grid-area: dock; display: flex; flex-direction: column; gap: 12px; position: sticky; top: calc(12px + env(safe-area-inset-top, 0px)); animation: popIn 0.22s ease both; }
-  #quiz-play.writing-layout .flashcard { margin-bottom: 0; min-height: clamp(260px, 34vh, 400px); }
-  #quiz-play.writing-layout .flashcard .q-text.is-mean { font-size: clamp(1.6rem, 3.6vw, 2.6rem); }
-  #quiz-play.writing-layout .flashcard .ans-text.is-hanja { font-size: clamp(5rem, 11vw, 8rem); }
+  #quiz-play.writing-layout .flashcard { margin-bottom: 0; min-height: calc(var(--sq) + 76px); }
+  #quiz-play.writing-layout .flashcard .q-text.is-mean { font-size: clamp(1.6rem, 3.4vw, 2.6rem); }
+  #quiz-play.writing-layout .flashcard .ans-text { display: none !important; }
   .write-dock .quiz-action-slot { margin: 0; height: 64px; }
   .write-dock .grade-btns { gap: 8px; }
-  .write-dock .write-pad { display: block; width: 100%; aspect-ratio: 1 / 1; margin: 0; box-sizing: border-box; }
-  .write-dock .write-pad .write-placeholder { bottom: 10px; }
+  .write-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .write-pair .write-pad { display: block; width: 100%; aspect-ratio: 1 / 1; margin: 0; box-sizing: border-box; }
+  .write-pair .write-pad .write-placeholder { bottom: 10px; }
+  .write-pair .write-compare { display: flex; position: relative; align-items: center; justify-content: center; aspect-ratio: 1 / 1; border-radius: 18px; background: var(--card); border: 1.5px dashed var(--border); overflow: hidden; transition: border-color 0.2s, background 0.2s; }
+  .write-pair .write-compare .write-grid path { opacity: 0.6; }
+  .write-pair .write-compare.revealed { border-style: solid; border-color: rgba(49,130,246,0.45); background: var(--secondary); }
+  .write-pair .wc-label { position: absolute; top: 9px; left: 12px; }
+  .write-pair .wc-hanja { position: relative; margin: 0; line-height: 1; color: var(--border); font-weight: 400; font-family: "Apple SD Gothic Neo","Noto Sans CJK KR","Malgun Gothic",serif; }
+  .write-pair .write-compare.revealed .wc-hanja { color: var(--primary); }
+  .write-pair .wc-mean { display: none; }
+  /* 세로 화면(기본 폭): 카드 위, 도크는 그 아래 전체 폭 */
+  .app-container:not(.landscape) #quiz-play.writing-layout .quiz-layout { grid-template-columns: 1fr; grid-template-areas: "card" "dock" "extras"; }
+  .app-container:not(.landscape) #quiz-play.writing-layout .write-dock { position: static; }
+  .app-container:not(.landscape) #quiz-play.writing-layout .flashcard { min-height: 180px; }
   @media (max-width: 520px) {
     #quiz-play.writing-layout .quiz-layout { grid-template-columns: 1fr; grid-template-areas: "card" "dock" "extras"; }
     #quiz-play.writing-layout .write-dock { position: static; }
@@ -983,6 +996,7 @@
           <div class="q-text" id="play-q"></div>
           <div class="ans-text" id="play-a"></div>
           <div class="write-compare" id="write-compare" aria-live="polite">
+            <svg class="write-grid" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 0V100M0 50H100"/><path class="diag" d="M0 0L100 100M100 0L0 100"/></svg>
             <div class="wc-label" id="wc-label">정답</div>
             <div class="wc-hanja" id="wc-hanja">?</div>
             <div class="wc-mean" id="wc-mean"></div>
@@ -1131,7 +1145,7 @@ let qType = 'hanja';
 const TARGET_CHUNK_SIZE = 25;
 
 /* ▼ 앱 버전: 새 파일을 올릴 때마다 바뀜. 열려 있는 앱이 GitHub의 최신 버전과 비교해 업데이트를 알려줌 */
-const APP_VERSION = '2026.10.16-3';
+const APP_VERSION = '2026.10.16-4';
 
 /* ▼▼▼ 내 '한자DB' 시트의 웹 앱 주소 ▼▼▼
    여기에 넣어두면 어느 기기에서 열어도 자동으로 연결됩니다.
@@ -4123,11 +4137,19 @@ function placeWriteDock(on) {
   const dock = document.getElementById('write-dock');
   const slot = document.querySelector('.quiz-action-slot');
   const pad = document.getElementById('write-pad');
+  const cmp = document.getElementById('write-compare');
+  let pair = dock.querySelector('.write-pair');
+  if (!pair) { pair = document.createElement('div'); pair.className = 'write-pair'; }
   if (on) {
-    if (slot.parentElement !== dock) { dock.appendChild(slot); dock.appendChild(pad); }
+    if (slot.parentElement !== dock) {
+      dock.appendChild(slot);
+      pair.appendChild(cmp); pair.appendChild(pad);
+      dock.appendChild(pair);
+    }
   } else if (slot.parentElement === dock) {
     document.querySelector('.quiz-controls-area').prepend(slot);
-    document.querySelector('#quiz-play .flashcard').appendChild(pad);
+    const card = document.querySelector('#quiz-play .flashcard');
+    card.appendChild(cmp); card.appendChild(pad);
   }
   play.classList.toggle('writing-layout', on);
 }
@@ -4200,6 +4222,7 @@ function wpResize() {
   if (!w) return;
   const dpr = window.devicePixelRatio || 1;
   if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(w * dpr); }
+  document.getElementById('wc-hanja').style.fontSize = Math.round(w * 0.74) + 'px';
   wpRedraw();
 }
 // 좌표는 칸 크기 기준 0~1로 저장 → 화면 크기가 바뀌어도 그대로 다시 그림. 굵기 = 칸의 1/48 × 필압
@@ -4254,12 +4277,21 @@ function wpReset() {
   wpClear(true);
   const card = document.querySelector('#quiz-play .flashcard');
   card.classList.remove('wc-revealed');
+  document.getElementById('write-compare').classList.remove('revealed');
   document.getElementById('wc-hanja').textContent = '?';
   document.getElementById('wc-mean').textContent = '';
   applyWriteMode(false);
 }
-// 쓰기 모드에서도 정답은 카드에 평소처럼 크게 표시 (오른쪽 쓰는 칸과 나란히 비교)
-function wpReveal(item) { return false; }
+// 정답: 쓰는 칸 바로 왼쪽 '정답 칸'에 같은 크기로 → 시선을 옮기지 않고 모양 비교
+function wpReveal(item) {
+  if (!document.getElementById('quiz-play').classList.contains('writing-layout')) return false;
+  const cmp = document.getElementById('write-compare');
+  const h = document.getElementById('wc-hanja');
+  h.textContent = item.hanja;
+  cmp.classList.add('revealed');
+  replayAnim(h, 'pop-in');
+  return true;
+}
 
 /* ---------- 퀴즈 카드: 탭하면 정답 보기 ---------- */
 (function setupCardTap() {
