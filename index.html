@@ -1145,7 +1145,7 @@ let qType = 'hanja';
 const TARGET_CHUNK_SIZE = 25;
 
 /* ▼ 앱 버전: 새 파일을 올릴 때마다 바뀜. 열려 있는 앱이 GitHub의 최신 버전과 비교해 업데이트를 알려줌 */
-const APP_VERSION = '2026.10.16-5';
+const APP_VERSION = '2026.10.17-2';
 
 /* ▼▼▼ 내 '한자DB' 시트의 웹 앱 주소 ▼▼▼
    여기에 넣어두면 어느 기기에서 열어도 자동으로 연결됩니다.
@@ -1414,6 +1414,36 @@ async function gasPost(url, body) {
   return readJson(res);
 }
 
+/* ---------- '응답만 못 받은 저장' 구별 ----------
+   아이패드에서 앱을 잠깐 내리면 저장은 시트에 들어갔는데 응답을 못 받는 경우가 있음.
+   그러면 다음 저장 때 '다른 기기에서 먼저 저장했어요'가 잘못 뜸.
+   → 보낸 내용의 지문을 기억해 두고, 시트 내용이 내가 보낸 것과 같으면 조용히 이어서 저장 */
+function canonHash(words, tombs) {
+  const str = JSON.stringify([(words || []).map(w => serializeWord(normalizeWord(w))), (tombs || []).map(String)]);
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36) + ':' + str.length;
+}
+function rememberPush(hash) {
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem('hanja_push_hashes') || '[]'); } catch(e) {}
+  list = [hash, ...list.filter(x => x !== hash)].slice(0, 8);
+  localStorage.setItem('hanja_push_hashes', JSON.stringify(list));
+}
+function isOurPush(r) {
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem('hanja_push_hashes') || '[]'); } catch(e) {}
+  return list.includes(canonHash(r.words, r.tombstones));
+}
+// 충돌이 나면: 시트 내용이 내가 보낸 것이면 버전만 맞추고 true
+async function settleIfOurs(r) {
+  try {
+    if (!r) r = await gasGet(Cloud.url(), { action: 'load' });
+    if (r && r.ok && isOurPush(r)) { Cloud.setVer(r.updatedAt); return true; }
+  } catch(e) {}
+  return false;
+}
+
 async function pushToCloud(force = false) {
   if (!Cloud.enabled()) return;
   if (pushing) { pushQueued = true; return; }
@@ -1421,10 +1451,12 @@ async function pushToCloud(force = false) {
   setSyncStatus('saving');
   const seq = editSeq;
   try {
+    const payloadWords = wordList.map(serializeWord), payloadTombs = tombstones.slice();
+    rememberPush(canonHash(payloadWords, payloadTombs));
     const r = await gasPost(Cloud.url(), {
       action: 'save', baseVer: Cloud.ver(), force: !!force,
       allowEmpty: allowEmptyOnce || undefined,
-      words: wordList.map(serializeWord), tombstones
+      words: payloadWords, tombstones: payloadTombs
     });
     if (r && r.ok) {
       allowEmptyOnce = false;
@@ -1434,6 +1466,7 @@ async function pushToCloud(force = false) {
       else pushQueued = true;
     } else if (r && r.conflict) {
       pushing = false;
+      if (await settleIfOurs()) { pushQueued = true; return; }   // 내 저장이 이미 들어가 있던 것 → 조용히 다시 저장
       await resolveConflict();
       return;
     } else {
@@ -1526,6 +1559,7 @@ async function syncNow(opts = {}) {
     if (Cloud.dirty() || editSeq !== seqAtStart) {
       syncing = false;
       if (remoteVer === Cloud.ver()) return pushToCloud();
+      if (await settleIfOurs(r)) return pushToCloud();   // 응답만 놓친 내 저장
       return resolveConflict();
     }
     if (remoteVer !== Cloud.ver()) applyRemote(r);
@@ -2516,7 +2550,10 @@ function updateWord(id) {
    if (!w || (w.hanja === h && w.mean === m && (w.hint || '') === hint)) return;
    if (!h) { document.getElementById(`edit-hanja-${id}`).value = w.hanja; return notify('한자는 비울 수 없어요'); }
    if (w.origin === 'friend' && (w.hanja !== h || w.mean !== m)) w.userEdited = true;
+   const hanjaChanged = w.hanja !== h, hintChanged = (w.hint || '') !== hint;
    w.hanja = h; w.mean = m; w.hint = hint;
+   if (hanjaChanged) { invalidateGroups(); syncDuplicateStats(); }   // 다른 한자 묶음으로 옮겨 감
+   else if (hintChanged) shareHint(w);
    saveToStorage();
    renderSources(); renderWrongNotes();
    const row = document.getElementById(`edit-row-${id}`);
@@ -2703,7 +2740,7 @@ window.addEventListener('scroll', () => {
 
 function updateHintInline(id, val) {
   const w = wordList.find(w => w.id === id);
-  if (w) { w.hint = val.trim(); saveToStorage(); }
+  if (w) { w.hint = val.trim(); shareHint(w); saveToStorage(); }
 }
 
 function setAllStudyState(state) {
@@ -3134,6 +3171,7 @@ function saveQuizExtra() {
   if (w && (w.hint || '') === newHint) return;
   if (w) {
     w.hint = newHint; item.hint = newHint;
+    shareHint(w);
     saveToStorage();
     const btn = document.getElementById('btn-save-extra');
     btn.innerText = "✓ 완료";
@@ -3424,13 +3462,36 @@ function shareState(w) {
     SHARED_KEYS.forEach(k => { x[k] = (k === 'sM' || k === 'sH') ? { ...(w[k] || EMPTY_STAT()) } : w[k]; });
   });
 }
+// 힌트도 같은 한자 전체가 함께 씀: 한 곳에서 고치면 모두 같은 내용
+function shareHint(w) {
+  groupOf(w).forEach(x => {
+    if (x === w) return;
+    x.hint = w.hint;
+    const ta = document.getElementById(`edit-hint-${x.id}`);          // 목록·수정 화면에 보이는 칸도 갱신
+    if (ta && document.activeElement !== ta) { ta.value = w.hint; autoGrow(ta); }
+  });
+}
+// 처음 한 번(그리고 데이터가 들어올 때): 범위마다 달랐던 힌트를 줄바꿈으로 합쳐 같은 내용으로
+function syncDuplicateHints() {
+  let changed = 0;
+  groupMap().forEach(ws => {
+    if (ws.length < 2) return;
+    const parts = [];
+    ws.forEach(x => str(x.hint).split('\n').map(t => t.trim()).filter(Boolean).forEach(t => { if (!parts.includes(t)) parts.push(t); }));
+    const merged = parts.join('\n');
+    ws.forEach(x => { if ((x.hint || '') !== merged) { x.hint = merged; changed++; } });
+  });
+  return changed;
+}
+const invalidateGroups = () => { groupCache.len = -1; groupCache.ref = null; };
+
 function restoreGroup(w, prev) {
   Object.assign(w, prev);
   shareState(w);
 }
 // 처음 한 번, 그리고 한자를 추가·가져온 뒤: 같은 한자끼리 가장 최근 기록으로 맞춤
 function syncDuplicateStats() {
-  let changed = 0;
+  let changed = syncDuplicateHints();
   groupMap().forEach(ws => {
     if (ws.length < 2) return;
     const pick = key => ws.reduce((a, b) => {
