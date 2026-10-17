@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>인구기 문제</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="인구기">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fbf8fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16131b" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAD6ElEQVR42u3dTY4USRBEYQhxLS4AW/atucHcBG6A2LPlfrNAQiPUqIvqikhz9+/tQKCqsHhpkf/19sP7z2+A51giADlADpAD5AA5QA6QA+QAOUAOgBwgB8gBcoAcIAfIAXKAHCAHQA6QA+QAOUAOkAPZvBs78u9fPt7+jz/9+2NgRG+HPEj9VyrQpb8cDxdimigN5TjmRHtL+shxoRNdLekgR5QWnRSpLUesFj0UqSpHCS2qK1JPjnJa1FVkMcP3L98c1bWoWCGLGUZUtTn6aVGoQhYzjLGeHBPMCB9p4rIyR4vwJWYxw9hryDHZjMAEllz4kS4HMwLTWLLgR64czIhNxqMJSJVDbSTns5jBjzg5mJGflX0OhMmhNkoktpjBD8sK4uVQG4XSW8zgh2UFwXKojXJJvpP1b7x4r94cyw/dQ5of6B33b147qAM3nE5vjtdE/Ov/du2SE82Rmd3Dt7zzw9xdHkOPVnbE2u/NYNvlCKyNfbN42I/d2c7a5zgweT8/osdeyGJGgwopKUfOBnR+ts584taERzTHVdtx9f5wbQVXyBGyply7+R749H05N2+OhGKvu7gsZvDjT7gq+wxPT//8/4/fvn21z9Fqh+PujfU3M579m7Ty2JS2o5WbPHiIH5qjoRlj/egpxx0dfsvcv9KPcrulmgPkQIgc7W+uDPxuOzLXHCDHS9xypmva2TBy3Dr3A8+TkuMmA2aeQSfHyx6Mvbbiwpue0BwgB8gBcoAcjyX5abNaT8JpDpAD5Ehu73JPV2+Ro9+bKvLZkbllBfPkSOvwim/s0BwYKUfOxlr0RT/NmyNhVuq+AmqXHDkHLNfOzZlP35S2fQ7MluOq8qj+TsEpzXF+nhq8bXKjHGnnSU/O1snP2pfzrHtIf85ZxVdlWFbKb9bNfj5hrxyxV+B2zOIlZmxNeO6jCQ9cYrr+3sr051Z+zWu5X2o6wNwf47m7qOe80N0Tb+P6IOtoxY1hRVN1bQVXy6E8KuapORAgh/Iol6TmQIYcyqNWhqvx2JhhWUEjOZRHldzWkHEyw7KCFnIoj/ys1sAxM6PGssKP5HzscyBYDuURm8ySAjPSlxV+BKaxJMKMGjuk/IhKYEnH2P/EiedW7mPUIwKZm8SSl5HWk2OIH8ljzF1W2i8x+eovORpR7eboVCGFRF+S9f2bNEfdCqmodVU5CilSt+1qyxGuSPVFsIMcgYr0OLzqI0eCJc0OuRvKcd6SrmdyO8uxVZQJp/anyPFKXWbeSDBXDryIRxNADpAD5AA5QA6QA+QAOUAOkAMgB8gBcoAcIAfIAXKAHCAHyAGQA+QAOUAOkAMZ/AfjsHyktbYlUQAAAABJRU5ErkJggg==">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAD6ElEQVR42u3dTY4USRBEYQhxLS4AW/atucHcBG6A2LPlfrNAQiPUqIvqikhz9+/tQKCqsHhpkf/19sP7z2+A51giADlADpAD5AA5QA6QA+QAOUAOgBwgB8gBcoAcIAfIAXKAHCAHQA6QA+QAOUAOkAPZvBs78u9fPt7+jz/9+2NgRG+HPEj9VyrQpb8cDxdimigN5TjmRHtL+shxoRNdLekgR5QWnRSpLUesFj0UqSpHCS2qK1JPjnJa1FVkMcP3L98c1bWoWCGLGUZUtTn6aVGoQhYzjLGeHBPMCB9p4rIyR4vwJWYxw9hryDHZjMAEllz4kS4HMwLTWLLgR64czIhNxqMJSJVDbSTns5jBjzg5mJGflX0OhMmhNkoktpjBD8sK4uVQG4XSW8zgh2UFwXKojXJJvpP1b7x4r94cyw/dQ5of6B33b147qAM3nE5vjtdE/Ov/du2SE82Rmd3Dt7zzw9xdHkOPVnbE2u/NYNvlCKyNfbN42I/d2c7a5zgweT8/osdeyGJGgwopKUfOBnR+ts584taERzTHVdtx9f5wbQVXyBGyply7+R749H05N2+OhGKvu7gsZvDjT7gq+wxPT//8/4/fvn21z9Fqh+PujfU3M579m7Ty2JS2o5WbPHiIH5qjoRlj/egpxx0dfsvcv9KPcrulmgPkQIgc7W+uDPxuOzLXHCDHS9xypmva2TBy3Dr3A8+TkuMmA2aeQSfHyx6Mvbbiwpue0BwgB8gBcoAcjyX5abNaT8JpDpAD5Ehu73JPV2+Ro9+bKvLZkbllBfPkSOvwim/s0BwYKUfOxlr0RT/NmyNhVuq+AmqXHDkHLNfOzZlP35S2fQ7MluOq8qj+TsEpzXF+nhq8bXKjHGnnSU/O1snP2pfzrHtIf85ZxVdlWFbKb9bNfj5hrxyxV+B2zOIlZmxNeO6jCQ9cYrr+3sr051Z+zWu5X2o6wNwf47m7qOe80N0Tb+P6IOtoxY1hRVN1bQVXy6E8KuapORAgh/Iol6TmQIYcyqNWhqvx2JhhWUEjOZRHldzWkHEyw7KCFnIoj/ys1sAxM6PGssKP5HzscyBYDuURm8ySAjPSlxV+BKaxJMKMGjuk/IhKYEnH2P/EiedW7mPUIwKZm8SSl5HWk2OIH8ljzF1W2i8x+eovORpR7eboVCGFRF+S9f2bNEfdCqmodVU5CilSt+1qyxGuSPVFsIMcgYr0OLzqI0eCJc0OuRvKcd6SrmdyO8uxVZQJp/anyPFKXWbeSDBXDryIRxNADpAD5AA5QA6QA+QAOUAOkAMgB8gBcoAcIAfIAXKAHCAHyAGQA+QAOUAOkAMZ/AfjsHyktbYlUQAAAABJRU5ErkJggg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --paper:#fbf8fb; --surface:#ffffff; --ink:#221b2e; --muted:#6f667a; --line:#e6dfe8;
+  --hema:#4a3d8f; --hema-soft:#ebe7f8; --on-hema:#ffffff;
+  --eosin:#c8456f; --eosin-soft:#fbe4ec;
+  --ok:#22795a; --ok-soft:#dcf1e6;
+  --empty:#e9e4ec;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#16131b; --surface:#201c27; --ink:#ece8f2; --muted:#a59cb0; --line:#342e3d;
+    --hema:#a99cf0; --hema-soft:#2c2645; --on-hema:#16131b;
+    --eosin:#f07a9f; --eosin-soft:#3d2030;
+    --ok:#5cc79a; --ok-soft:#183a2c;
+    --empty:#332d3b;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#16131b; --surface:#201c27; --ink:#ece8f2; --muted:#a59cb0; --line:#342e3d;
+  --hema:#a99cf0; --hema-soft:#2c2645; --on-hema:#16131b;
+  --eosin:#f07a9f; --eosin-soft:#3d2030;
+  --ok:#5cc79a; --ok-soft:#183a2c;
+  --empty:#332d3b;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans KR",-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  font-size:17px; line-height:1.6; -webkit-text-size-adjust:100%; word-break:keep-all; overflow-wrap:anywhere;
+}
+.wrap{max-width:780px; margin:0 auto; padding:20px 18px 48px}
+header{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+h1{font-size:1.5rem; font-weight:700; margin:0; letter-spacing:-0.01em}
+.tally{font-size:.95rem; color:var(--muted); font-variant-numeric:tabular-nums; display:flex; gap:12px}
+.tally .o{color:var(--ok); font-weight:600} .tally .x{color:var(--eosin); font-weight:600}
+
+.controls{display:flex; flex-direction:column; gap:10px; margin:16px 0 14px}
+.controls .line{display:flex; flex-wrap:wrap; gap:10px}
+.seg{display:inline-flex; flex-wrap:wrap; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:3px; gap:2px}
+.seg button{
+  font:inherit; font-size:.9rem; border:0; background:transparent; color:var(--muted);
+  padding:6px 12px; border-radius:7px; cursor:pointer; min-height:36px;
+}
+.seg button[aria-pressed="true"]{background:var(--hema); color:var(--on-hema); font-weight:600}
+.seg button:disabled{opacity:.38; cursor:default}
+
+.stripbar{display:flex; justify-content:space-between; align-items:center; margin:2px 0 6px; font-size:.85rem; color:var(--muted)}
+.strip{display:grid; grid-template-columns:repeat(auto-fill,minmax(22px,1fr)); gap:5px; margin:0 0 22px}
+.strip.folded{max-height:84px; overflow:hidden}
+.cell{aspect-ratio:1; border:0; border-radius:50%; background:var(--empty); cursor:pointer; padding:0; font:inherit; font-size:0}
+.cell.o{background:var(--ok)}
+.cell.x{background:var(--eosin)}
+.cell.cur{outline:2.5px solid var(--hema); outline-offset:2px}
+
+.card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:22px 20px}
+.meta{font-size:.88rem; color:var(--muted); margin:0 0 8px}
+.q{font-size:1.14rem; font-weight:600; margin:0 0 18px; line-height:1.55}
+.choices{display:grid; gap:9px}
+.choice{
+  font:inherit; text-align:left; display:flex; gap:12px; align-items:flex-start;
+  background:transparent; color:var(--ink); border:1.5px solid var(--line); border-radius:12px;
+  padding:12px 14px; cursor:pointer; min-height:48px; line-height:1.5;
+}
+.choice .n{flex:none; width:1.5em; color:var(--muted); font-weight:600}
+.choice:hover:not(:disabled){border-color:var(--hema)}
+.choice:disabled{cursor:default}
+.choice.right{border-color:var(--ok); background:var(--ok-soft)}
+.choice.right .n{color:var(--ok)}
+.choice.wrong{border-color:var(--eosin); background:var(--eosin-soft)}
+.choice.wrong .n{color:var(--eosin)}
+.choice.dim{opacity:.55}
+
+.verdict{margin:18px 0 6px; font-weight:700; font-size:1.05rem}
+.verdict.o{color:var(--ok)} .verdict.x{color:var(--eosin)}
+.exp{background:var(--hema-soft); border-radius:12px; padding:14px 16px; margin-top:8px; line-height:1.75}
+.exp p{margin:0 0 8px}
+.exp p:last-of-type{margin-bottom:4px}
+.exp .pg{display:inline-block; font-size:.88rem; color:var(--hema); font-weight:600}
+
+.nav{display:flex; justify-content:space-between; gap:10px; margin-top:18px}
+.btn{
+  font:inherit; font-size:.98rem; font-weight:600; border-radius:12px; padding:12px 18px; min-height:48px;
+  cursor:pointer; border:1.5px solid var(--line); background:var(--surface); color:var(--ink);
+}
+.btn.primary{background:var(--hema); border-color:var(--hema); color:var(--on-hema)}
+.btn:disabled{opacity:.4; cursor:default}
+
+.empty, .summary{text-align:center; padding:34px 20px}
+.summary .big{font-size:2.6rem; font-weight:700; font-variant-numeric:tabular-nums; margin:6px 0}
+.summary p{color:var(--muted); margin:6px 0 20px}
+.summary .row{display:flex; justify-content:center; gap:10px; flex-wrap:wrap}
+
+footer{margin-top:28px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; font-size:.85rem; color:var(--muted)}
+footer .tools{display:flex; gap:14px}
+.link{font:inherit; font-size:.85rem; background:none; border:0; color:var(--muted); text-decoration:underline; cursor:pointer; padding:6px 0}
+
+dialog{border:1px solid var(--line); border-radius:16px; background:var(--surface); color:var(--ink); padding:20px; width:min(92vw,520px)}
+dialog::backdrop{background:rgba(20,15,30,.45)}
+dialog h2{font-size:1.1rem; margin:0 0 8px}
+dialog p{margin:0 0 12px; color:var(--muted); font-size:.92rem}
+dialog textarea{width:100%; height:140px; font:inherit; font-size:.8rem; border:1px solid var(--line); border-radius:10px; padding:10px; background:var(--paper); color:var(--ink)}
+dialog .row{display:flex; justify-content:flex-end; gap:8px; margin-top:12px; flex-wrap:wrap}
+
+button:focus-visible{outline:2.5px solid var(--hema); outline-offset:2px}
+@media (prefers-reduced-motion: no-preference){
+  .exp,.verdict{animation:rise .18s ease-out}
+  @keyframes rise{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none}}
+}
+@media (max-width:480px){
+  .wrap{padding:16px 14px 40px}
+  .card{padding:18px 15px}
+  .q{font-size:1.06rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>인구기 문제</h1>
+    <div class="tally" id="tally"></div>
+  </header>
+
+  <div class="controls">
+    <div class="line"><div class="seg" id="lectureSeg" role="group" aria-label="강 선택"></div></div>
+    <div class="line">
+      <div class="seg" id="modeSeg" role="group" aria-label="풀 문제">
+        <button data-v="all">전체</button>
+        <button data-v="wrong">틀린 것</button>
+        <button data-v="unseen">안 푼 것</button>
+      </div>
+      <div class="seg" id="orderSeg" role="group" aria-label="순서">
+        <button data-v="seq">번호순</button>
+        <button data-v="rand">랜덤</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stripbar" id="stripbar"><span id="stripInfo"></span><button class="link" id="stripToggle" hidden>펼치기</button></div>
+  <div class="strip" id="strip" aria-label="문항 목록"></div>
+  <main id="main"></main>
+
+  <footer>
+    <span>보기 순서는 풀 때마다 섞여요. 키보드: 1~5 선택, Enter 다음</span>
+    <span class="tools">
+      <button class="link" id="exportBtn">기록 옮기기</button>
+      <button class="link" id="reset">기록 지우기</button>
+    </span>
+  </footer>
+</div>
+
+<dialog id="moveDlg">
+  <h2>기록 옮기기</h2>
+  <p>다른 기기나 다른 주소에서 이어 풀 때 써요. 아래 글자를 복사해 두었다가, 옮길 곳에서 붙여 넣고 ‘가져오기’를 누르세요.</p>
+  <textarea id="moveText" spellcheck="false"></textarea>
+  <div class="row">
+    <button class="btn" id="copyBtn">복사</button>
+    <button class="btn" id="importBtn">가져오기</button>
+    <button class="btn primary" id="closeDlg">닫기</button>
+  </div>
+</dialog>
+
+<!--
+  문제 데이터: 강마다 아래와 같은 블록 하나.
+  새 강을 추가할 때는 블록만 하나 더 붙이면 된다.
+  { "lecture": 번호, "title": "강 제목",
+    "questions": [ { "id": "L번호-문항", "page": 쪽, "type": "mcq",
+                     "q": 문제, "choices": [보기들], "answer": 정답 인덱스(0부터), "exp": 해설(줄바꿈은 \n) } ] }
+-->
+<script type="application/json" class="quiz-data" data-lecture="1">
+{
+ "lecture": 1,
+ "title": "세포학, 조직학 서론",
+ "questions": [
+  {
+   "id": "L1-01",
+   "page": 2,
+   "type": "mcq",
+   "q": "다음 중 현미경해부학에 속하는 것은?",
+   "choices": [
+    "표면해부학",
+    "국소해부학",
+    "계통해부학",
+    "조직학",
+    "병태생리학"
+   ],
+   "answer": 3,
+   "exp": "정답은 조직학.\n해부학은 보는 크기에 따라 둘로 나뉜다. 맨눈해부학(눈으로 보이는 크기)에는 표면·국소·계통해부학이, 현미경해부학(현미경으로 봐야 보이는 크기)에는 세포학·조직학이 들어간다.\n병태생리학은 해부학이 아니라 생리학의 한 갈래(병이 생겼을 때 기능이 어떻게 망가지는지)라서 분류 자체가 다르다.\n외우기: 맨눈 = 표면·국소·계통 / 현미경 = 세포·조직."
+  },
+  {
+   "id": "L1-02",
+   "page": 2,
+   "type": "mcq",
+   "q": "몸을 부위별로 나누어, 한 부위 안의 뼈·근육·혈관·신경을 한꺼번에 공부하는 해부학은?",
+   "choices": [
+    "표면해부학",
+    "국소해부학",
+    "계통해부학",
+    "세포학",
+    "조직학"
+   ],
+   "answer": 1,
+   "exp": "정답은 국소해부학. “배 부위”처럼 지역 하나를 통째로 보고, 그 안의 모든 구조를 함께 다룬다.\n표면해부학은 피부 겉에서 보이고 만져지는 것(배꼽, 갈비뼈 끝)으로 속 구조를 짐작하는 것이고, 계통해부학은 뼈대계통처럼 시스템 하나를 머리부터 발끝까지 따라가는 것이다.\n외우기: 국소 = 지역별, 계통 = 시스템별. 세포학·조직학은 맨눈이 아니라 현미경해부학이다."
+  },
+  {
+   "id": "L1-03",
+   "page": 3,
+   "type": "mcq",
+   "q": "심장이나 콩팥처럼 특정 기관 하나의 기능을 다루는 생리학은?",
+   "choices": [
+    "세포생리학",
+    "특수생리학",
+    "계통생리학",
+    "병태생리학",
+    "국소생리학"
+   ],
+   "answer": 1,
+   "exp": "정답은 특수생리학.\n생리학은 네 갈래로 나뉜다. 세포생리학은 세포 하나가 어떻게 살아가는지, 특수생리학은 특정 기관 하나의 기능, 계통생리학은 여러 기관이 모인 계통(예: 소화계통)의 기능, 병태생리학은 병이 생겼을 때 기능이 어떻게 망가지는지를 다룬다.\n국소생리학이라는 갈래는 없다. 국소‘해부학’과 헷갈리게 만든 보기다.\n외우기: 해부학 = 구조·형태, 생리학 = 기능(무엇을, 어떻게)."
+  },
+  {
+   "id": "L1-04",
+   "page": 4,
+   "type": "mcq",
+   "q": "인체의 구조적 단위를 작은 것부터 바르게 나열한 것은?",
+   "choices": [
+    "세포 → 기관 → 조직 → 계(11개) → 인체",
+    "세포 → 조직 → 기관 → 계(11개) → 인체",
+    "세포 → 조직 → 기관 → 계(12개) → 인체",
+    "조직 → 세포 → 기관 → 계(11개) → 인체",
+    "세포 → 조직 → 계(11개) → 기관 → 인체"
+   ],
+   "answer": 1,
+   "exp": "정답은 세포 → 조직 → 기관 → 계(11개) → 인체.\n예를 들면 심장근육세포(세포) → 심장근육조직(조직) → 심장(기관) → 심장혈관계통(계) → 인체 순서다. 같은 종류의 세포가 모이면 조직, 여러 조직이 모여 하나의 일을 하면 기관, 기관들이 모이면 계통이다.\n계통은 11개: 외피·뼈대·근육·신경·내분비·심장혈관·림프·호흡·소화·비뇨·생식계통. 개수 11도 보기로 바꿔 내기 좋은 숫자다."
+  },
+  {
+   "id": "L1-05",
+   "page": 5,
+   "type": "mcq",
+   "q": "사람 세포의 일반적인 직경은?",
+   "choices": [
+    "7.5~10 nm",
+    "0.5~2 μm",
+    "10~20 μm",
+    "100~200 μm",
+    "0.2 mm"
+   ],
+   "answer": 2,
+   "exp": "정답은 10~20 μm.\n1 μm는 1 mm의 1000분의 1이라, 1 mm 안에 세포가 50~100개 일렬로 들어간다. 그래서 맨눈으로는 안 보인다.\n나머지 보기도 전부 1강에 나오는 숫자다: 7.5~10 nm = 세포막 두께, 0.5~2 μm = 사립체 크기, 0.2 mm = 맨눈 해상력.\n단위 사다리: mm → μm(1/1000) → nm(또 1/1000). 세포·소기관은 μm, 막 두께·섬유 굵기는 nm."
+  },
+  {
+   "id": "L1-06",
+   "page": 5,
+   "type": "mcq",
+   "q": "세포에 대한 설명으로 옳지 않은 것은?",
+   "choices": [
+    "세포는 생명의 기본단위이다.",
+    "사람 몸의 세포는 약 200~260여 종이다.",
+    "사람 몸의 세포 수는 약 40~100조 개이다.",
+    "세포의 크기와 모양은 종류에 따라 다양하다.",
+    "사람 몸에는 원핵세포와 진핵세포가 섞여 있다."
+   ],
+   "answer": 4,
+   "exp": "정답은 “원핵세포와 진핵세포가 섞여 있다”.\n우리 몸 세포는 전부 진핵세포다. 원핵세포는 세균처럼 핵막이 없는 세포다.\n세포 기본 숫자: 약 200~260여 종, 40~100조 개, 직경 10~20 μm. 모양은 민무늬근육세포, 신경세포, 지방세포, 정자처럼 하는 일에 따라 제각각이다."
+  },
+  {
+   "id": "L1-07",
+   "page": 5,
+   "type": "mcq",
+   "q": "원핵세포에는 없고 진핵세포에만 있는 것은?",
+   "choices": [
+    "세포막",
+    "세포질",
+    "리보솜",
+    "유전물질(DNA)",
+    "미토콘드리아"
+   ],
+   "answer": 4,
+   "exp": "정답은 미토콘드리아.\n원핵·진핵을 가르는 기준은 핵이 막으로 싸여 있느냐다. 원핵세포(세균)는 핵막이 없어 DNA가 세포질에 그냥 떠 있고, 진핵세포는 DNA가 핵 안에 있으며 미토콘드리아처럼 막으로 된 소기관을 가진다.\n둘 다 가진 것: 세포막, 세포질, 리보솜, 유전물질. 리보솜은 막이 없는 구조라 원핵세포에도 있다는 점이 함정 포인트.\n비유: 원핵 = 원룸, 진핵 = 방이 나뉜 아파트."
+  },
+  {
+   "id": "L1-08",
+   "page": 7,
+   "type": "mcq",
+   "q": "세포막에 대한 설명으로 옳지 않은 것은?",
+   "choices": [
+    "두께는 약 7.5~10 nm이다.",
+    "인지질이중층, 단백질, 당지질, 콜레스테롤로 구성된다.",
+    "콜레스테롤은 막이 너무 흐물흐물하거나 딱딱해지지 않게 잡아 준다.",
+    "물에 녹는 물질은 주로 막단백질을 통해 막을 통과한다.",
+    "인지질의 꼬리는 물을 좋아해서 막의 바깥쪽을 향한다."
+   ],
+   "answer": 4,
+   "exp": "정답은 “꼬리가 물을 좋아해서 바깥쪽을 향한다”.\n인지질은 머리가 물을 좋아하고(친수성) 꼬리가 물을 싫어한다(소수성). 그래서 물속에서 꼬리끼리 안쪽으로 숨고 머리가 바깥(물 쪽)을 보며 두 겹으로 선다. 이게 인지질이중층이다.\n막 안쪽이 기름 성질이라 물에 녹는 물질은 그냥 못 지나가고 막단백질(문)을 거쳐야 한다. 콜레스테롤은 막 사이에 끼어 유동성을 조절하고, 당지질·당단백질은 막 바깥의 당 이름표다.\n세포막 기능 4가지: 경계(장벽), 물질교환 조절, 신호전달(자극 반응성), 구조적 지지."
+  },
+  {
+   "id": "L1-09",
+   "page": 8,
+   "type": "mcq",
+   "q": "면역계통에 “우리 세포”임을 알리는 막단백질로, 대표적인 예가 MHC(주조직적합복합체)인 것은?",
+   "choices": [
+    "수용체단백질",
+    "통로단백질",
+    "운반체단백질",
+    "고정단백질",
+    "인식단백질"
+   ],
+   "answer": 4,
+   "exp": "정답은 인식단백질. 세포가 자기 세포인지, 정상 세포인지를 면역계통에 알려 주는 신분증이다.\n막단백질 6가지와 예:\n수용체 = 초인종(인슐린과 결합해 포도당 흡수율을 높임)\n통로 = 항상 뚫린 구멍(칼슘 이온 통과 → 근수축·신경자극)\n운반체 = 회전문(포도당, Na⁺·K⁺·Ca²⁺ 운반)\n효소 = 문 앞 가위(창자 상피에서 디펩티드 분해)\n고정 = 닻(세포뼈대나 세포 밖 섬유에 부착)\n인식 = 신분증(MHC)"
+  },
+  {
+   "id": "L1-10",
+   "page": 8,
+   "type": "mcq",
+   "q": "특정 물질과 결합한 뒤 그 물질을 막 건너편으로 옮기며, 포도당 흡수나 Na⁺·K⁺·Ca²⁺ 이동을 담당하는 막단백질은? (ATP가 필요할 때도, 필요 없을 때도 있다)",
+   "choices": [
+    "수용체단백질",
+    "통로단백질",
+    "운반체단백질",
+    "효소",
+    "인식단백질"
+   ],
+   "answer": 2,
+   "exp": "정답은 운반체단백질.\n통로와 운반체의 차이가 핵심이다. 통로단백질은 가운데 구멍이 항상 뚫려 있어 물·이온이 그냥 지나가고, 운반체단백질은 물질을 붙잡아(결합) 모양을 바꿔 건너편으로 넘겨준다. 그래서 운반체는 ATP 에너지가 필요한 경우도 있다.\n비유: 통로 = 열린 문, 운반체 = 회전문.\n수용체는 물질을 옮기지 않고, 결합한 신호로 세포 안 반응만 일으킨다."
+  },
+  {
+   "id": "L1-11",
+   "page": 8,
+   "type": "mcq",
+   "q": "창자 속면을 덮는 상피세포의 세포막에서 디펩티드를 아미노산으로 분해하는 막단백질은?",
+   "choices": [
+    "수용체단백질",
+    "통로단백질",
+    "운반체단백질",
+    "효소",
+    "고정단백질"
+   ],
+   "answer": 3,
+   "exp": "정답은 효소. 세포 안팎에서 일어나는 반응의 촉매로 작용하는 막단백질이고, 자습서의 대표 예가 바로 창자 상피의 디펩티드 분해다.\n디펩티드 = 아미노산 2개가 붙은 것. 효소가 잘라서 흡수할 수 있는 아미노산으로 만든다.\n예시 문장만 보고 종류를 맞히는 문제가 나오기 쉬우니, 막단백질 6가지는 예시와 짝으로 외워 두자."
+  },
+  {
+   "id": "L1-12",
+   "page": 9,
+   "type": "mcq",
+   "q": "세포질그물(ER)의 기능이 아닌 것은?",
+   "choices": [
+    "합성",
+    "저장",
+    "운반",
+    "해독",
+    "ATP 생성"
+   ],
+   "answer": 4,
+   "exp": "정답은 ATP 생성. ATP는 사립체(미토콘드리아)가 만든다.\nER의 기능 4가지: 합성(Synthesis), 저장(Storage), 운반(Transport), 해독(Detoxification).\nER은 막이 그물처럼 연결된 구조이고, 핵막과 연속되어 있다. 이 “핵막과 연속”은 다른 문제의 함정으로도 나온다."
+  },
+  {
+   "id": "L1-13",
+   "page": 9,
+   "type": "mcq",
+   "q": "무과립세포질그물(smooth ER)의 기능이 아닌 것은?",
+   "choices": [
+    "인지질 합성",
+    "스테로이드 합성",
+    "독성물질 해독",
+    "칼슘 격리 및 방출 조절",
+    "만든 단백질을 운반소포에 담아 골지체로 수송"
+   ],
+   "answer": 4,
+   "exp": "정답은 “단백질을 골지체로 수송”. 이건 과립세포질그물의 기능이다.\n이름이 생김새 그대로다. 과립(rough) = 리보솜이 붙어 오돌토돌 → 리보솜이 단백질 작업대니까 단백질 합성, 골지체로 수송. 무과립(smooth) = 리보솜이 없어 매끈 → 지질(인지질·스테로이드) 합성, 해독, 칼슘 저장·방출.\n그래서 해독을 많이 하는 간세포와 칼슘으로 수축을 조절하는 근육세포에 무과립세포질그물이 발달해 있다."
+  },
+  {
+   "id": "L1-14",
+   "page": 9,
+   "type": "mcq",
+   "q": "근육세포에서 칼슘을 저장했다가 내보내 수축을 조절하는 세포소기관은?",
+   "choices": [
+    "과립세포질그물",
+    "무과립세포질그물",
+    "골지체",
+    "용해소체",
+    "사립체"
+   ],
+   "answer": 1,
+   "exp": "정답은 무과립세포질그물. 기능 중 하나인 “칼슘 격리 및 방출 조절”이다.\n근육은 칼슘이 나와야 수축한다. 그래서 칼슘 창고가 필요하고, 그 역할을 무과립세포질그물이 맡는다.\n6강에서 근육세포질그물과 종말수조(Ca²⁺ 저장고, 탈분극 때 방출)로 다시 나온다. 1강과 6강을 잇는 연결고리라 서술형으로도 쓰일 수 있다."
+  },
+  {
+   "id": "L1-15",
+   "page": 11,
+   "type": "mcq",
+   "q": "리보솜에 대한 설명으로 옳은 것은?",
+   "choices": [
+    "리보솜은 지질을 합성한다.",
+    "리보솜은 하나의 단위로만 이루어져 있다.",
+    "자유리보솜이 만든 단백질은 주로 세포 밖으로 분비된다.",
+    "부착리보솜은 세포질그물에 붙어 만든 단백질을 세포질그물 안으로 보낸다.",
+    "리보솜은 tRNA의 염기서열을 읽어 단백질을 만든다."
+   ],
+   "answer": 3,
+   "exp": "정답은 “부착리보솜은 세포질그물에 붙어 단백질을 그 안으로 보낸다”.\n오답 정리: 리보솜은 단백질을 만든다(지질은 무과립세포질그물). 큰 단위 + 작은 단위 두 개로 이루어진다. 읽는 것은 mRNA이고, tRNA는 아미노산을 배달하는 역할이다.\n자유리보솜은 세포질에 떠다니며 세포 안에서 쓸 단백질을 만들고, 부착리보솜이 만든 단백질은 ER → 골지체 경로를 타서 세포 밖으로 분비되거나 막에 쓰인다. 자유와 부착을 뒤바꾼 보기가 단골 함정."
+  },
+  {
+   "id": "L1-16",
+   "page": 12,
+   "type": "mcq",
+   "q": "골지체에서 핵 쪽의 볼록한 면으로, 세포질그물에서 온 운반소포를 받는 부위는?",
+   "choices": [
+    "시스(cis)",
+    "중간(medial)",
+    "트랜스(trans)",
+    "핵주위공간",
+    "능선(cristae)"
+   ],
+   "answer": 0,
+   "exp": "정답은 시스(cis).\n골지체는 납작한 수조 5~6층이고, 물질이 cis → medial → trans 순서로 지나간다. cis = 핵 쪽, 받는 면 / medial = 당화·가공 / trans = 분류·수송, 운송면.\n핵주위공간은 바깥핵막과 속핵막 사이 공간, 능선(cristae)은 사립체 속막의 주름이다. 다른 소기관 용어를 섞어 넣은 보기."
+  },
+  {
+   "id": "L1-17",
+   "page": 12,
+   "type": "mcq",
+   "q": "골지체의 중간(medial) 부위에서 주로 일어나는 일은?",
+   "choices": [
+    "세포질그물에서 온 운반소포를 받아들인다.",
+    "단백질과 지질에 당을 붙이고 가공한다.",
+    "가공된 물질을 목적지별로 분류해 내보낸다.",
+    "rRNA를 합성한다.",
+    "ATP를 만든다."
+   ],
+   "answer": 1,
+   "exp": "정답은 당을 붙이고 가공하는 일(당화).\n당화 = 단백질에 당 이름표를 다는 것. 골지체를 택배 센터로 보면 입구(cis)에서 받고, 가운데(medial)에서 포장하고, 출구(trans)에서 행선지별로 분류해 내보낸다.\nrRNA 합성은 핵소체, ATP 생성은 사립체."
+  },
+  {
+   "id": "L1-18",
+   "page": 12,
+   "type": "mcq",
+   "q": "골지체의 기능이 아닌 것은?",
+   "choices": [
+    "세포질그물에서 온 물질의 변형·압축·선별",
+    "단백질 성숙",
+    "형질막의 재생 또는 변형",
+    "분비소포 형성과 운반",
+    "리보솜 RNA(rRNA) 합성"
+   ],
+   "answer": 4,
+   "exp": "정답은 rRNA 합성. 이건 핵소체의 기능이다.\n골지체 기능 4가지: ① ER에서 온 물질 변형·압축·선별 ② 단백질 성숙 ③ 형질막 재생·변형 ④ 분비소포 형성·이동·운반.\n골지체 출구(trans)에서 나가는 곳은 세 군데: 세포 밖(분비), 세포막(막단백질), 용해소체(청소 효소). 용해소체의 효소가 골지체를 거쳐 만들어진다는 점이 다음 문제와 연결된다."
+  },
+  {
+   "id": "L1-19",
+   "page": 14,
+   "type": "mcq",
+   "q": "용해소체(lysosome)에 대한 설명으로 옳지 않은 것은?",
+   "choices": [
+    "주로 산성 가수분해효소(acid hydrolase)로 차 있다.",
+    "소화효소는 과립세포질그물에서 만들어져 골지체를 거친다.",
+    "손상된 세포를 스스로 녹이는 자가용해(autolysis)를 일으킨다.",
+    "병원체를 제거한다.",
+    "카탈라아제로 과산화수소(H₂O₂)를 물과 산소로 분해한다."
+   ],
+   "answer": 4,
+   "exp": "정답은 “카탈라아제로 H₂O₂를 분해한다”. 이건 과산화소체의 기능이다. 작년 기출에도 똑같은 함정이 나왔다.\n용해소체 = 세포의 위장 + 소각장. 안이 산성이라 산성 가수분해효소(acid hydrolase)가 잘 일한다. 효소는 과립세포질그물에서 만들어져 골지체를 거쳐 용해소체에 담긴다.\n기능 3가지: ① 세포 속 청소·재활용 ② 손상된 세포의 자가용해(auto = 스스로, lysis = 녹음) ③ 병원체 제거."
+  },
+  {
+   "id": "L1-20",
+   "page": 14,
+   "type": "mcq",
+   "q": "용해소체에서 소화되지 못한 물질이 남아 있는 구조는?",
+   "choices": [
+    "잔여소체",
+    "이른섭취소체",
+    "과산화소체",
+    "분비소포",
+    "핵소체"
+   ],
+   "answer": 0,
+   "exp": "정답은 잔여소체.\n삼킨 물질이 처리되는 길: 세포내섭취 소포 → 이른섭취소체 → 늦섭취소체 → 이차용해소체에서 분해. 세포 스스로 낡은 부품을 먹는 자가포식소체, 세균 등을 삼킨 포식성 공포도 용해소체와 합쳐 분해된다.\n끝까지 소화되지 못한 찌꺼기가 남은 것이 잔여소체다."
+  },
+  {
+   "id": "L1-21",
+   "page": 15,
+   "type": "mcq",
+   "q": "세포내섭취(endocytosis)로 들어온 물질을 받아 다시 쓸 것과 버릴 것으로 분류하는 구조는?",
+   "choices": [
+    "이른섭취소체(early endosome)",
+    "늦섭취소체(late endosome)",
+    "단백질분해소체",
+    "골지체 트랜스면",
+    "과산화소체"
+   ],
+   "answer": 0,
+   "exp": "정답은 이른섭취소체(early endosome).\n섭취소체는 세포막에서 용해소체로 가는 수송로이고, 분리수거장에 비유된다. 이른섭취소체는 들어온 물질을 분류해 재활용할 것은 돌려보내고, 늦섭취소체는 운반소포·이른섭취소체와 융합한 뒤 용해소체로 성숙해 물질을 분해한다.\n외우기: early = 분류·재활용, late = 용해소체로 성숙."
+  },
+  {
+   "id": "L1-22",
+   "page": 16,
+   "type": "mcq",
+   "q": "과산화소체(peroxisome)에 대한 설명으로 옳지 않은 것은?",
+   "choices": [
+    "간세포처럼 대사가 활발한 세포에 가장 풍부하다.",
+    "지방산 등 유기 화합물을 분해한다.",
+    "H₂O₂를 만들어 유독물질 해독과 미생물 살해에 쓴다.",
+    "카탈라아제로 H₂O₂를 물과 산소로 분해한다.",
+    "용해소체와 같은 산성 가수분해효소를 운반한다."
+   ],
+   "answer": 4,
+   "exp": "정답은 “용해소체와 같은 효소를 운반한다”. 자습서 표현은 반대로 “용해소체와 다른 그룹의 효소를 운반”이다.\n과산화소체 흐름: 효소가 지방산 등을 분해 → 부산물로 H₂O₂ 생성 → H₂O₂로 독소를 해독하고 미생물을 죽임 → 남는 H₂O₂는 카탈라아제가 물 + 산소로 분해해 세포를 보호.\nH₂O₂는 양날의 검이라 만들어 쓰고 바로 치우는 구조다."
+  },
+  {
+   "id": "L1-23",
+   "page": 16,
+   "type": "mcq",
+   "q": "상처에 과산화수소수를 부으면 거품이 난다. 이때 H₂O₂를 물과 산소로 분해하는 효소와, 그 효소가 있는 세포소기관의 짝으로 옳은 것은?",
+   "choices": [
+    "카탈라아제 – 과산화소체",
+    "카탈라아제 – 용해소체",
+    "산성 가수분해효소 – 과산화소체",
+    "산성 가수분해효소 – 용해소체",
+    "카탈라아제 – 사립체"
+   ],
+   "answer": 0,
+   "exp": "정답은 카탈라아제 – 과산화소체.\n거품의 정체가 H₂O₂가 분해되며 나오는 산소다. 우리 세포의 카탈라아제가 일하는 모습이다.\n짝으로 외우기: 과산화소체 = 카탈라아제(H₂O₂ 분해), 용해소체 = 산성 가수분해효소(acid hydrolase, 물질 소화). 이 둘을 뒤바꾸는 게 1강 최대 함정이다."
+  },
+  {
+   "id": "L1-24",
+   "page": 16,
+   "type": "mcq",
+   "q": "변성되었거나 기능을 잃은 폴리펩티드, 비정상 단백질을 골라 분해하는 원통 모양 구조는?",
+   "choices": [
+    "과산화소체",
+    "용해소체",
+    "단백질분해소체(proteasome)",
+    "섭취소체",
+    "핵소체"
+   ],
+   "answer": 2,
+   "exp": "정답은 단백질분해소체(proteasome).\n기능 2가지: ① 변성 또는 기능을 상실한 폴리펩티드 분해 ② 비정상이거나 불필요한 단백질 제거. 망가진 단백질만 골라 부수는 파쇄기이고, 그림에서 원통 모양으로 나온다.\n폴리펩티드 = 아미노산이 여러 개 이어진 사슬(단백질의 재료 단계).\n이름이 비슷한 과산화소체(peroxisome)와 헷갈리지 말 것: 과산화소체는 지방산 분해와 H₂O₂ 처리."
+  },
+  {
+   "id": "L1-25",
+   "page": 17,
+   "type": "mcq",
+   "q": "사립체(미토콘드리아)에 대한 설명으로 옳지 않은 것은?",
+   "choices": [
+    "크기는 약 0.5~2 μm이다.",
+    "바깥막과 속막의 이중막 구조이다.",
+    "능선(cristae)은 바깥막이 안으로 접혀 만들어진다.",
+    "능선은 표면적을 넓혀 에너지 생성을 늘린다.",
+    "세포당 개수는 그 세포의 에너지 요구량에 따라 다르다."
+   ],
+   "answer": 2,
+   "exp": "정답은 “능선은 바깥막이 접혀 만들어진다”. 능선은 속막이 주름지게 접힌 것이다.\n속막을 접는 이유는 좁은 공간에 표면적을 늘리기 위해서다. 에너지를 만드는 효소를 붙일 벽이 많아질수록 ATP를 더 많이 만든다.\n사립체 숫자: 0.5~2 μm, 세포당 10~100개. 기능은 ATP 생성(영양분을 산소로 태우는 세포호흡, 찌꺼기로 물과 CO₂)."
+  },
+  {
+   "id": "L1-26",
+   "page": 17,
+   "type": "mcq",
+   "q": "다음 중 사립체가 가장 많을 것으로 예상되는 세포는?",
+   "choices": [
+    "에너지를 많이 쓰는 근육세포",
+    "핵과 세포소기관이 없는 적혈구",
+    "원핵세포인 세균",
+    "에너지를 거의 쓰지 않는 세포",
+    "세포막만 남은 죽은 세포"
+   ],
+   "answer": 0,
+   "exp": "정답은 근육세포.\n사립체 개수는 그 세포의 에너지 요구량에 따라 달라진다. 근육세포처럼 에너지를 많이 쓰는 세포에 사립체가 많다.\n적혈구는 핵과 세포소기관이 없어 사립체도 없다(5강: 그래서 산소를 쓰지 않는 혐기성 해당작용으로 에너지를 얻는다). 세균은 원핵세포라 미토콘드리아가 없다."
+  },
+  {
+   "id": "L1-27",
+   "page": 18,
+   "type": "mcq",
+   "q": "중간미세섬유에 대한 설명으로 옳지 않은 것은?",
+   "choices": [
+    "지름은 약 8~10 nm이다.",
+    "keratin은 상피세포에 있다.",
+    "vimentin은 섬유모세포에 있다.",
+    "desmin은 신경세포에 있다.",
+    "세포에 강도를 주고 세포소기관을 안정화한다."
+   ],
+   "answer": 3,
+   "exp": "정답은 “desmin은 신경세포에 있다”. desmin은 근육세포, 신경세포에 있는 것은 neurofilament다.\n중간미세섬유 4종 짝: keratin – 상피, vimentin – 섬유모세포, desmin – 근육, neurofilament – 신경. 세포 종류마다 다른 종류를 쓰기 때문에, 어떤 중간미세섬유가 있는지 보면 그 세포가 무엇인지 알 수 있다.\n3강에서 결합체(데스모솜)가 중간잔섬유(케라틴)와 연결된다는 내용으로 다시 나온다."
+  },
+  {
+   "id": "L1-28",
+   "page": 19,
+   "type": "mcq",
+   "q": "세포뼈대를 굵기가 가는 것부터 바르게 나열한 것은?",
+   "choices": [
+    "미세섬유 < 중간미세섬유 < 굵은미세섬유 < 미세관",
+    "미세관 < 미세섬유 < 중간미세섬유 < 굵은미세섬유",
+    "중간미세섬유 < 미세섬유 < 굵은미세섬유 < 미세관",
+    "미세섬유 < 굵은미세섬유 < 중간미세섬유 < 미세관",
+    "굵은미세섬유 < 미세섬유 < 미세관 < 중간미세섬유"
+   ],
+   "answer": 0,
+   "exp": "정답은 미세섬유 < 중간미세섬유 < 굵은미세섬유 < 미세관.\n숫자와 구성 단백질까지 한 줄로: 미세섬유 7 nm(액틴) < 중간미세섬유 8~10 nm(keratin 등) < 굵은미세섬유 10~15 nm(미오신) < 미세관 25 nm(튜뷸린).\n이름이 헷갈리는 함정: “미세관”이 이름은 작아 보여도 제일 굵다. 속이 빈 빨대 모양이라 그렇다."
+  },
+  {
+   "id": "L1-29",
+   "page": 19,
+   "type": "mcq",
+   "q": "지름 10~15 nm이며, 액틴미세섬유와 상호작용해 강력한 근수축을 일으키는 섬유의 구성 단백질은?",
+   "choices": [
+    "액틴",
+    "미오신",
+    "튜뷸린",
+    "keratin",
+    "desmin"
+   ],
+   "answer": 1,
+   "exp": "정답은 미오신. 굵은미세섬유(미오신필라멘트)의 재료다.\n액틴 + 미오신 = 근수축 짝꿍. 미오신 머리가 액틴 줄을 잡아당기면 근육이 짧아진다(줄다리기).\n6강에서 굵은잔섬유(미오신)와 가는잔섬유(액틴)로 다시 나오고, 미오신 머리에 액틴·ATP 결합부위가 있다는 내용이 이어진다. desmin은 근육세포에 있지만 근수축을 일으키는 게 아니라 중간미세섬유로서 강도를 준다."
+  },
+  {
+   "id": "L1-30",
+   "page": 19,
+   "type": "mcq",
+   "q": "미세관(microtubule)에 대한 설명으로 옳지 않은 것은?",
+   "choices": [
+    "지름은 약 25 nm이다.",
+    "튜뷸린으로 구성된다.",
+    "세포뼈대의 일차적 성분이다.",
+    "세포소기관을 이동시킨다.",
+    "미오신과 직접 결합해 근수축을 일으킨다."
+   ],
+   "answer": 4,
+   "exp": "정답은 “미오신과 결합해 근수축을 일으킨다”. 미오신과 짝을 이뤄 근수축을 일으키는 것은 액틴(미세섬유)이다.\n미세관 정리: 25 nm, 튜뷸린(α·β 튜뷸린 이량체가 중합해 원섬유를 만들고, 원섬유가 모여 미세관), 세포뼈대의 일차적 성분.\n기능: 세포 모양 변화와 운동 보조, 세포소기관 이동, 방추사 형성."
+  },
+  {
+   "id": "L1-31",
+   "page": 19,
+   "type": "mcq",
+   "q": "세포분열 때 방추사를 형성해 염색체를 양쪽으로 끌어가는 세포뼈대는?",
+   "choices": [
+    "미세섬유(액틴)",
+    "중간미세섬유",
+    "굵은미세섬유(미오신)",
+    "미세관(튜뷸린)",
+    "미세융모"
+   ],
+   "answer": 3,
+   "exp": "정답은 미세관(튜뷸린).\n미세관은 세포 속 레일이다. 평소엔 세포소기관을 실어 나르고, 분열 때는 방추사가 되어 염색체를 양극으로 끌어간다.\n2강 감수분열(2차 감수분열에서 염색분체가 양극으로 이동)과 이어지는 내용이다. 미세융모는 3강에 나오는 상피 표면 구조로, 속에 액틴이 들어 있다."
+  },
+  {
+   "id": "L1-32",
+   "page": 19,
+   "type": "mcq",
+   "q": "중심소체(centriole)의 구조로 옳은 것은?",
+   "choices": [
+    "미세관 3개 묶음(triplet) 9개가 원형으로 배열되고, 한 쌍이 서로 직각으로 놓인다.",
+    "미세관 2개 묶음 9개가 원형으로 배열되고, 한 쌍이 서로 평행하게 놓인다.",
+    "미세섬유 3개 묶음 9개가 원형으로 배열된다.",
+    "중간미세섬유 12개가 원형으로 배열된다.",
+    "미세관 3개 묶음 12개가 원형으로 배열된다."
+   ],
+   "answer": 0,
+   "exp": "정답은 “미세관 3개 묶음 9개, 한 쌍이 직각”.\n중심소체 = 미세관 triplet × 9개가 원형 배열, 그런 원통 두 개가 직각으로 놓인 쌍. 숫자 “3개씩 9묶음”과 “직각”을 같이 외워야 보기를 걸러낼 수 있다.\n재료가 미세관이라는 점도 함정 포인트(미세섬유·중간미세섬유가 아님)."
+  },
+  {
+   "id": "L1-33",
+   "page": 21,
+   "type": "mcq",
+   "q": "핵의 구성 요소가 아닌 것은?",
+   "choices": [
+    "핵막",
+    "핵질",
+    "염색질",
+    "핵소체",
+    "골지체"
+   ],
+   "answer": 4,
+   "exp": "정답은 골지체. 골지체는 핵 밖 세포질에 있는 소기관이다.\n핵 = 핵막 + 핵질 + 염색질 + 핵소체. 핵은 보통 세포에서 가장 큰 구조이고, 유전정보 발현으로 단백질 합성을 조절하는 세포의 조절중추다.\n핵막을 더 쪼개면: 이중막(바깥·속핵막), 그 사이 핵주위공간, 핵구멍, 핵판."
+  },
+  {
+   "id": "L1-34",
+   "page": 21,
+   "type": "mcq",
+   "q": "핵소체(nucleolus)의 기능은?",
+   "choices": [
+    "mRNA를 번역해 단백질을 만든다.",
+    "rRNA를 합성하고 리보솜 소단위를 조립한다.",
+    "염색질을 속핵막에 결합시킨다.",
+    "핵 안팎으로 물질 이동을 허용한다.",
+    "비활성 X 염색체를 응축시킨다."
+   ],
+   "answer": 1,
+   "exp": "정답은 rRNA 합성과 리보솜 소단위 조립.\n핵소체는 막이 없는 리보솜 부품 공장이다. 만든 부품(작은·큰 소단위)은 핵구멍으로 내보내고, 세포분열 때는 사라진다.\n오답 출처: 번역 = 리보솜, 염색질을 속핵막에 결합 = 핵판, 핵 안팎 물질 이동 = 핵구멍, 비활성 X 염색체 = 바소체."
+  },
+  {
+   "id": "L1-35",
+   "page": 21,
+   "type": "mcq",
+   "q": "핵막에 대한 설명으로 옳지 않은 것은?",
+   "choices": [
+    "바깥핵막과 속핵막의 이중막이다.",
+    "두 막 사이에 핵주위공간이 있다.",
+    "핵구멍은 바깥핵막과 속핵막이 융합되어 만들어진다.",
+    "핵판은 속핵막 안쪽에서 염색질을 속핵막에 결합시킨다.",
+    "핵막은 세포질그물과 연결되지 않은 독립된 막이다."
+   ],
+   "answer": 4,
+   "exp": "정답은 “세포질그물과 연결되지 않는다”. 세포질그물(ER)은 핵막과 연속되어 있다(9쪽).\n핵막 구조 정리: 이중막(바깥·속핵막), 두 막 사이 핵주위공간, 두 막이 융합된 자리에 뚫린 핵구멍(핵 안팎 물질 이동), 속핵막 안쪽의 핵판(염색질을 속핵막에 결합).\n다른 소기관 단원의 내용을 섞어서 틀리게 만드는 전형적인 함정이다."
+  },
+  {
+   "id": "L1-36",
+   "page": 21,
+   "type": "mcq",
+   "q": "속핵막의 핵질 쪽에 있는 전자밀도가 높은 층으로, 염색질을 속핵막에 결합시키는 것은?",
+   "choices": [
+    "핵판(nuclear lamina)",
+    "핵구멍",
+    "핵주위공간",
+    "핵소체",
+    "바소체"
+   ],
+   "answer": 0,
+   "exp": "정답은 핵판.\n“전자밀도가 높다” = 전자현미경에서 진하게(어둡게) 보인다는 뜻이다. 핵판은 속핵막 안쪽에 붙어 염색질을 잡아 준다.\n핵구멍은 물질 통로, 핵주위공간은 두 핵막 사이 틈, 핵소체는 rRNA 공장, 바소체는 여성 세포의 비활성 X 염색체."
+  },
+  {
+   "id": "L1-37",
+   "page": 22,
+   "type": "mcq",
+   "q": "전자현미경 사진에서 밝게 보이며, 실이 느슨하게 풀려 있어 활발히 사용 중인 유전자가 있는 염색질은?",
+   "choices": [
+    "퍼진염색질(euchromatin)",
+    "뭉친염색질(heterochromatin)",
+    "바소체",
+    "핵소체",
+    "염색체"
+   ],
+   "answer": 0,
+   "exp": "정답은 퍼진염색질.\n염색질 = DNA가 히스톤 단백질에 감긴 DNA-단백질 복합체. 느슨하게 풀린 퍼진염색질은 밝게 보이고 읽기 쉬워 활발히 쓰이는 유전자, 꽁꽁 뭉친 뭉친염색질은 어둡게 보이고 쉬는 유전자다.\n염색질과 염색체는 같은 물질이다. 평소 풀린 상태가 염색질, 분열 때 옮기기 좋게 응축한 상태가 염색체."
+  },
+  {
+   "id": "L1-38",
+   "page": 22,
+   "type": "mcq",
+   "q": "여성의 세포 핵 가장자리에서 작고 진하게 응축된 점이 관찰되었다. 이것의 정체로 옳은 것은?",
+   "choices": [
+    "핵소체",
+    "비활성화되어 응축된 X 염색체",
+    "Y 염색체",
+    "응축된 상염색체 한 쌍",
+    "용해소체"
+   ],
+   "answer": 1,
+   "exp": "정답은 비활성 X 염색체, 즉 바소체(Barr body).\n여성은 X가 2개라 둘 다 쓰면 유전자 양이 남성의 2배가 된다. 그래서 하나를 꽁꽁 뭉쳐 꺼 두는데, 이게 핵 가장자리의 작은 점으로 보인다.\n남성(XY)에는 바소체가 없다. 5강에서 여성 호중구의 약 3%에 보이는 북채 모양 바소체로 다시 나온다."
+  },
+  {
+   "id": "L1-39",
+   "page": 22,
+   "type": "mcq",
+   "q": "사람 체세포의 염색체 구성으로 옳은 것은?",
+   "choices": [
+    "22쌍 상염색체 + 1쌍 성염색체",
+    "23쌍 상염색체 + 1쌍 성염색체",
+    "22개 상염색체 + 1개 성염색체",
+    "23쌍 상염색체",
+    "44쌍 상염색체 + 2쌍 성염색체"
+   ],
+   "answer": 0,
+   "exp": "정답은 22쌍 상염색체 + 1쌍 성염색체 = 총 23쌍, 46개.\n상염색체(autosome)는 남녀 공통, 성염색체(sex chromosome)는 성별을 정한다(여성 XX, 남성 XY).\n“22개 + 1개 = 23개”는 생식세포(정자·난자)의 염색체 수다. 2강 감수분열에서 46 → 23으로 줄어드는 내용과 연결된다."
+  },
+  {
+   "id": "L1-40",
+   "page": 23,
+   "type": "mcq",
+   "q": "내부 공간을 채우고 구조적 지지를 제공하는 조직은?",
+   "choices": [
+    "상피조직",
+    "결합조직",
+    "근육조직",
+    "신경조직",
+    "샘상피"
+   ],
+   "answer": 1,
+   "exp": "정답은 결합조직.\n4대 조직과 기능: 상피 = 노출된 표면을 덮어 보호, 내부 통로와 공간을 둘러쌈, 샘상피는 분비 / 결합 = 내부 공간 채움, 구조적 지지 / 근육 = 수축으로 움직임(뼈대근·민무늬근·심장근) / 신경 = 전기 자극, 정보 전달.\n비유: 상피 = 벽지·타일, 결합 = 콘크리트, 근육 = 모터, 신경 = 전선.\n조직의 정의: 세포 집단과 세포사이물질이 모여 특수한 구조나 기능을 갖춘 것. 작년 서술형에 “4대 조직”이 그대로 나왔다."
+  },
+  {
+   "id": "L1-41",
+   "page": 24,
+   "type": "mcq",
+   "q": "광학현미경의 해상력은?",
+   "choices": [
+    "0.2 mm",
+    "0.2 μm",
+    "0.2 nm",
+    "2 μm",
+    "20 nm"
+   ],
+   "answer": 1,
+   "exp": "정답은 0.2 μm.\n해상력 = 두 점을 두 개로 구별할 수 있는 최소 거리. 숫자가 작을수록 더 세밀하게 보인다.\n맨눈 0.2 mm → 광학현미경 0.2 μm → 전자현미경 0.2 nm. 앞자리 0.2는 셋 다 같고 단위만 1000배씩 작아진다."
+  },
+  {
+   "id": "L1-42",
+   "page": 24,
+   "type": "mcq",
+   "q": "다음 중 가시광선이 아닌 것(비가시광선)을 이용하는 현미경은?",
+   "choices": [
+    "광학현미경",
+    "편광현미경",
+    "위상차현미경",
+    "공초점레이저주사현미경",
+    "전자현미경"
+   ],
+   "answer": 4,
+   "exp": "정답은 전자현미경. 빛 대신 전자를 쏜다.\n현미경 분류: 가시광선 이용 = 광학, 편광, 위상차, 암시야·형광, 공초점레이저주사 / 비가시광선 이용 = 자외선, 전자, X선, 원자현미경 / 컴퓨터 이용 = 가상현미경.\n“레이저”가 들어가서 헷갈릴 수 있지만 공초점레이저주사현미경은 가시광선 쪽이다."
+  },
+  {
+   "id": "L1-43",
+   "page": 25,
+   "type": "mcq",
+   "q": "살아 있는 백혈구의 아메바운동을 염색 없이 관찰하는 데 쓰는 현미경은?",
+   "choices": [
+    "투과전자현미경",
+    "주사전자현미경",
+    "위상차현미경",
+    "자외선현미경",
+    "X선현미경"
+   ],
+   "answer": 2,
+   "exp": "정답은 위상차현미경.\n살아 있는 세포는 거의 투명해서 그냥 보면 잘 안 보인다. 위상차현미경은 빛이 시료를 통과할 때 부위마다 꺾이는 정도(굴절률)가 다른 것을 밝고 어두움으로 바꿔 보여 준다. 그래서 죽이거나 염색하지 않고 움직이는 세포(백혈구의 아메바운동, 포식작용)를 볼 수 있다.\n전자현미경은 고정해서 죽인 표본을 보기 때문에 살아 있는 세포 관찰에는 못 쓴다."
+  },
+  {
+   "id": "L1-44",
+   "page": 25,
+   "type": "mcq",
+   "q": "몸에서 갓 떼어 낸, 아직 살아 있는 세포를 염색하는 방법은?",
+   "choices": [
+    "생체염색",
+    "초생체염색",
+    "H&E 염색",
+    "면역세포화학적 염색",
+    "효소조직화학법"
+   ],
+   "answer": 1,
+   "exp": "정답은 초생체염색.\n생체염색 = 살아 있는 동물 몸에 독성 없는 염료를 주입 / 초생체염색 = 몸에서 막 떼어 낸 살아 있는 세포를 염색. 둘 다 살아 있는 세포를 대상으로 하지만, 몸 안이냐 밖이냐가 다르다.\nH&E 염색과 조직화학법은 고정한 죽은 조직에 하는 염색이다."
+  },
+  {
+   "id": "L1-45",
+   "page": 25,
+   "type": "mcq",
+   "q": "초생체염색에서 염료와 염색되는 구조의 짝으로 옳은 것은?",
+   "choices": [
+    "Janus green – 사립체",
+    "Janus green – 용해소체",
+    "neutral red – 사립체",
+    "neutral red – 신경세포",
+    "trypan blue – 사립체"
+   ],
+   "answer": 0,
+   "exp": "정답은 Janus green – 사립체.\n초생체염색 3쌍: Janus green → 사립체, neutral red → 용해소체, methylene blue → 신경세포.\n생체염색: trypan blue, methylene blue → 주로 큰포식세포.\nmethylene blue는 생체염색(큰포식세포)과 초생체염색(신경세포) 양쪽에 나와서 함정으로 쓰기 좋다."
+  },
+  {
+   "id": "L1-46",
+   "page": 26,
+   "type": "mcq",
+   "q": "광학현미경 표본을 만들 때 고정(fixation)에 쓰는 물질이 아닌 것은?",
+   "choices": [
+    "formalin",
+    "alcohol",
+    "mercuric chloride",
+    "osmic acid",
+    "paraffin"
+   ],
+   "answer": 4,
+   "exp": "정답은 paraffin. 파라핀은 고정이 아니라 침투·포매 단계에서 조직을 단단하게 굳히는 데 쓴다.\n고정 = 세포의 원형질을 그대로 보존하는 과정(썩지 않게 멈춤). 고정액: formalin, alcohol, mercuric chloride, osmic acid."
+  },
+  {
+   "id": "L1-47",
+   "page": 26,
+   "type": "mcq",
+   "q": "광학현미경 표본 제작 순서로 옳은 것은?",
+   "choices": [
+    "고정 → 탈수 → 투명화 → 침투 → 포매 → 절단",
+    "고정 → 투명화 → 탈수 → 침투 → 포매 → 절단",
+    "탈수 → 고정 → 투명화 → 포매 → 침투 → 절단",
+    "고정 → 탈수 → 침투 → 투명화 → 포매 → 절단",
+    "고정 → 탈수 → 투명화 → 포매 → 침투 → 절단"
+   ],
+   "answer": 0,
+   "exp": "정답은 고정 → 탈수 → 투명화 → 침투 → 포매 → 절단 (그 뒤 염색 → 봉입).\n이유로 외우면 안 헷갈린다. 조직은 물컹해서 파라핀(양초)에 굳혀야 얇게 썰 수 있다. 그런데 파라핀은 기름이라 물과 안 섞인다. 그래서 고정(멈춤) → 탈수(알코올로 물 빼기) → 투명화(유기용매로 알코올 빼기) → 침투(녹인 파라핀 스며들게, 52~60°C) → 포매(굳히기) → 절단(microtome, 3~10 μm).\n침투(스며들게)가 먼저, 포매(굳히기)가 나중."
+  },
+  {
+   "id": "L1-48",
+   "page": 26,
+   "type": "mcq",
+   "q": "표본을 ultramicrotome으로 수십 nm 두께로 아주 얇게 잘라, 전자가 통과하게 해서 세포 내부 단면을 보는 방법은?",
+   "choices": [
+    "투과전자현미경법(TEM)",
+    "주사전자현미경법(SEM)",
+    "위상차현미경법",
+    "형광현미경법",
+    "편광현미경법"
+   ],
+   "answer": 0,
+   "exp": "정답은 투과전자현미경법(TEM, Transmission).\nTEM = 전자가 아주 얇은 조각을 뚫고 지나감 → 세포 속 단면(엑스레이 사진 느낌). SEM(Scanning) = 전자를 표면에 훑듯이 쏘고 튕겨 나온 전자를 검출 → 표면이 입체로 보임(항공사진 느낌).\n광학현미경 절단은 microtome으로 3~10 μm, TEM은 ultramicrotome으로 수십 nm. 전자현미경은 미세구조가 보존되도록 고정액을 최대한 빨리 침투시킨다."
+  },
+  {
+   "id": "L1-49",
+   "page": 28,
+   "type": "mcq",
+   "q": "H&E 염색에서 핵이 청보라색으로 보이는 이유는?",
+   "choices": [
+    "핵산이 산성 염료인 eosin과 결합하기 때문",
+    "핵산이 염기성 염료인 hematoxylin과 결합하기 때문",
+    "핵의 단백질이 eosin과 결합하기 때문",
+    "세포질이 염기성이기 때문",
+    "항원-항체 반응이 일어나기 때문"
+   ],
+   "answer": 1,
+   "exp": "정답은 핵산이 염기성 염료 hematoxylin과 결합하기 때문.\n반대끼리 끌린다: 산성인 핵산(DNA·RNA)은 염기성 염료 hematoxylin을 끌어당겨 청보라색(이런 구조를 호염기성이라 함). 단백질이 많은 세포질은 산성 염료 eosin에 물들어 분홍색.\nH&E = Hematoxylin(청색, 염기성) & Eosin(붉은색, 산성). 5강의 호산구·호염기구 이름도 이 원리에서 나온다."
+  },
+  {
+   "id": "L1-50",
+   "page": 28,
+   "type": "mcq",
+   "q": "조직을 갈지 않고 원래 위치에서 특정 DNA·RNA를 찾아내는 방법은?",
+   "choices": [
+    "효소조직화학법",
+    "면역세포화학적 염색",
+    "in situ hybridization 조직화학법",
+    "H&E 염색",
+    "위상차현미경법"
+   ],
+   "answer": 2,
+   "exp": "정답은 in situ hybridization(하이브리드조직화학법).\nin situ = “제자리에서”. 조직을 갈지 않고 원래 위치 그대로 특정 핵산(DNA, RNA)을 검출해 유전자 발현 패턴을 본다. 형광으로 표시하면 FISH.\n면역세포화학적 염색은 항원-항체 반응(열쇠-자물쇠)으로 특정 단백질을 찾는다. 찾는 대상이 핵산이냐 단백질이냐로 구분하자."
+  }
+ ]
+}
+</script>
+
+<script>
+(function(){
+  const LECTURE_META = {1:'세포학, 조직학 서론', 2:'발생학 서론', 3:'상피와 고유결합조직', 4:'연골과 뼈', 5:'혈액', 6:'근육조직'};
+  const KEY = 'ingugi-quiz:v1';
+  const NUM = ['①','②','③','④','⑤','⑥'];
+
+  // 데이터 블록 모으기
+  const blocks = [];
+  document.querySelectorAll('script.quiz-data').forEach(el => {
+    try { blocks.push(JSON.parse(el.textContent)); } catch(e) { console.error('데이터 블록 오류', e); }
+  });
+  const Q = [];
+  blocks.sort((a,b) => a.lecture - b.lecture).forEach(b => {
+    if (b.title) LECTURE_META[b.lecture] = b.title;
+    b.questions.forEach(q => Q.push(Object.assign({ lecture:b.lecture }, q)));
+  });
+  const byId = Object.fromEntries(Q.map(q => [q.id, q]));
+  const available = [...new Set(Q.map(q => q.lecture))];
+
+  let store = { records:{}, session:null, prefs:{ lectures:'all', mode:'all', order:'seq' } };
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      store.records = s.records || {};
+      store.session = s.session || null;
+      if (s.prefs) store.prefs = Object.assign(store.prefs, s.prefs);
+      if (!Array.isArray(store.prefs.lectures) && store.prefs.lectures !== 'all') store.prefs.lectures = 'all';
+    }
+  } catch(e) {}
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e) {} }
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const $ = s => document.querySelector(s);
+  const main = $('#main'), strip = $('#strip'), tally = $('#tally');
+
+  let list = [], idx = 0, perm = null, picked = null, stripOpen = false;
+
+  // 강 선택: 전체 + 1~6강 (문제가 없는 강은 비활성)
+  function selectedLectures(){
+    const L = store.prefs.lectures;
+    if (L === 'all') return available.slice();
+    const sel = L.filter(n => available.includes(n));
+    return sel.length ? sel : available.slice();
+  }
+  function renderLectureSeg(){
+    const seg = $('#lectureSeg');
+    const isAll = store.prefs.lectures === 'all';
+    let html = `<button data-v="all" aria-pressed="${isAll}">전체</button>`;
+    Object.keys(LECTURE_META).map(Number).sort((a,b)=>a-b).forEach(n => {
+      const has = available.includes(n);
+      const on = !isAll && store.prefs.lectures.includes(n);
+      html += `<button data-v="${n}" aria-pressed="${on}" ${has ? '' : 'disabled title="준비 중"'}>${n}강</button>`;
+    });
+    seg.innerHTML = html;
+  }
+  $('#lectureSeg').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || b.disabled) return;
+    if (b.dataset.v === 'all') store.prefs.lectures = 'all';
+    else {
+      const n = +b.dataset.v;
+      let cur = store.prefs.lectures === 'all' ? [] : store.prefs.lectures.slice();
+      cur = cur.includes(n) ? cur.filter(x => x !== n) : cur.concat(n).sort((a,b)=>a-b);
+      store.prefs.lectures = cur.length ? cur : 'all';
+    }
+    rebuild(true);
+  });
+  function bindSeg(el, k){
+    el.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      store.prefs[k] = b.dataset.v; rebuild(true);
+    });
+  }
+  bindSeg($('#modeSeg'),'mode'); bindSeg($('#orderSeg'),'order');
+  function syncSegs(){
+    renderLectureSeg();
+    [['#modeSeg','mode'],['#orderSeg','order']].forEach(([s,k]) => {
+      document.querySelectorAll(s + ' button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === store.prefs[k])));
+    });
+  }
+
+  function sessionKey(){ const p = store.prefs; return [selectedLectures().join(','), p.mode, p.order].join('|'); }
+  function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function pool(){ const L = selectedLectures(); return Q.filter(q => L.includes(q.lecture)); }
+  function status(id){ const r = store.records[id]; return r ? (r.last ? 'o' : 'x') : ''; }
+
+  function rebuild(fresh){
+    const p = store.prefs, k = sessionKey(), s = store.session;
+    if (!fresh && s && s.key === k && Array.isArray(s.list) && s.list.length && s.list.every(id => byId[id])) {
+      list = s.list; idx = Math.min(s.idx || 0, list.length);
+    } else {
+      let qs = pool();
+      if (p.mode === 'wrong') qs = qs.filter(q => status(q.id) === 'x');
+      if (p.mode === 'unseen') qs = qs.filter(q => !store.records[q.id]);
+      list = qs.map(q => q.id);
+      if (p.order === 'rand') list = shuffle(list);
+      idx = 0;
+    }
+    store.session = { key:k, list, idx };
+    save(); syncSegs(); newQuestion(); render();
+  }
+  function newQuestion(){
+    picked = null;
+    const q = byId[list[idx]];
+    perm = q ? shuffle(q.choices.map((_, i) => i)) : null;
+  }
+
+  function renderTally(){
+    const ids = pool().map(q => q.id);
+    let o = 0, x = 0;
+    ids.forEach(id => { const s = status(id); if (s === 'o') o++; else if (s === 'x') x++; });
+    tally.innerHTML = `<span class="o">맞힘 ${o}</span><span class="x">틀림 ${x}</span><span>안 풂 ${ids.length - o - x}</span>`;
+  }
+  function renderStrip(){
+    strip.innerHTML = list.map((id, i) =>
+      `<button class="cell ${status(id)} ${i === idx ? 'cur' : ''}" data-i="${i}" aria-label="${i + 1}번">${i + 1}</button>`
+    ).join('');
+    const many = list.length > 60;
+    strip.classList.toggle('folded', many && !stripOpen);
+    $('#stripToggle').hidden = !many;
+    $('#stripToggle').textContent = stripOpen ? '접기' : '펼치기';
+    $('#stripInfo').textContent = list.length ? `이번 세트 ${list.length}문제` : '';
+    strip.hidden = list.length === 0;
+  }
+  $('#stripToggle').onclick = () => { stripOpen = !stripOpen; renderStrip(); };
+  strip.addEventListener('click', e => {
+    const b = e.target.closest('.cell'); if (!b) return;
+    idx = +b.dataset.i; store.session.idx = idx; save(); newQuestion(); render();
+  });
+
+  function expHtml(q){
+    const paras = String(q.exp).split('\n').filter(Boolean).map(t => `<p>${esc(t)}</p>`).join('');
+    return `<div class="exp">${paras}<span class="pg">자습서 ${q.page}쪽</span></div>`;
+  }
+
+  function render(){
+    renderTally(); renderStrip();
+    const p = store.prefs;
+    if (list.length === 0){
+      const msg = p.mode === 'wrong' ? '틀린 문제가 없어요. 전체에서 먼저 풀어 보세요.'
+                : p.mode === 'unseen' ? '고른 범위는 전부 한 번씩 풀었어요.'
+                : '고른 범위에 문제가 없어요.';
+      main.innerHTML = `<div class="card empty"><p>${msg}</p><button class="btn primary" id="toAll">전체 풀기</button></div>`;
+      $('#toAll').onclick = () => { store.prefs.mode = 'all'; rebuild(true); };
+      return;
+    }
+    if (idx >= list.length){
+      let o = 0; list.forEach(id => { if (status(id) === 'o') o++; });
+      const wrongLeft = list.filter(id => status(id) === 'x').length;
+      main.innerHTML = `<div class="card summary">
+        <div class="big">${o} / ${list.length}</div>
+        <p>이번 세트에서 맞힌 문제</p>
+        <div class="row">
+          ${wrongLeft ? `<button class="btn primary" id="redoWrong">틀린 ${wrongLeft}문제 다시 풀기</button>` : ''}
+          <button class="btn" id="again">처음부터 다시</button>
+        </div></div>`;
+      const rw = $('#redoWrong'); if (rw) rw.onclick = () => { store.prefs.mode = 'wrong'; rebuild(true); };
+      $('#again').onclick = () => rebuild(true);
+      return;
+    }
+    const q = byId[list[idx]];
+    const answered = picked !== null;
+    const correct = answered && perm[picked] === q.answer;
+    main.innerHTML = `<article class="card">
+      <p class="meta">${q.lecture}강 ${esc(LECTURE_META[q.lecture] || '')} — ${idx + 1} / ${list.length}</p>
+      <p class="q">${esc(q.q)}</p>
+      <div class="choices">
+        ${perm.map((orig, d) => {
+          let cls = '';
+          if (answered) cls = orig === q.answer ? 'right' : (d === picked ? 'wrong' : 'dim');
+          return `<button class="choice ${cls}" data-d="${d}" ${answered ? 'disabled' : ''}><span class="n">${NUM[d]}</span><span>${esc(q.choices[orig])}</span></button>`;
+        }).join('')}
+      </div>
+      ${answered ? `<p class="verdict ${correct ? 'o' : 'x'}">${correct ? '정답' : '오답 — 정답은 ' + NUM[perm.indexOf(q.answer)]}</p>${expHtml(q)}` : ''}
+      <div class="nav">
+        <button class="btn" id="prev" ${idx === 0 ? 'disabled' : ''}>이전</button>
+        <button class="btn primary" id="next">${answered ? (idx === list.length - 1 ? '결과 보기' : '다음 문제') : '건너뛰기'}</button>
+      </div>
+    </article>`;
+    main.querySelectorAll('.choice').forEach(b => b.onclick = () => choose(+b.dataset.d));
+    $('#prev').onclick = prev; $('#next').onclick = next;
+  }
+
+  function choose(d){
+    if (picked !== null) return;
+    const q = byId[list[idx]];
+    if (!q || d >= perm.length) return;
+    picked = d;
+    const ok = perm[d] === q.answer;
+    const r = store.records[q.id] || { tries:0, wrong:0 };
+    r.tries++; if (!ok) r.wrong++; r.last = ok; r.ts = Date.now();
+    store.records[q.id] = r;
+    save(); render();
+    const v = main.querySelector('.verdict');
+    if (v && v.getBoundingClientRect().bottom > window.innerHeight) v.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+  function next(){ if (idx >= list.length) return; idx++; store.session.idx = idx; save(); newQuestion(); render(); window.scrollTo({ top:0 }); }
+  function prev(){ if (idx <= 0) return; idx--; store.session.idx = idx; save(); newQuestion(); render(); }
+
+  document.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if ($('#moveDlg').open) return;
+    if (/^[1-6]$/.test(e.key)) choose(+e.key - 1);
+    else if (e.key === 'Enter' || e.key === 'ArrowRight') { if (document.activeElement && document.activeElement.classList.contains('cell')) return; e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft') prev();
+  });
+
+  $('#reset').onclick = () => {
+    if (!confirm('푼 기록을 모두 지울까요?')) return;
+    store.records = {}; store.session = null; save(); rebuild(true);
+  };
+
+  // 기록 옮기기
+  const dlg = $('#moveDlg'), ta = $('#moveText');
+  $('#exportBtn').onclick = () => { ta.value = JSON.stringify({ records: store.records }); dlg.showModal(); };
+  $('#closeDlg').onclick = () => dlg.close();
+  $('#copyBtn').onclick = async () => {
+    ta.select();
+    try { await navigator.clipboard.writeText(ta.value); $('#copyBtn').textContent = '복사됨'; }
+    catch(e) { document.execCommand && document.execCommand('copy'); $('#copyBtn').textContent = '복사됨'; }
+    setTimeout(() => $('#copyBtn').textContent = '복사', 1500);
+  };
+  $('#importBtn').onclick = () => {
+    try {
+      const data = JSON.parse(ta.value);
+      if (!data || typeof data.records !== 'object') throw new Error();
+      Object.entries(data.records).forEach(([id, r]) => {
+        const cur = store.records[id];
+        if (!cur || (r.ts || 0) > (cur.ts || 0)) store.records[id] = r;
+      });
+      save(); dlg.close(); rebuild(true);
+    } catch(e) { alert('붙여 넣은 글자를 읽을 수 없어요. ‘기록 옮기기’에서 복사한 글자 전체를 붙여 넣으세요.'); }
+  };
+
+  rebuild(false);
+})();
+</script>
+</body>
+</html>
