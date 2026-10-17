@@ -532,6 +532,9 @@
   .st-weak span { font-size: 1.8rem; line-height: 1; padding: 8px 10px; border-radius: 12px; background: rgba(240,68,82,0.07); color: var(--text); }
   .st-hint { font-size: 0.78rem; color: var(--text-muted); margin-top: 12px; }
   .st-empty { font-size: 0.85rem; color: var(--text-muted); }
+  .st-model-row { display: flex; align-items: center; gap: 14px; }
+  .st-model-row b { font-size: 1.8rem; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .st-model-row span { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); line-height: 1.5; word-break: keep-all; }
   .weak-meter { display: flex; gap: 2px; margin-top: 8px; }
   .weak-meter i { width: 4px; height: 10px; border-radius: 2px; background: var(--border); }
   .weak-meter.lv1 i:nth-child(1), .weak-meter.lv2 i:nth-child(-n+2), .weak-meter.lv3 i { background: #F59E0B; }
@@ -1145,7 +1148,7 @@ let qType = 'hanja';
 const TARGET_CHUNK_SIZE = 25;
 
 /* ▼ 앱 버전: 새 파일을 올릴 때마다 바뀜. 열려 있는 앱이 GitHub의 최신 버전과 비교해 업데이트를 알려줌 */
-const APP_VERSION = '2026.10.17-2';
+const APP_VERSION = '2026.10.17-3';
 
 /* ▼▼▼ 내 '한자DB' 시트의 웹 앱 주소 ▼▼▼
    여기에 넣어두면 어느 기기에서 열어도 자동으로 연결됩니다.
@@ -2761,7 +2764,8 @@ function filterByTarget(list, target, mode) {
 }
 // 추천은 약한 한자부터
 function sortByWeakness(list, mode) {
-  const sc = new Map(list.map(w => { const i = weakInfo(w, mode); return [w.id, i.need + 0.02 * i.cx]; }));
+  const W = getModel().w;
+  const sc = new Map(list.map(w => [w.id, predictWrong(w, mode, W) + 0.08 * (dayRand(w.id) - 0.5)]));
   return list.sort((a, b) => sc.get(b.id) - sc.get(a.id));
 }
 
@@ -2960,6 +2964,11 @@ function statsHTML() {
       <div class="st-bars2">${bars}</div>
       <div class="st-legend"><span><i class="good"></i>정답률 80%↑</span><span><i class="mid"></i>60%↑</span><span><i class="low"></i>그 아래</span></div>
     </div>
+    ${(() => { const acc = modelAccuracy(), m = getModel(); return `<div class="setup-group st-box st-model">
+      <div class="st-title">추천 예측</div>
+      <div class="st-model-row"><b>${acc ? acc.pct + '%' : '–'}</b><span>${acc ? `최근 ${acc.n}문제 중 '틀릴 것 같다/맞힐 것 같다' 예측이 맞은 비율` : '10문제 이상 풀면 표시돼요'}</span></div>
+      <div class="st-hint">채점할 때마다 추천 기준이 나에게 맞게 조금씩 바뀌어요 · 지금까지 ${m.n}번 학습</div>
+    </div>`; })()}
     <div class="setup-group st-box">
       <div class="st-title">범위별 익힘</div>
       ${rows || '<div class="st-empty">범위가 없어요</div>'}
@@ -3187,7 +3196,8 @@ function markAnswer(isCorrect) {
   if (!item) return;
   const w = wordList.find(w => w.id === item.id);
   if (w) {
-    quizHistory.push({ type: 'mark', id: w.id, correct: isCorrect, index: currentIndex, prev: snapshot(w), day: TODAY() });
+    const mprev = learnFrom(featsOf(w, qType), !isCorrect);
+    quizHistory.push({ type: 'mark', id: w.id, correct: isCorrect, index: currentIndex, prev: snapshot(w), day: TODAY(), mprev });
     addLog(TODAY(), 1, isCorrect ? 1 : 0);
     setResult(w, isCorrect);
     cardAnim = isCorrect ? 'ok' : 'no';
@@ -3242,7 +3252,10 @@ function prevQuestion() {
   }
   const w = wordList.find(x => x.id === last.id);
   if (w) { if (last.type === 'mark') restoreGroup(w, last.prev); else Object.assign(w, last.prev); }
-  if (last.type === 'mark') addLog(last.day || TODAY(), -1, last.correct ? -1 : 0);
+  if (last.type === 'mark') {
+    addLog(last.day || TODAY(), -1, last.correct ? -1 : 0);
+    if (last.mprev) { const m = getModel(); m.w = { ...last.mprev }; m.n = Math.max(0, m.n - 1); m.log = m.log.slice(0, -1); putModel(m); }
+  }
   saveToStorage(); renderWrongNotes();
   if (last.type === 'hide') renderSources();
   currentIndex = typeof last.index === 'number' ? last.index : Math.max(0, currentIndex - 1);
@@ -3338,9 +3351,9 @@ function complexity(h) {
 // min = 이 정도는 복습이 필요해야 함, top = 고른 범위 한자 중 많아야 이만큼(비율)까지만
 // → 단계끼리, 그리고 1단계와 '전체' 사이에 항상 뚜렷한 차이가 남
 const REC_LEVELS = {
-  1: { min: 0.35, top: 0.5,  name: '넓게', desc: '고른 범위의 절반 이내 · 흐려지기 시작한 한자까지' },
-  2: { min: 0.55, top: 0.25, name: '균형', desc: '고른 범위의 4분의 1 이내 · 잊어가거나 자주 틀리는 한자' },
-  3: { min: 0.75, top: 0.1,  name: '집중', desc: '고른 범위의 10분의 1 이내 · 지금 꼭 봐야 하는 한자만' }
+  1: { th: 0.30, lo: 0.30, hi: 0.69, name: '넓게', desc: '고른 범위의 30~70% · 조금이라도 틀릴 것 같은 한자' },
+  2: { th: 0.45, lo: 0.20, hi: 0.49, name: '균형', desc: '고른 범위의 20~50% · 틀릴 가능성이 높은 한자' },
+  3: { th: 0.60, lo: 0.00, hi: 0.24, name: '집중', desc: '고른 범위의 25% 미만 · 틀릴 가능성이 가장 높은 한자만' }
 };
 let recLevel = Number(localStorage.getItem('hanja_rec_level') || 2);
 function setRecLevel(n) {
@@ -3382,26 +3395,107 @@ function weakInfo(w, mode) {
   if (!reasons.length) reasons.push(`${st.s}번 중 ${st.s - st.w}번 맞힘`);
   return { unseen: false, need, recall, half, days, cx, reasons: reasons.slice(0, 2), st };
 }
-// 범위 안에서 추천 고르기: 필요도 순으로 줄 세운 뒤 기준과 비율 상한을 둘 다 적용
+/* ---------- 추천 모델 (틀릴 확률 예측) ----------
+   틀릴 확률 = 시그모이드( Σ 가중치 × 특징 )
+   특징 (0~1):  틀린 비율 ↑ · 반대 유형에서 틀린 비율 ↑ · 마지막으로 푼 뒤 지난 날 ↑ · 획 복잡도 ↑
+               뜻 개수 ↑ · 힌트 있음 ↑ · 푼 횟수 적음 ↑ · 연속 맞힘 ↓ · 여러 범위에 겹침 ↓ · 처음 보는 한자
+   채점할 때마다: (실제 결과 − 예측) 만큼 가중치를 조금씩 고침 (온라인 학습)
+     → 높게 추천했는데 맞히면 그런 특징의 가중치가 내려가고, 낮게 봤는데 틀리면 올라감
+   가중치는 처음 값(사전 지식)에서 너무 멀어지지 않게 살짝 끌어당김 */
+const FEATS = ['bias', 'err', 'cross', 'recent', 'cx', 'means', 'hint', 'few', 'streak', 'dup', 'unseen'];
+const PRIOR_W = { bias: -2.4, err: 2.6, cross: 0.9, recent: 1.4, cx: 0.8, means: 0.4, hint: 0.3, few: 0.6, streak: -1.6, dup: -0.5, unseen: -0.3 };
+const FEAT_LABEL = { err: '자주 틀림', cross: '반대 유형에서 틀림', recent: '오래 안 봄', cx: '획이 많음', means: '뜻이 여러 개', hint: '힌트 있음', few: '몇 번 안 풂', unseen: '처음 보는 한자' };
+const MODEL_PREFIX = '__model__|';
+let modelCache = null, modelKey = null;
+function getModel() {
+  const t = tombstones.find(x => x.startsWith(MODEL_PREFIX)) || '';
+  if (t === modelKey && modelCache) return modelCache;
+  let m = null;
+  try { m = t ? JSON.parse(t.slice(MODEL_PREFIX.length)) : null; } catch(e) {}
+  m = m || {};
+  m.w = { ...PRIOR_W, ...(m.w || {}) };
+  m.n = m.n || 0;            // 학습한 횟수
+  m.log = m.log || [];       // 최근 결과 [예측 확률(%), 틀림 1/맞힘 0]
+  modelCache = m; modelKey = t;
+  return m;
+}
+function putModel(m) {
+  tombstones = tombstones.filter(x => !x.startsWith(MODEL_PREFIX));
+  const w = {}; FEATS.forEach(k => w[k] = Math.round(m.w[k] * 1000) / 1000);
+  tombstones.push(MODEL_PREFIX + JSON.stringify({ w, n: m.n, log: m.log.slice(-200) }));
+}
+function featsOf(w, mode) {
+  const st = (mode === 'mean' ? w.sH : w.sM) || EMPTY_STAT();
+  const ot = (mode === 'mean' ? w.sM : w.sH) || EMPTY_STAT();
+  const s = st.s || 0;
+  const days = s ? (st.t ? Math.max(0, TODAY() - st.t) : 3) : 0;   // 날짜 없는 옛 기록은 3일, 처음 보는 한자는 0
+  const nMeans = meansOf(w).join(' / ').split(/\s*\/\s*/).filter(Boolean).length;
+  return {
+    bias: 1,
+    err: (st.w + 1) / (s + 2),
+    cross: ot.s ? (ot.w + 1) / (ot.s + 2) : 0,                    // 반대 유형을 안 풀어 봤으면 정보 없음
+    recent: Math.min(1, Math.log1p(days) / Math.log(31)),
+    cx: complexity(w.hanja),
+    means: Math.min(1, (nMeans - 1) / 2),
+    hint: str(w.hint) ? 1 : 0,
+    few: 1 / (1 + s),
+    streak: Math.min(st.k || 0, 5) / 5,
+    dup: Math.min(1, (groupOf(w).filter(x => !x.hidden).length - 1) / 3),
+    unseen: s ? 0 : 1
+  };
+}
+function predictWrong(w, mode, W = getModel().w) {
+  const x = featsOf(w, mode);
+  let z = 0; FEATS.forEach(k => z += W[k] * x[k]);
+  return 1 / (1 + Math.exp(-z));
+}
+// 이 한자를 왜 추천했는지: 확률을 가장 많이 올린 특징 2개
+function recReasons(w, mode) {
+  const x = featsOf(w, mode), W = getModel().w;
+  return Object.keys(FEAT_LABEL).map(k => [k, W[k] * x[k]]).filter(([, v]) => v > 0.15)
+    .sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k]) => FEAT_LABEL[k]);
+}
+// 채점 결과로 배우기 (채점 '전' 상태의 특징을 씀)
+function learnFrom(x, wrong) {
+  const m = getModel();
+  let z = 0; FEATS.forEach(k => z += m.w[k] * x[k]);
+  const p = 1 / (1 + Math.exp(-z)), y = wrong ? 1 : 0;
+  const lr = 0.06, pull = 0.003;
+  const before = { ...m.w };
+  FEATS.forEach(k => { m.w[k] += lr * (y - p) * x[k] + pull * (PRIOR_W[k] - m.w[k]); });
+  m.n++;
+  m.log = [...m.log, [Math.round(p * 100), y]].slice(-200);
+  putModel(m);
+  return before;
+}
+// 최근 예측이 얼마나 맞았나: 50% 이상 틀린다고 본 것이 틀렸거나, 50% 미만으로 본 것을 맞혔으면 적중
+function modelAccuracy() {
+  const log = getModel().log;
+  if (log.length < 10) return null;
+  const hit = log.filter(([p, y]) => (p >= 50) === (y === 1)).length;
+  return { pct: Math.round(hit / log.length * 100), n: log.length };
+}
+// 날마다 바뀌는 고정 난수 (같은 날엔 같은 추천 목록 → 개수 표시와 실제가 일치)
+const dayRand = id => { const v = Math.sin(Number(id) * 12.9898 + TODAY() * 78.233) * 43758.5453; return v - Math.floor(v); };
+
+// 범위 안에서 추천 고르기: 틀릴 확률(+작은 무작위) 순으로 줄 세워
+// 기준 확률 이상인 개수를 세고, 강도별 비율 범위(최소~최대) 안으로 맞춤
 function recSelect(pool, mode, level = recLevel) {
-  const L = REC_LEVELS[level];
-  const cap = Math.max(1, Math.round(pool.length * L.top));
-  return pool.map(w => ({ w, i: weakInfo(w, mode) }))
-    .filter(x => !x.i.unseen && x.i.need >= L.min)
-    .sort((a, b) => (b.i.need + 0.02 * b.i.cx) - (a.i.need + 0.02 * a.i.cx))
-    .slice(0, cap).map(x => x.w);
+  const L = REC_LEVELS[level], N = pool.length;
+  if (!N) return [];
+  const W = getModel().w;
+  const scored = pool.map(w => { const p = predictWrong(w, mode, W); return { w, p, sc: p + 0.08 * (dayRand(w.id) - 0.5) }; })
+    .sort((a, b) => b.sc - a.sc);
+  const lo = Math.ceil(N * L.lo), hi = Math.max(lo, Math.floor(N * L.hi));
+  const want = scored.filter(x => x.p >= L.th).length;
+  return scored.slice(0, Math.min(hi, Math.max(lo, want))).map(x => x.w);
 }
-// 한 단어만 볼 때 (기준만 적용)
-function isRec(w, mode, level = recLevel) {
-  const i = weakInfo(w, mode);
-  if (i.unseen) return false;
-  return i.need >= REC_LEVELS[level].min;
-}
+// 한 단어만 볼 때
+function isRec(w, mode, level = recLevel) { return predictWrong(w, mode) >= REC_LEVELS[level].th; }
 // 이 한자가 들어가는 가장 높은 강도 (0이면 추천 아님)
 function recTier(w, mode) {
-  const i = weakInfo(w, mode);
-  if (i.unseen) return 0;
-  return i.need >= 0.8 ? 3 : i.need >= 0.6 ? 2 : i.need >= 0.4 ? 1 : 0;
+  const p = predictWrong(w, mode);
+  return p >= 0.6 ? 3 : p >= 0.45 ? 2 : p >= 0.3 ? 1 : 0;
 }
 
 // 강도 선택 버튼 (학습 탭·복습 탭 공통)
@@ -3418,7 +3512,8 @@ function renderRecTiers() {
     const type = (document.querySelector('input[name="qType"]:checked') || {}).value || 'hanja';
     const pool = dedupeByHanja(wordList.filter(w => ids.has(String(w.id)) && !w.hidden));
     setup.innerHTML = recTierHTML(n => recSelect(pool, type, n).length);
-    document.getElementById('rec-tier-desc').textContent = REC_LEVELS[recLevel].desc;
+    const acc = modelAccuracy();
+    document.getElementById('rec-tier-desc').textContent = REC_LEVELS[recLevel].desc + (acc ? ` · 예측 적중 ${acc.pct}% (최근 ${acc.n}문제)` : ' · 풀수록 내게 맞춰져요');
     document.querySelectorAll('#rec-limit-seg button').forEach(b => b.classList.toggle('active', Number(b.dataset.n) === recLimit));
   }
   const rv = document.getElementById('rec-tier-review');
