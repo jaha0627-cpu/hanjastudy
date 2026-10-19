@@ -21,7 +21,7 @@ h1{font-size:1.85rem;font-weight:700;margin:8px 4px 2px;letter-spacing:-.02em}
 h1 span{color:var(--accent)}
 .sub{color:var(--soft);font-size:.9rem;margin:0 4px 16px}
 .term{font-weight:700;letter-spacing:-.005em}
-.tabs{display:flex;gap:2px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--fill);padding:4px;border-radius:12px;z-index:5;margin-bottom:12px;box-shadow:0 0 0 8px var(--bg)}
+.tabs{display:flex;gap:2px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--line);padding:4px;border-radius:12px;z-index:5;margin-bottom:12px;box-shadow:0 0 0 8px var(--bg)}
 .tabs button{flex:1;padding:12px 0;border:none;background:transparent;color:var(--soft);font:inherit;font-size:1rem;font-weight:600;border-radius:9px;cursor:pointer}
 .tabs button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .filters{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
@@ -73,6 +73,31 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .opt.right .n{background:var(--ok);color:#fff}
 .opt.wrong{background:var(--badSoft);box-shadow:inset 0 0 0 1.5px var(--bad)}
 .opt.wrong .n{background:var(--bad);color:#fff}
+.opt>span:nth-child(2){flex:1;min-width:0}
+.opt .ex{margin-left:auto;text-align:right;max-width:50%;color:var(--ink2);font-size:.92rem;line-height:1.3;padding-left:14px;border-left:1.5px solid var(--line)}
+.opt .ex b{display:block;font-weight:700}
+.opt .ex small{display:block;color:var(--soft);font-size:.78rem;font-weight:400;margin-top:2px}
+.opt.right .ex{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+.opt.wrong .ex{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 35%,transparent)}
+@media (max-width:520px){.opt{flex-wrap:wrap}.opt .ex{max-width:none;width:100%;text-align:left;margin:6px 0 0 44px;padding:6px 0 0;border-left:none;border-top:1.5px solid var(--line)}}
+@media (prefers-reduced-motion:no-preference){
+ .enter{animation:qin .32s cubic-bezier(.2,.8,.2,1) both}
+ .leave{animation:qout .17s ease-in both;pointer-events:none}
+ .flip{animation:flip .28s cubic-bezier(.2,.8,.2,1) both}
+ .opt .ex{animation:exin .3s cubic-bezier(.2,.8,.2,1) both}
+ .opt.wrong{animation:shake .32s ease}
+ .opt.right .n{animation:pop .3s ease}
+ .q.enter .opt{animation:optin .34s cubic-bezier(.2,.8,.2,1) both}
+ .q.enter .opt:nth-of-type(2){animation-delay:.04s}.q.enter .opt:nth-of-type(3){animation-delay:.08s}.q.enter .opt:nth-of-type(4){animation-delay:.12s}
+ .bar i{transition:width .4s cubic-bezier(.2,.8,.2,1)}
+}
+@keyframes qin{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes qout{to{opacity:0;transform:translateX(-36px)}}
+@keyframes flip{from{opacity:.4;transform:rotateY(70deg) scale(.97)}to{opacity:1;transform:none}}
+@keyframes exin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+@keyframes optin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
 .keys{font-size:.85rem;color:var(--soft);text-align:center;margin-top:10px}
 .keys kbd{font-family:inherit;background:var(--fill);border-radius:5px;padding:1px 6px;margin:0 1px}
 .fb{padding:14px 16px;font-size:1.1rem;border-radius:12px;margin:10px 0;font-weight:600}
@@ -85,13 +110,54 @@ input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;hei
 .note{font-size:.92rem;color:var(--soft)}
 select{font:inherit;padding:6px 10px;background:var(--fill);color:var(--ink);border:none;border-radius:8px}
 @media (prefers-reduced-motion:no-preference){.flash,.opt,.chip,.btns button,.primary,.tabs button{transition:transform .1s,background .15s,box-shadow .15s}.flash:active,.opt:active,.btns button:active,.primary:active{transform:scale(.98)}}
+
+.chip em{font-style:normal;opacity:.55;font-size:.85em;margin-left:2px}
+.chip.on em{opacity:.7}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.toolbar .search{flex:1;min-width:220px;margin:0}
+.seg{display:inline-flex;background:var(--fill);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.q .seg,.cardtop .seg{background:var(--fill)}
+.toolbar .seg{background:var(--card)}
+.seg button{border:none;background:transparent;color:var(--soft);font:inherit;font-size:.92rem;font-weight:600;padding:8px 14px;border-radius:8px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.toolbar .seg button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.lbl{font-size:.92rem;color:var(--soft);font-weight:600;min-width:56px}
+.ttl{font-size:1.3rem;font-weight:700;margin:0 0 14px}
+.gap{height:10px}
+.sm{font-size:.8em;opacity:.75;font-weight:500}
+.link{border:none;background:none;color:var(--accent);font:inherit;font-size:inherit;font-weight:600;cursor:pointer;padding:0}
+.count{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tag{display:inline-block;font-size:.72rem;color:var(--soft);background:var(--fill);border-radius:6px;padding:1px 7px;margin-left:8px;font-weight:600;vertical-align:middle}
+td .tag{display:block;width:max-content;margin:6px 0 0}
+.hide-ko td.k .hv,.hide-en td.p .hv{background:var(--fill);color:transparent;border-radius:6px;cursor:pointer}
+.hide-ko tr.show td.k .hv,.hide-en tr.show td.p .hv{background:none;color:inherit}
+.hide-ko td.k .en,.hide-en td.k .en{visibility:hidden}
+.hide-ko tr.show td.k .en,.hide-en tr.show td.k .en{visibility:visible}
+tbody tr{cursor:pointer}
+.cardtop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.flash{position:relative}
+.ftag{position:absolute;top:16px;left:16px;margin:0}
+.qtag{font-size:.82rem;color:var(--soft);margin-top:14px;font-weight:600}
+.qtag+.ask{margin-top:8px}
+.okc{color:var(--ok)}.badc{color:var(--bad)}
+.hintw{letter-spacing:.08em;color:var(--ink)}
+.verdict{text-align:center;color:var(--ink2);margin:0 0 18px}
+.chs{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.chs div{background:var(--fill);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;row-gap:6px;font-size:.92rem}
+.chs b{font-size:1.1rem}
+.chs i{grid-column:1/-1;height:5px;border-radius:9px;background:linear-gradient(90deg,var(--accent) var(--w),var(--line) var(--w))}
+.chs small{grid-column:1/-1;color:var(--soft)}
+.wl{display:grid;gap:8px}
+.wl div{background:var(--fill);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 12px}
+.wl small{grid-column:1/-1;color:var(--bad);font-size:.84rem}
+.btns #hint{flex:.6}
 </style>
 </head>
 <body>
 <div class="wrap">
 <h1><span>의학용어</span> 중간고사 Ch.1~4</h1>
 <p class="sub">'의용' 단어장 751개 + 4장 PPT 추가분 41개 · 한글 뜻은 단어장·PPT 표기 그대로</p>
-<div class="tabs" role="group" aria-label="모드">
+<div class="tabs" role="group" aria-label="모드" title="Alt+1~4로 탭 전환">
 <button data-mode="list" aria-pressed="true">암기표</button>
 <button data-mode="card" aria-pressed="false">카드</button>
 <button data-mode="quiz" aria-pressed="false">객관식</button>
@@ -105,70 +171,116 @@ select{font:inherit;padding:6px 10px;background:var(--fill);color:var(--ink);bor
 const RAW=[["aden/o","샘, 선","gland",1,"r"],["arthr/o","관절","joint",1,"r"],["bi/o","생명","life",1,"r"],["carcin/o","암, 암성","cancerous, cancer",1,"r"],["cardi/o","심장","heart",1,"r"],["cephal/o","머리","head",1,"r"],["cerebr/o","대뇌","cerebrum",1,"r"],["cis/o","자르다","to cut",1,"r"],["crin/o","분비하다","to secrete",1,"r"],["cyst/o","방광","urinary bladder",1,"r"],["cyt/o","세포","cell",1,"r"],["derm/o, dermat/o","피부","skin",1,"r"],["electr/o","전기","electricity",1,"r"],["encephal/o","뇌","brain",1,"r"],["enter/o","장, 창자","intestines",1,"r"],["erythr/o","붉은","red",1,"r"],["gastr/o","위","stomach",1,"r"],["glyc/o","당, 당질","sugar",1,"r"],["gnos/o","지식, 앎","knowledge",1,"r"],["gynec/o","여성","woman, female",1,"r"],["hemat/o, hem/o","혈액","blood",1,"r"],["hepat/o","간","liver",1,"r"],["iatr/o","치료, 처치, 의사","treatment, physician",1,"r"],["leuk/o","흰","white",1,"r"],["log/o","학문, 연구","study of",1,"r"],["nephr/o","신장, 콩팥","kidney",1,"r"],["neur/o","신경","nerve",1,"r"],["onc/o","종양, 암","tumor",1,"r"],["ophthalm/o","눈","eye",1,"r"],["oste/o","뼈","bone",1,"r"],["path/o","병","disease",1,"r"],["ped/o","어린이","child",1,"r"],["psych/o","마음, 정신","mind",1,"r"],["radi/o","X선","x-rays",1,"r"],["ren/o","신장, 콩팥","kidney",1,"r"],["rhin/o","코","nose",1,"r"],["sarc/o","살, 육","flesh",1,"r"],["sect/o","자르다","to cut",1,"r"],["thromb/o","덩어리, 응고","clot, clotting",1,"r"],["ur/o","요로, 소변","urinary tract, urine",1,"r"],["a-, an-","아닌, 없는","no, not, without",1,"p"],["aut-, auto-","스스로, 자신","self, own",1,"p"],["dia-","완전한, -을 통하여","complete, through",1,"p"],["end-, endo-","속","within",1,"p"],["epi-","위에, 표면에","above, upon",1,"p"],["ex-, exo-","바깥, 바깥으로","out, outside of, outward",1,"p"],["hyper-","지나친, 위의, 평균보다 많은","excessive, above, more than normal",1,"p"],["hypo-","모자란, 아래의, 평균보다 적은","deficient, below, under, less than normal",1,"p"],["in-","속으로, 속","into, in",1,"p"],["peri-","둘러싸는, 주위의","surrounding, around",1,"p"],["pro-","앞, 이전","before, forward",1,"p"],["re-","뒤로, 다시","back, backward, again",1,"p"],["retro-","뒤","behind",1,"p"],["sub-","밑, 아래","below, under",1,"p"],["trans-","가로질러, 통해서","across, through",1,"p"],["-ac","-에 관한","pertaining to",1,"s"],["-al","-에 관한","pertaining to",1,"s"],["-algia","통증","pain",1,"s"],["-cyte","세포","cell",1,"s"],["-ectomy","절제, 제거","excision, removal",1,"s"],["-emia","혈액 상태","blood condition",1,"s"],["-genic","생산되는, 생산하는","produced by or in",1,"s"],["-globin","단백질","protein",1,"s"],["-gram","기록","record",1,"s"],["-ic, -ical","-에 관한","pertaining to",1,"s"],["-ion","과정","process",1,"s"],["-ist","전문가","specialist",1,"s"],["-itis","염증","inflammation",1,"s"],["-logy","학문","process of study",1,"s"],["-oma","종양, 덩어리, 혹","tumor, mass, swelling",1,"s"],["-opsy","관찰 과정","process of viewing",1,"s"],["-osis","비정상적인 상태","condition, usually abnormal",1,"s"],["-pathy","질병 상태","disease condition",1,"s"],["-scope","시각적으로 검사하는 도구","instrument to visually examine",1,"s"],["-scopy","시각적으로 검사하는 과정","process of visually examining",1,"s"],["-sis","상태","state of, condition",1,"s"],["-y","과정, 상태","process, condition",1,"s"],["-tomy","절단 과정, 절개","process of cutting, incision",1,"s"],["hematology","혈액학","",1,"t"],["electrocardiogram (ECG, EKG)","심전도","",1,"t"],["gastritis","위염","",1,"t"],["gastroenterology","소화기내과","",1,"t"],["hypogastric","아랫배-, 하복-","",1,"t"],["epigastric","명치-, 상복부-","",1,"t"],["adenoma","샘종","",1,"t"],["adenitis","샘염","",1,"t"],["arthritis","관절염","",1,"t"],["biology","생물학","",1,"t"],["biopsy","생검","",1,"t"],["carcinoma","암종","",1,"t"],["cardiology","심장내과, 순환기내과","",1,"t"],["cephalic","머리-, 두부-","",1,"t"],["cerebral","대뇌-, 뇌-, 뇌성-","",1,"t"],["incision","절개","",1,"t"],["endocrine gland","내분비샘","",1,"t"],["cystoscopy","방광내시경","",1,"t"],["cytology","세포학, 세포검사","",1,"t"],["dermatitis","피부염","",1,"t"],["hypodermic","피부밑, 피하","",1,"t"],["electroencephalogram (EEG)","뇌파도","",1,"t"],["enteritis","장염","",1,"t"],["erythrocyte","적혈구","",1,"t"],["gastrectomy","위절제(술)","",1,"t"],["gastrotomy","위절개(술)","",1,"t"],["hyperglycemia","고혈당","",1,"t"],["diagnosis","진단","",1,"t"],["prognosis","예후, 예측","",1,"t"],["gynecology","부인과","",1,"t"],["hematoma","혈종","",1,"t"],["hemoglobin","혈색소","",1,"t"],["hepatitis","간염","",1,"t"],["iatrogenic","의인성, 의원성","",1,"t"],["leukocyte","백혈구","",1,"t"],["dermatology","피부과","",1,"t"],["nephritis","신장염","",1,"t"],["nephrology","신장내과","",1,"t"],["neurology","신경과, 신경학","",1,"t"],["oncology","종양내과, 종양학","",1,"t"],["oncologist","종양내과 전문의","",1,"t"],["ophthalmoscope","검안경","",1,"t"],["osteitis","골염, 뼈염","",1,"t"],["osteoarthritis","골관절염","",1,"t"],["pathology","병리학, 병리","",1,"t"],["pathologist","병리학자","",1,"t"],["pediatric","소아청소년과","",1,"t"],["psychology","심리학","",1,"t"],["psychiatrist","정신건강의학과 전문의","",1,"t"],["radiology","영상의학","",1,"t"],["renal","신장-, 콩팥-","",1,"t"],["rhinitis","비염","",1,"t"],["sarcoma","육종","",1,"t"],["resection","절제","",1,"t"],["thrombocyte","혈소판","",1,"t"],["urologist","비뇨의학과 전문의","",1,"t"],["cardiac","심장-","",1,"t"],["neural","신경-","",1,"t"],["arthralgia","관절통","",1,"t"],["neuralgia","신경통","",1,"t"],["nephrectomy","신장절제","",1,"t"],["leukemia","백혈병","",1,"t"],["carcinogenic","발암-","",1,"t"],["pathogenic","병원성-, 발병-","",1,"t"],["gastric","위-","",1,"t"],["neurologic","신경학적-","",1,"t"],["excision","절제","",1,"t"],["ophthalmologist","안과 전문의","",1,"t"],["optometrist","검안사","",1,"t"],["cystitis","방광염","",1,"t"],["endocrinology","내분비학","",1,"t"],["hepatoma","간암","",1,"t"],["nephrosis","신증","",1,"t"],["leukocytosis","백혈구증가","",1,"t"],["encephalopathy","뇌병증","",1,"t"],["endoscope","내시경","",1,"t"],["endoscopy","내시경검사","",1,"t"],["osteotomy","절골술, 뼈자름술","",1,"t"],["anemia","빈혈","",1,"t"],["autopsy","부검","",1,"t"],["endocrinologist","내분비내과 전문의","",1,"t"],["epidermis","표피","",1,"t"],["exocrine gland","외분비샘","",1,"t"],["hyperthyroidism","갑상샘항진증","",1,"t"],["hypoglycemia","저혈당","",1,"t"],["pericardium","심장막, 심낭","",1,"t"],["prostate gland","전립샘","",1,"t"],["retrocardiac","심장뒤-","",1,"t"],["subhepatic","간밑-","",1,"t"],["transhepatic","간경유-, 경간-","",1,"t"],["basal cell carcinoma","기저세포암","",1,"t"],["esophageal carcinoma","식도암종","",1,"t"],["cerebrovascular accident (CVA)","뇌혈관질환(뇌졸중)","",1,"t"],["chronic traumatic encephalopathy (CTE)","만성 외상성 뇌병증","",1,"t"],["ileum","회장 (소장의 한 부위)","",1,"t"],["ilium","장골 (골반뼈)","",1,"t"],["ureter","요관 (신장과 방광 연결)","",1,"t"],["urethra","요도","",1,"t"],["abdomin/o","배, 복부","abdomen",2,"r"],["adip/o","지방","fat",2,"r"],["anter/o","앞","front",2,"r"],["cervic/o","목","neck (of the body or uterus)",2,"r"],["chondr/o","연골","cartilage",2,"r"],["chrom/o","색깔","color",2,"r"],["coccyg/o","꼬리뼈","coccyx (tailbone)",2,"r"],["crani/o","머리뼈, 두개골","skull",2,"r"],["cyt/o","세포","cell",2,"r"],["dist/o","먼","far, distant",2,"r"],["dors/o","등쪽","back portion of the body",2,"r"],["hist/o, histi/o","조직","tissue",2,"r"],["ili/o","엉덩뼈, 장골","ilium (upper part of the hip bone)",2,"r"],["inguin/o","사타구니","groin",2,"r"],["kary/o","핵","nucleus",2,"r"],["later/o","옆","side",2,"r"],["lumb/o","허리","lower back",2,"r"],["medi/o","가운데","middle",2,"r"],["nucle/o","핵","nucleus",2,"r"],["pelv/i","골반","pelvis",2,"r"],["pharyng/o","인두","pharynx (throat)",2,"r"],["poster/o","뒤","back, behind",2,"r"],["proxim/o","가장 가까운","nearest",2,"r"],["sacr/o","엉치뼈, 천골","sacrum",2,"r"],["sarc/o","살","flesh",2,"r"],["spin/o","척추, 척추뼈","spine, backbone",2,"r"],["thel/o, theli/o","젖꼭지, 유두","nipple",2,"r"],["thorac/o","가슴","chest",2,"r"],["trache/o","기관","trachea, windpipe",2,"r"],["umbilic/o","배꼽","navel, umbilicus",2,"r"],["ventr/o","배쪽","belly side of the body",2,"r"],["vertebr/o","척추뼈","vertebra(e), backbone(s)",2,"r"],["viscer/o","내장, 장기","internal organs",2,"r"],["ana-","위로","up",2,"p"],["cata-","아래로","down",2,"p"],["epi-","위","above",2,"p"],["hypo-","아래","below",2,"p"],["inter-","사이","between",2,"p"],["intra-","안에, 내부에","within",2,"p"],["meta-","변화","change",2,"p"],["-eal","-에 관한, -에 속한","pertaining to",2,"s"],["-iac","-에 관한, -에 속한","pertaining to",2,"s"],["-ior","-에 관한, -에 속한","pertaining to",2,"s"],["-ism","과정, 상태","process, condition",2,"s"],["-ose","-에 관한, -에 속한, -로 가득 찬","pertaining to, full of",2,"s"],["-plasm","형성, 형체, 형질","formation",2,"s"],["-somes","몸통, -체, -소체","bodies",2,"s"],["-type","형상, 분류","picture, classification",2,"s"],["abdominal","배-, 복부-","",2,"t"],["adipose","지방-","",2,"t"],["anterior","앞-, 전-, 전방-","",2,"t"],["cervical","목-, 경부-, 자궁경부-, 자궁목-","",2,"t"],["chondroma","연골종","",2,"t"],["chromosome","염색체","",2,"t"],["coccygeal","꼬리-, 꼬리뼈-","",2,"t"],["craniotomy","머리뼈절개술, 개두술","",2,"t"],["cytoplasm","세포질","",2,"t"],["distal","먼쪽-, 원위-, 말단-","",2,"t"],["dorsal","등쪽-, 배측-","",2,"t"],["histology","조직학","",2,"t"],["iliac","엉덩-, 장골-","",2,"t"],["inguinal","고샅-, 서혜-","",2,"t"],["karyotype","핵형","",2,"t"],["lateral","가쪽-, 외측-","",2,"t"],["lumbosacral","허리엉치-, 요천골-","",2,"t"],["medial","안쪽-, 내측-","",2,"t"],["nucleic","핵-","",2,"t"],["pelvic","골반-","",2,"t"],["pharyngeal","인두-","",2,"t"],["posterior","뒤-, 후-","",2,"t"],["proximal","몸쪽-, 근위-","",2,"t"],["sacral","엉치-, 천골-","",2,"t"],["sarcoma","육종","",2,"t"],["spinal","척추-, 척주-, 척수-","",2,"t"],["epithelial cell","상피세포","",2,"t"],["thoracotomy","가슴절개, 개흉술","",2,"t"],["tracheal","기관-","",2,"t"],["umbilical","탯줄-, 제대-, 배꼽","",2,"t"],["ventral","배쪽-, 복측-","",2,"t"],["vertebral","척추-","",2,"t"],["visceral","내장-","",2,"t"],["anabolism","동화작용","",2,"t"],["catabolism","이화작용","",2,"t"],["metabolism","대사","",2,"t"],["epinephrine","에피네프린","",2,"t"],["hypochondriac region","갈비밑부위, 늑하부","",2,"t"],["intervertebral","추간-, 척추사이-","",2,"t"],["intravenous","정맥내-","",2,"t"],["cell","세포","",2,"t"],["tissue","조직","",2,"t"],["organ","장기, 기관","",2,"t"],["system","계통, 계","",2,"t"],["cell membrane","세포막","",2,"t"],["nucleus","핵","",2,"t"],["mitochondria","미토콘드리아, 사립체","",2,"t"],["endoplasmic reticulum","소포체","",2,"t"],["ribosome","리보소체, 리보솜","",2,"t"],["Down syndrome","다운증후군","",2,"t"],["muscle cell","근육세포","",2,"t"],["nerve cell","신경세포","",2,"t"],["fat cell","지방세포","",2,"t"],["digestive system","소화계통","",2,"t"],["urinary system","비뇨계통","",2,"t"],["respiratory system","호흡계통","",2,"t"],["reproductive system","생식계통","",2,"t"],["endocrine system","내분비계통","",2,"t"],["nervous system","신경계통","",2,"t"],["circulatory system","순환계통","",2,"t"],["lymphatic system","림프계통","",2,"t"],["musculoskeletal system","근육뼈대계통, 근골격계","",2,"t"],["skeletal system","뼈대계통, 골격계","",2,"t"],["muscular system","근육계통","",2,"t"],["integumentary system","피부계통","",2,"t"],["mouth","입, 입안, 구강","",2,"t"],["pharynx","인두","",2,"t"],["esophagus","식도","",2,"t"],["stomach","위","",2,"t"],["small intestine","소장, 작은창자","",2,"t"],["large intestine","대장, 큰창자","",2,"t"],["liver","간","",2,"t"],["gallbladder","담낭, 쓸개","",2,"t"],["pancreas","췌장, 이자","",2,"t"],["rectum","직장","",2,"t"],["kidney","신장, 콩팥","",2,"t"],["urinary bladder","방광","",2,"t"],["nose","코","",2,"t"],["larynx","후두","",2,"t"],["trachea","기관","",2,"t"],["bronchus","기관지","",2,"t"],["lung","폐, 허파","",2,"t"],["ovary","난소","",2,"t"],["fallopian tube","자궁관, 난관","",2,"t"],["uterus","자궁","",2,"t"],["vagina","질","",2,"t"],["mammary gland","유선, 젖샘","",2,"t"],["testis","고환","",2,"t"],["penis","음경","",2,"t"],["prostate gland","전립샘, 전립선","",2,"t"],["thyroid gland","갑상샘","",2,"t"],["pituitary gland","뇌하수체","",2,"t"],["sex gland","생식샘, 성선","",2,"t"],["adrenal gland","부신","",2,"t"],["islet of Langerhans","췌장소도, 이자섬","",2,"t"],["parathyroid gland","부갑상샘","",2,"t"],["brain","뇌","",2,"t"],["spinal cord","척수","",2,"t"],["nerve","신경","",2,"t"],["artery","동맥","",2,"t"],["vein","정맥","",2,"t"],["capillary","모세혈관","",2,"t"],["aorta","대동맥","",2,"t"],["lymphatic vessel","림프관","",2,"t"],["lymph node","림프절","",2,"t"],["spleen","비장, 지라","",2,"t"],["thymus","가슴샘, 흉선","",2,"t"],["muscle","근육","",2,"t"],["bone","뼈","",2,"t"],["joint","관절","",2,"t"],["skin","피부","",2,"t"],["hair","털","",2,"t"],["nail","손발톱","",2,"t"],["sweat gland","땀샘, 한선","",2,"t"],["sebaceous gland","기름샘, 피지샘","",2,"t"],["eye","눈","",2,"t"],["ear","귀","",2,"t"],["tongue","혀","",2,"t"],["cranial cavity","머리뼈안, 두개강","",2,"t"],["thoracic cavity","가슴안, 흉강","",2,"t"],["pleural cavity","가슴막안, 흉막강","",2,"t"],["mediastinum","세로칸, 종격","",2,"t"],["abdominal cavity","배안, 복강","",2,"t"],["pelvic cavity","골반안, 골반강","",2,"t"],["spinal cavity","척추공간, 척추강","",2,"t"],["viscera","내장, 내부 장기","",2,"t"],["epigastric region","명치부위","",2,"t"],["lumbar region","허리부위","",2,"t"],["umbilical region","배꼽부위","",2,"t"],["inguinal region","고샅부위","",2,"t"],["hypogastric region","아랫배부위","",2,"t"],["right upper quadrant (RUQ)","오른위사분역","",2,"t"],["left upper quadrant (LUQ)","왼위사분역","",2,"t"],["right lower quadrant (RLQ)","오른아래사분역","",2,"t"],["left lower quadrant (LLQ)","왼아래사분역","",2,"t"],["cervical vertebrae","목뼈, 경추","",2,"t"],["thoracic vertebrae","등뼈, 흉추","",2,"t"],["lumbar vertebrae","허리뼈, 요추","",2,"t"],["sacral vertebrae","엉치뼈, 천추","",2,"t"],["coccygeal vertebrae","꼬리뼈, 미추","",2,"t"],["vertebra","척추뼈, 척추","",2,"t"],["vertebrae","척추뼈들","",2,"t"],["spinal column","척주","",2,"t"],["disc","척추사이원반","",2,"t"],["deep","깊은-, 심부-","",2,"t"],["superficial","얕은-, 표재-","",2,"t"],["inferior","아래-, 하-","",2,"t"],["superior","위-, 상-","",2,"t"],["supine","바로누운-, 앙와위-","",2,"t"],["prone","엎드린-, 복와위-","",2,"t"],["frontal plane","이마면, 관상면","",2,"t"],["sagittal plane","시상면, 가쪽면","",2,"t"],["transverse plane","가로면, 축면, 수평면","",2,"t"],["acr/o","끝, 정점","extremities, top, extreme point",3,"r"],["acu/o","날카로운, 심한, 갑작스런","sharp, severe, sudden",3,"r"],["aden/o","샘","gland",3,"r"],["adip/o","지방","fat",3,"r"],["amni/o","양막","amnion",3,"r"],["angi/o","혈관","vessel",3,"r"],["arteri/o","동맥","artery",3,"r"],["arthr/o","관절","joint",3,"r"],["axill/o","겨드랑, 액와","armpit",3,"r"],["bi/o","생명","life",3,"r"],["blephar/o","눈꺼풀","eyelid",3,"r"],["bronch/o","기관지","bronchial tubes",3,"r"],["carcin/o","암","cancer",3,"r"],["cardi/o","심장","heart",3,"r"],["chem/o","약물, 화학물질","drug, chemical",3,"r"],["chondr/o","연골","cartilage",3,"r"],["chron/o","시간","time",3,"r"],["col/o","결장, 대장","colon (large intestine)",3,"r"],["cyst/o","방광","urinary bladder",3,"r"],["encephal/o","뇌","brain",3,"r"],["erythr/o","붉은","red",3,"r"],["hem/o","혈액","blood",3,"r"],["hepat/o","간","liver",3,"r"],["hydr/o","물, 액체","water, fluid",3,"r"],["inguin/o","고샅, 서혜부, 사타구니","groin",3,"r"],["isch/o","억제하다","to hold back",3,"r"],["lapar/o","배, 배벽","abdomen, abdominal wall",3,"r"],["laryng/o","후두","larynx",3,"r"],["leuk/o","흰","white",3,"r"],["lymph/o","림프","lymph",3,"r"],["mamm/o","유방","breast",3,"r"],["mast/o","유방","breast",3,"r"],["morph/o","모양, 형태","shape, form",3,"r"],["muc/o","점액","mucus",3,"r"],["my/o","근육","muscle",3,"r"],["myel/o","척수, 골수","spinal cord, bone marrow",3,"r"],["necr/o","죽음","death (of cells or whole body)",3,"r"],["nephr/o","콩팥, 신장","kidney",3,"r"],["neur/o","신경","nerve",3,"r"],["neutr/o","중성구","neutrophil",3,"r"],["nucle/o","핵","nucleus",3,"r"],["ophthalm/o","눈","eye",3,"r"],["oste/o","뼈","bone",3,"r"],["ot/o","귀","ear",3,"r"],["path/o","질병, 질환","disease",3,"r"],["peritone/o","배막, 복막","peritoneum",3,"r"],["phag/o","먹음, 삼킴","to eat, swallow",3,"r"],["phleb/o","정맥","vein",3,"r"],["plas/o","형성, 발생","formation, development",3,"r"],["pleur/o","가슴막, 흉막","pleura",3,"r"],["pneumon/o","폐","lungs",3,"r"],["pulmon/o","폐","lungs",3,"r"],["radi/o","X선","x-rays",3,"r"],["rect/o","곧창자, 직장","rectum",3,"r"],["ren/o","콩팥, 신장","kidney",3,"r"],["rhin/o","코, 비","nose",3,"r"],["sarc/o","살","flesh",3,"r"],["splen/o","비장, 지라","spleen",3,"r"],["staphyl/o","송이, 다발","clusters",3,"r"],["cephal/o","머리","head",3,"r"],["crani/o","두개골","skull",3,"r"],["cerebr/o","대뇌","cerebrum",3,"r"],["cerebell/o","소뇌","cerebellum",3,"r"],["phalang/o","손가락, 발가락","phalanges (fingers and toes)",3,"r"],["-algia","통증","pain",3,"s"],["-cele","탈장","hernia",3,"s"],["-centesis","천자","puncture to remove fluid",3,"s"],["-coccus, -cocci","열매 모양의 세균, 구균","berry- shaped bacterium",3,"s"],["-cyte","세포","cell",3,"s"],["-dynia","통증","pain",3,"s"],["-ectomy","절제, 제거","excision, removal, resection",3,"s"],["-emia","혈액의 상태","blood condition",3,"s"],["-genesis","생산, 형성","condition of producing, forming",3,"s"],["-gram","기록","record",3,"s"],["-graph","기록 장치","instrument for recording",3,"s"],["-graphy","기록 과정","process of recording",3,"s"],["-pathy","질병 상태","disease condition",3,"s"],["-penia","결핍","deficiency",3,"s"],["-phobia","두려움, 공포","fear",3,"s"],["-plasia","발생, 형성, 성장","development, formation, growth",3,"s"],["-plasty","재건수술","surgical repair",3,"s"],["-ptosis","늘어짐, 처짐","drooping, falling, prolapse",3,"s"],["-rrhea","흐름, 분비물","flow, discharge",3,"s"],["-sclerosis","경화","hardening",3,"s"],["-scope","검사기구","instrument for visual examination",3,"s"],["-scopy","내시경검사","process of visual examination",3,"s"],["-stasis","통제, 정지","controlling, stopping",3,"s"],["-stomy","창냄술","opening to form a mouth (stoma)",3,"s"],["-therapy","치료, 요법","treatment",3,"s"],["-tomy","절개, 자르다","incision, cutting into",3,"s"],["-trophy","발생, 영양","development, nourishment",3,"s"],["-er","사람","one who",3,"s"],["-ia","상태","condition",3,"s"],["-ist","전문가","specialist",3,"s"],["-ole","적은, 작은","little, small",3,"s"],["-ule","적은, 작은","little, small",3,"s"],["-um, -ium","구조, 조직","structure, tissue",3,"s"],["-us","구조, 물질","structure, substance",3,"s"],["-y","상태, 과정","condition, process",3,"s"],["-ac","-에 관한","pertaining to",3,"s"],["-iac","-에 관한","pertaining to",3,"s"],["-al","-에 관한","pertaining to",3,"s"],["-ar","-에 관한","pertaining to",3,"s"],["-ary","-에 관한","pertaining to",3,"s"],["-eal","-에 관한","pertaining to",3,"s"],["-genic","-에 관한, 생산하는","pertaining to producing, produced by, or in",3,"s"],["-ic, -ical","-에 관한","pertaining to",3,"s"],["-ose","-에 관한, -로 가득한","pertaining to, full of",3,"s"],["-ous","-에 관한","pertaining to",3,"s"],["-tic","-에 관한","pertaining to",3,"s"],["arthralgia","관절통","",3,"t"],["otalgia","귀통증","",3,"t"],["neuralgia","신경통","",3,"t"],["fibromyalgia","섬유근육통","",3,"t"],["rectocele","직장탈출, 직장류","",3,"t"],["cystocele","방광탈출, 방광류","",3,"t"],["thoracentesis","흉강천자, 가슴천자","",3,"t"],["amniocentesis","양막천자, 양수천자","",3,"t"],["abdominocentesis","복부천자","",3,"t"],["paracentesis","천자술","",3,"t"],["streptococcus","연쇄상구균","",3,"t"],["staphylococci","포도상구균","",3,"t"],["diplococci","쌍구균","",3,"t"],["erythrocyte","적혈구","",3,"t"],["leukocyte","백혈구","",3,"t"],["thrombocyte","혈소판","",3,"t"],["pleurodynia","가슴막통증","",3,"t"],["laryngectomy","후두절제","",3,"t"],["mastectomy","유방절제","",3,"t"],["anemia","빈혈","",3,"t"],["ischemia","허혈","",3,"t"],["carcinogenesis","발암","",3,"t"],["pathogenesis","발병기전","",3,"t"],["angiogenesis","혈관신생","",3,"t"],["electroencephalogram (EEG)","뇌파도","",3,"t"],["mammogram","유방촬영사진","",3,"t"],["electroencephalograph","뇌파기","",3,"t"],["electroencephalography","뇌파검사","",3,"t"],["angiography","혈관조영술","",3,"t"],["cardiomyopathy","심근병증","",3,"t"],["erythropenia","적혈구감소","",3,"t"],["neutropenia","호중구감소증","",3,"t"],["thrombocytopenia","혈소판감소증","",3,"t"],["acrophobia","고소공포증","",3,"t"],["agoraphobia","광장공포증","",3,"t"],["achondroplasia","연골무형성증","",3,"t"],["angioplasty","혈관성형술","",3,"t"],["blepharoplasty","안검성형술","",3,"t"],["blepharoptosis","눈꺼풀처짐, 안검하수","",3,"t"],["rhinorrhea","콧물, 비루","",3,"t"],["arteriosclerosis","동맥경화증","",3,"t"],["laparoscope","복강경","",3,"t"],["laparoscopy","복강경검사","",3,"t"],["metastasis","전이","",3,"t"],["hemostasis","지혈","",3,"t"],["colostomy","결장창냄술","",3,"t"],["tracheostomy","기관절개술","",3,"t"],["hydrotherapy","수치료법","",3,"t"],["chemotherapy","화학요법","",3,"t"],["radiotherapy","방사선요법","",3,"t"],["laparotomy","개복술","",3,"t"],["phlebotomy","정맥절개술","",3,"t"],["tracheotomy","기관절개","",3,"t"],["hypertrophy","비대","",3,"t"],["atrophy","위축","",3,"t"],["radiographer","방사선사","",3,"t"],["leukemia","백혈병","",3,"t"],["pneumonia","폐렴","",3,"t"],["nephrologist","신장내과 전문의","",3,"t"],["arteriole","세동맥","",3,"t"],["venule","세정맥","",3,"t"],["pericardium","심장막, 심낭","",3,"t"],["mucus","점액","",3,"t"],["esophagus","식도","",3,"t"],["nephropathy","신장병증","",3,"t"],["cardiac","심장-","",3,"t"],["peritoneal","복막-","",3,"t"],["inguinal","고샅-, 서혜-","",3,"t"],["pleural","가슴막-, 흉막-","",3,"t"],["tonsillar","편도-","",3,"t"],["pulmonary","폐-, 허파-","",3,"t"],["axillary","겨드랑-, 액와-","",3,"t"],["laryngeal","후두-","",3,"t"],["carcinogenic","발암-","",3,"t"],["osteogenic","골형성-","",3,"t"],["pathologic","병적-","",3,"t"],["adipose","지방-","",3,"t"],["mucous membrane","점막","",3,"t"],["necrotic","괴사-","",3,"t"],["acute","급성","",3,"t"],["subacute","아급성","",3,"t"],["chronic","만성, 만성-","",3,"t"],["granulocyte","과립구","",3,"t"],["mononuclear leukocyte","단핵구","",3,"t"],["eosinophil","호산구","",3,"t"],["basophil","호염기구","",3,"t"],["neutrophil","호중구","",3,"t"],["lymphocyte","림프구","",3,"t"],["monocyte","단핵구","",3,"t"],["Streptococcus pneumoniae","폐렴구균","",3,"t"],["Staphylococcus aureus","황색포도상구균","",3,"t"],["Neisseria gonorrhoeae","임균","",3,"t"],["nuclei","핵 (nucleus의 복수)","",3,"t"],["bronchi","기관지 (bronchus의 복수)","",3,"t"],["thrombus","혈전","",3,"t"],["thrombi","혈전 (thrombus의 복수)","",3,"t"],["cocci","세균, 구균 (coccus의 복수)","",3,"t"],["hernia","탈장","",3,"t"],["phalanx","손가락, 발가락 (뼈)","",3,"t"],["carp/o","손목뼈","wrist bones",4,"r"],["cis/o","자르다","cut",4,"r"],["cost/o","갈비뼈","rib",4,"r"],["cutane/o","피부","skin",4,"r"],["dactyl/o","손가락, 발가락","fingers, toes",4,"r"],["duct/o","이끌다, 운반하다","lead, carry",4,"r"],["flex/o","굽히다","bend",4,"r"],["gloss/o","혀","tongue",4,"r"],["glyc/o","설탕, 당","sugar",4,"r"],["immun/o","보호","protection",4,"r"],["morph/o","모양, 형태","shape, form",4,"r"],["mort/o","죽음","death",4,"r"],["nat/i","출생","birth",4,"r"],["norm/o","표준, 질서","rule, order",4,"r"],["ox/o","산소","oxygen",4,"r"],["pub/o","두덩뼈","pubis; anterior portion of hip bone",4,"r"],["seps/o","감염","infection",4,"r"],["a-, an-","아닌, 없는","no, not, without",4,"p"],["ab-","멀리 떨어지다","away from",4,"p"],["ad-","향하다, 근처","toward, near",4,"p"],["ana-","위로, 분리하다","up, apart",4,"p"],["ante-","앞, 앞으로","before, forward",4,"p"],["anti-","-에 대항하여","against",4,"p"],["auto-","자신","self, own",4,"p"],["bi-","둘","two",4,"p"],["brady-","느린","slow",4,"p"],["cata-","아래로","down",4,"p"],["con-","함께","with, together",4,"p"],["contra-","반대의","against, opposite",4,"p"],["de-","아래로, 부족한","down, lack of",4,"p"],["dia-","-을 통한, 완전한","through, complete",4,"p"],["dys-","비정상, 나쁜, 고통스러운, 어려운","abnormal, bad, painful, difficult",4,"p"],["ec-","바깥","out, outside",4,"p"],["endo-","속, 안","in, within",4,"p"],["epi-","위, 표면","upon, on, above",4,"p"],["eu-","좋은, 정상","good, normal",4,"p"],["ex-","바깥","out, outside",4,"p"],["hemi-","절반","half",4,"p"],["hyper-","지나친, 위의","excessive, above",4,"p"],["hypo-","부족한, 아래","deficient, under",4,"p"],["in-","아닌, 속, 속으로","not; into, within",4,"p"],["neo-","새로운","new",4,"p"],["pan-","모든","all",4,"p"],["para-","비정상, 옆, 근처","abnormal, beside, near",4,"p"],["per-","-를 통한","through",4,"p"],["peri-","둘러싸는","surrounding",4,"p"],["poly-","많은","many, much",4,"p"],["post-","이후, 뒤","after, behind",4,"p"],["pre-","이전, 앞","before, in front of",4,"p"],["pro-","앞, 앞으로","before, forward",4,"p"],["pros-","앞, 앞으로","before, forward",4,"p"],["re-","뒤, 다시","back, again",4,"p"],["retro-","뒤, 뒤로","behind, backward",4,"p"],["sub-","밑, 아래","under",4,"p"],["supra-","위","above, upper",4,"p"],["syn-, sym-","함께, 같이","together, with",4,"p"],["tachy-","빠른","fast",4,"p"],["trans-","가로질러, -을 통한","across, through",4,"p"],["ultra-","너머, 지나친","beyond, excess",4,"p"],["uni-","하나","one",4,"p"],["-crine","분비하다","secrete",4,"s"],["-drome","달리다","run",4,"s"],["-fusion","합치다, 붓다","coming together; to pour",4,"s"],["-gen","생성 물질","substance that produces",4,"s"],["-lapse","미끄러지다, 떨어지다, 가라앉다","slide, fall, sag",4,"s"],["-lysis","분해, 분리","breakdown, destruction, separation",4,"s"],["-meter","측정하다","measure",4,"s"],["-mission","보내다","send",4,"s"],["-or","-하는 사람","one who",4,"s"],["-oxia","산소","oxygen",4,"s"],["-partum","출산, 분만","birth, labor",4,"s"],["-phoria","지니다, 감정","bear, carry; feeling",4,"s"],["-physis","자라다, 성장","grow",4,"s"],["-plasia","발생, 형성, 성장","development, formation, growth",4,"s"],["-plasm","구조, 형질","structure or formation",4,"s"],["-pnea","호흡","breathing",4,"s"],["-ptom","사건, 발생","happening, occurrence",4,"s"],["-ptosis","처짐, 가라앉음","falling, drooping, prolapse",4,"s"],["-rrhea","흐름, 분비물","flow, discharge",4,"s"],["-stasis","중지, 조절","stopping, controlling",4,"s"],["-trophy","성장, 육성","development, nourishment",4,"s"],["apnea","무호흡","",4,"t"],["anoxia","무산소증","",4,"t"],["abnormal","이상-, 비정상-","",4,"t"],["abductor","벌림근, 외전근","",4,"t"],["adductor","모음근, 내전근","",4,"t"],["adrenal gland","부신","",4,"t"],["anabolism","동화 작용","",4,"t"],["analysis","분석, 검사","",4,"t"],["ante cibum (a.c.)","식전","",4,"t"],["anteflexion","전굴, 앞굽음","",4,"t"],["antepartum","분만전-, 산전-","",4,"t"],["antibiotic","항생제","",4,"t"],["antibody","항체","",4,"t"],["antigen","항원","",4,"t"],["antisepsis","방부, 멸균","",4,"t"],["antitoxin","항독소","",4,"t"],["autoimmune disease","자가면역질환","",4,"t"],["bifurcation","갈림, 분기","",4,"t"],["bilateral","양측-, 양쪽-","",4,"t"],["bradycardia","서맥","",4,"t"],["catabolism","이화 작용","",4,"t"],["congenital anomaly","선천기형","",4,"t"],["connective","연결-, 결합-","",4,"t"],["contraindication","금기","",4,"t"],["contralateral","반대쪽-","",4,"t"],["dehydration","탈수","",4,"t"],["diarrhea","설사","",4,"t"],["dialysis","투석","",4,"t"],["dyspnea","호흡곤란","",4,"t"],["dysentery","이질","",4,"t"],["dystrophy","이상증","",4,"t"],["dysplasia","형성이상","",4,"t"],["ectopic pregnancy","자궁외임신","",4,"t"],["endocardium","심장속막","",4,"t"],["endoscope","내시경","",4,"t"],["endotracheal","기관내-","",4,"t"],["epithelium","상피","",4,"t"],["euphoria","이상행복감, 다행감","",4,"t"],["euthyroid","정상 갑상샘","",4,"t"],["exophthalmos","안구돌출증","",4,"t"],["hemiglossectomy","반쪽혀절제","",4,"t"],["hyperglycemia","고혈당증","",4,"t"],["hyperplasia","과형성, 증식","",4,"t"],["hypertrophy","비대","",4,"t"],["hypertension","고혈압","",4,"t"],["hypodermic injection","피하 주사","",4,"t"],["hypoglycemia","저혈당증","",4,"t"],["insomniac","불면증 환자","",4,"t"],["incision","절개","",4,"t"],["neonatal","신생아-","",4,"t"],["neoplasm","신생물","",4,"t"],["pancytopenia","범혈구감소증","",4,"t"],["paralysis","마비","",4,"t"],["parathyroid glands","부갑상샘","",4,"t"],["percutaneous","피부경유-, 경피-","",4,"t"],["pericardium","심장막, 심낭","",4,"t"],["polymorphonuclear","다형핵-","",4,"t"],["polyneuritis","다발신경염","",4,"t"],["postmortem","사후-","",4,"t"],["postpartum","분만후-","",4,"t"],["precancerous","전암-","",4,"t"],["prenatal","출생 전, 산전","",4,"t"],["prodrome","전구증상","",4,"t"],["prolapse","탈출증","",4,"t"],["prosthesis","인공삽입물, 보형물, 의지","",4,"t"],["relapse","재발","",4,"t"],["remission","완화, 관해","",4,"t"],["recombinant DNA","재조합 DNA","",4,"t"],["retroperitoneal","복막뒤-, 후복막-","",4,"t"],["retroflexion","뒤굽이, 후굴","",4,"t"],["subcutaneous","피부밑-, 피하-","",4,"t"],["suprapubic","두덩위-, 치골위-","",4,"t"],["syndactyly","가락붙음증, 합지증","",4,"t"],["synthesis","합성, 생성, 접합","",4,"t"],["syndrome","증후군","",4,"t"],["symbiosis","공생","",4,"t"],["symmetry","대칭","",4,"t"],["symphysis","결합, 섬유연골결합","",4,"t"],["tachypnea","빠른호흡, 빈호흡","",4,"t"],["transfusion","수혈","",4,"t"],["transurethral","요도경유-","",4,"t"],["ultrasonography","초음파 검사","",4,"t"],["unilateral","한쪽-, 편측-","",4,"t"],["hysterocele","자궁탈출증 (= uterine hernia)","",4,"t"],["somn/o","수면","sleep",4,"r"],["son/o","소리","sound",4,"r"],["the/o","두다, 위치하다","put, place",4,"r"],["thel/o, theli/o","젖꼭지, 유두","nipple",4,"r"],["tens/o","힘, 늘이다","force, strain, stretch",4,"r"],["thyr/o","갑상샘; 방패","thyroid gland; shield",4,"r"],["top/o","장소, 위치","place, position, location",4,"r"],["tox/o","독","poison",4,"r"],["trache/o","기관","windpipe, trachea",4,"r"],["urethr/o","요도","urethra",4,"r"],["infra-","아래, 밑","beneath, under",4,"p"],["inter-","사이","between",4,"p"],["intra-","속, 안","in, within, into",4,"p"],["macro-","큰","large",4,"p"],["mal-","나쁜","bad",4,"p"],["meta-","너머, 변화","beyond, change",4,"p"],["micro-","작은","small",4,"p"],["infracostal","갈비아래-, 늑하-","",4,"t"],["intercostal","갈비사이-, 늑간-","",4,"t"],["intravenous","정맥내-","",4,"t"],["macrocephaly","대두증","",4,"t"],["microcephaly","소두증","",4,"t"],["malaise","병감, 권태감","",4,"t"],["malignant","악성-","",4,"t"],["metacarpal bones","손허리뼈","",4,"t"],["metamorphosis","변형, 변태","",4,"t"],["metastasis","전이","",4,"t"],["microscope","현미경","",4,"t"],["tachycardia","빈맥 (분당 100회 이상)","",4,"t"],["arrhythmia","부정맥 (불규칙한 맥박)","",4,"t"],["pulse","맥박","",4,"t"],["clubfoot","곤봉발, 내반족","",4,"t"],["fetal alcohol syndrome (FAS)","태아 알코올 증후군","",4,"t"],["sign","징후 (객관적 소견)","",4,"t"],["symptom","증상 (환자가 느끼는 것)","",4,"t"],["Reye syndrome","라이 증후군 (바이러스 감염 후 아스피린 → 뇌부종·저혈당·간기능장애)","",4,"t"],["Marfan syndrome","마르판 증후군","",4,"t"],["transurethral resection of the prostate (TURP)","경요도전립샘절제술","",4,"t"],["echocardiogram","심장초음파 영상","",4,"t"],["sonogram","초음파 영상 (태아)","",4,"t"],["atrophy","위축","",4,"t"]];
 const TY={r:"연결형",p:"접두사",s:"접미사",t:"용어"};
 const D=RAW.map(([p,ko,en,ch,t],id)=>({id,p,ko,en,ch,t,key:ch+"|"+t+"|"+p}));
-let W={};try{W=JSON.parse(localStorage.getItem("mt_wrong")||"{}")}catch(e){W={}}
-const saveW=()=>{try{localStorage.setItem("mt_wrong",JSON.stringify(W))}catch(e){}};
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let W=LS.get("mt_wrong",{});
+const saveW=()=>LS.set("mt_wrong",W);
 const mark=(d,ok)=>{if(ok){if(W[d.key]){W[d.key]--;if(W[d.key]<=0)delete W[d.key]}}else W[d.key]=(W[d.key]||0)+1;saveW()};
-const st={mode:"list",chs:new Set([1,2,3,4]),tys:new Set(Object.keys(TY)),wonly:false,q:"",hide:false,dir:"toKo"};
+const P0=LS.get("mt_prefs",{});
+const st={mode:P0.mode||"list",chs:new Set(P0.chs||[1,2,3,4]),tys:new Set(P0.tys||Object.keys(TY)),wonly:!!P0.wonly,q:"",hide:P0.hide||"none",dir:P0.dir||"toKo",cdir:P0.cdir||"toKo",QN:P0.QN||20};
+const savePrefs=()=>LS.set("mt_prefs",{mode:st.mode,chs:[...st.chs],tys:[...st.tys],wonly:st.wonly,hide:st.hide,dir:st.dir,cdir:st.cdir,QN:st.QN});
 const $=s=>document.querySelector(s);const V=$("#view");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const pool=()=>D.filter(d=>st.chs.has(d.ch)&&st.tys.has(d.t)&&(!st.wonly||W[d.key]));
+const inScope=d=>st.chs.has(d.ch)&&st.tys.has(d.t);
+const pool=()=>D.filter(d=>inScope(d)&&(!st.wonly||W[d.key]));
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const byId=id=>D[id];
+
+/* ---------- filters ---------- */
 function chips(){
- $("#chF").innerHTML=[1,2,3,4].map(c=>`<button class="chip ${st.chs.has(c)?"on":""}" data-c="${c}">${c}장</button>`).join("")+
-  `<button class="chip wr ${st.wonly?"on":""}" data-w="1">오답만 (${Object.keys(W).length})</button>`;
- $("#tyF").innerHTML=Object.entries(TY).map(([k,v])=>`<button class="chip ${st.tys.has(k)?"on":""}" data-t="${k}">${v}</button>`).join("");
+ const wc=D.filter(d=>inScope(d)&&W[d.key]).length;
+ const all4=st.chs.size===4,allT=st.tys.size===4;
+ $("#chF").innerHTML=`<button class="chip ${all4?"on":""}" data-c="all">전체</button>`+[1,2,3,4].map(c=>`<button class="chip ${!all4&&st.chs.has(c)?"on":""}" data-c="${c}">${c}장 <em>${D.filter(d=>d.ch===c&&st.tys.has(d.t)).length}</em></button>`).join("")+
+  `<button class="chip wr ${st.wonly?"on":""}" data-w="1">오답만 <em>${wc}</em></button>`;
+ $("#tyF").innerHTML=`<button class="chip ${allT?"on":""}" data-t="all">전체</button>`+Object.entries(TY).map(([k,v])=>`<button class="chip ${!allT&&st.tys.has(k)?"on":""}" data-t="${k}">${v} <em>${D.filter(d=>d.t===k&&st.chs.has(d.ch)).length}</em></button>`).join("");
 }
-$("#chF").onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.w){st.wonly=!st.wonly}else{const c=+b.dataset.c;st.chs.has(c)&&st.chs.size>1?st.chs.delete(c):st.chs.add(c)}chips();render()};
-$("#tyF").onclick=e=>{const t=e.target.dataset.t;if(!t)return;st.tys.has(t)&&st.tys.size>1?st.tys.delete(t):st.tys.add(t);chips();render()};
-document.querySelector(".tabs").onclick=e=>{const m=e.target.dataset.mode;if(!m)return;st.mode=m;document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===m));render()};
-let kb=null;document.addEventListener("keydown",e=>{if(kb&&!e.isComposing)kb(e)});
+// 전체 선택 상태에서 하나 누르면 그것만, 아니면 토글
+function toggle(set,v,all){if(v==="all"){all.forEach(x=>set.add(x));return}
+ if(set.size===all.length){set.clear();set.add(v);return}
+ if(set.has(v)){if(set.size>1)set.delete(v)}else set.add(v)}
+$("#chF").onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.w)st.wonly=!st.wonly;else toggle(st.chs,b.dataset.c==="all"?"all":+b.dataset.c,[1,2,3,4]);savePrefs();render()};
+$("#tyF").onclick=e=>{const b=e.target.closest("button");if(!b)return;toggle(st.tys,b.dataset.t,Object.keys(TY));savePrefs();render()};
+function setMode(m){st.mode=m;savePrefs();document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===m));render()}
+document.querySelector(".tabs").onclick=e=>{const m=e.target.dataset.mode;if(m)setMode(m)};
+
+/* ---------- motion / keys ---------- */
+let moving=false;const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function swapEl(el,fn){if(moving)return;if(RM||!el){fn();return}moving=true;kb=null;el.classList.add("leave");setTimeout(()=>{moving=false;fn()},170)}
+const swap=fn=>swapEl(V.firstElementChild,fn);
+let kb=null;
+document.addEventListener("keydown",e=>{
+ if(e.isComposing)return;
+ const tag=e.target.tagName,typing=tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA";
+ if(!typing&&e.altKey&&/^[1-4]$/.test(e.key)){e.preventDefault();setMode(["list","card","quiz","spell"][+e.key-1]);return}
+ if(kb)kb(e,typing);
+});
 function render(){kb=null;chips();({list,card,quiz,spell})[st.mode]()}
-const empty=()=>{V.innerHTML=`<div class="q"><p style="margin:0">${st.wonly?"아직 틀린 단어가 없어요. 객관식이나 스펠링에서 틀리면 여기에 모여요.":"선택한 범위에 단어가 없어요."}</p></div>`};
+const empty=()=>{V.innerHTML=`<div class="q"><p style="margin:0">${st.wonly?"선택한 범위에 틀린 단어가 없어요. 객관식·스펠링·카드에서 틀리거나 '몰라요'를 누르면 여기에 모여요.":"선택한 범위에 단어가 없어요."}</p></div>`};
+const seg=(name,cur,items)=>`<div class="seg" data-seg="${name}">${items.map(([v,l])=>`<button data-v="${v}" aria-pressed="${v===cur}">${l}</button>`).join("")}</div>`;
+function bindSeg(name,fn){const el=V.querySelector(`[data-seg="${name}"]`);if(el)el.onclick=e=>{const b=e.target.closest("button");if(b)fn(b.dataset.v)}}
+
+/* ---------- 암기표 ---------- */
 function list(){
- V.innerHTML=`<input class="search" id="s" type="search" placeholder="검색 (예: cardi, 염증)" value="${esc(st.q)}">
- <div class="row"><label><input type="checkbox" id="h" ${st.hide?"checked":""}> 한글 뜻 가리기 (눌러서 확인)</label></div><div id="res"></div>`;
- const s=$("#s");s.addEventListener("input",()=>{st.q=s.value;listRes()});s.addEventListener("compositionend",()=>{st.q=s.value;listRes()});
- $("#h").onchange=e=>{st.hide=e.target.checked;listRes()};listRes();
+ V.innerHTML=`<div class="toolbar"><input class="search" id="s" type="search" placeholder="검색 (예: cardi, 염증) · / 키로 바로 검색" value="${esc(st.q)}">
+ ${seg("hide",st.hide,[["none","다 보기"],["ko","한글 가리기"],["en","영어 가리기"]])}</div>
+ <div id="res"></div>`;
+ const s=$("#s");const up=()=>{st.q=s.value;listRes()};s.addEventListener("input",up);s.addEventListener("compositionend",up);
+ bindSeg("hide",v=>{st.hide=v;savePrefs();list()});
+ kb=(e,typing)=>{if(e.key==="/"&&!typing){e.preventDefault();s.focus();s.select()}else if(e.key==="Escape"&&typing){s.value="";up();s.blur()}};
+ listRes();
 }
 function listRes(){
  const q=st.q.trim().toLowerCase();const P=pool().filter(d=>!q||(d.p+" "+d.en+" "+d.ko).toLowerCase().includes(q));
- $("#res").innerHTML=`<div class="count">${P.length}개</div><div style="overflow-x:auto"><table class="${st.hide?"hide-ko":""}"><tbody>${P.map(d=>`<tr><td class="p"><span class="term">${esc(d.p)}</span>${W[d.key]?`<span class="w">✕${W[d.key]}</span>`:""}</td><td class="k"><span class="ko">${esc(d.ko)}</span>${d.en?`<span class="en">${esc(d.en)}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
- $("#res").querySelectorAll(".ko").forEach(k=>k.onclick=()=>k.classList.toggle("show"));
+ const wn=P.filter(d=>W[d.key]).length;
+ $("#res").innerHTML=`<div class="count"><span>${P.length}개${st.hide!=="none"?" · 줄을 누르면 보여요":""}</span>${st.wonly&&wn?`<button class="link" id="clrW">이 범위 오답 기록 지우기</button>`:""}</div>
+ <div style="overflow-x:auto"><table class="${st.hide==="ko"?"hide-ko":st.hide==="en"?"hide-en":""}"><tbody>${P.map(d=>`<tr><td class="p"><span class="term hv">${esc(d.p)}</span>${W[d.key]?`<span class="w">✕${W[d.key]}</span>`:""}<span class="tag">${d.ch}장 ${TY[d.t]}</span></td><td class="k"><span class="ko hv">${esc(d.ko)}</span>${d.en?`<span class="en">${esc(d.en)}</span>`:""}</td></tr>`).join("")}</tbody></table></div>`;
+ $("#res").querySelectorAll("tr").forEach(r=>r.onclick=()=>r.classList.toggle("show"));
+ const c=$("#clrW");if(c)c.onclick=()=>{if(!confirm("이 범위의 오답 기록을 지울까요?"))return;P.forEach(d=>delete W[d.key]);saveW();render()};
 }
-let deck=[],cur=0,flipped=false,unknown=[];
+
+/* ---------- 카드 ---------- */
+let deck=[],cur=0,flipped=false,unknown=[],hist=[];
 function card(reset=true,fresh=false){
- if(reset&&!fresh){const v=getS("card");if(v&&v.deck&&v.cur<v.deck.length){
-  V.innerHTML=`<div class="q"><p style="font-size:1.25rem;font-weight:700;margin-top:0">카드</p><p class="note">지난번에 ${v.deck.length}장 중 ${v.cur}장까지 넘겼어요 (모름 ${v.unknown.length}장)</p>
-  <button class="primary" id="cres">이어서 하기 · ${v.cur+1}번째 카드부터</button><div style="height:10px"></div><button class="primary alt" id="cnew">새로 섞기 (현재 범위 ${pool().length}장)</button></div>`;
-  $("#cres").onclick=()=>{deck=v.deck.map(byId);cur=v.cur;unknown=v.unknown.map(byId);flipped=false;card(false)};
+ if(reset&&!fresh){const v=LS.get("mt_sess_card",null);if(v&&v.deck&&v.cur<v.deck.length){
+  V.innerHTML=`<div class="q enter"><p class="ttl">카드</p><p class="note">지난번에 ${v.deck.length}장 중 ${v.cur}장까지 넘겼어요 (모름 ${v.unknown.length}장)</p>
+  <button class="primary" id="cres">이어서 하기 · ${v.cur+1}번째 카드부터</button><div class="gap"></div><button class="primary alt" id="cnew">새로 섞기 (현재 범위 ${pool().length}장)</button></div>`;
+  $("#cres").onclick=()=>{deck=v.deck.map(byId);cur=v.cur;unknown=v.unknown.map(byId);hist=[];flipped=false;card(false)};
   $("#cnew").onclick=()=>card(true,true);
   kb=e=>{if(e.key==="Enter"||e.key==="ArrowRight"){e.preventDefault();$("#cres").click()}};return}}
- if(reset){deck=shuf(pool());cur=0;unknown=[];flipped=false}
+ if(reset){deck=shuf(pool());cur=0;unknown=[];hist=[];flipped=false}
  if(!deck.length)return empty();
- putS("card",cur<deck.length?{deck:deck.map(d=>d.id),cur,unknown:unknown.map(d=>d.id)}:null);
+ LS.set("mt_sess_card",cur<deck.length?{deck:deck.map(d=>d.id),cur,unknown:unknown.map(d=>d.id)}:null);
  if(cur>=deck.length){
-  V.innerHTML=`<div class="q"><p style="font-size:1.2rem;font-weight:700;margin-top:0">한 바퀴 끝!</p><p>모르는 카드 ${unknown.length}개</p>
-  ${unknown.length?`<button class="primary" id="again">모르는 것만 다시</button><div style="height:8px"></div>`:""}
+  V.innerHTML=`<div class="q enter"><p class="ttl">한 바퀴 끝!</p><p>${deck.length}장 중 모르는 카드 <b>${unknown.length}</b>장</p>
+  ${unknown.length?`<button class="primary" id="again">모르는 것만 다시 (${unknown.length}장)</button><div class="gap"></div>`:""}
   <button class="primary alt" id="restart">전체 다시 섞기</button></div>`;
-  const a=$("#again");if(a)a.onclick=()=>{deck=shuf(unknown);unknown=[];cur=0;flipped=false;card(false)};
-  $("#restart").onclick=()=>card(true,true);return}
- const d=deck[cur];
- V.innerHTML=`<div class="count">${cur+1} / ${deck.length} · 모름 ${unknown.length} · ${d.ch}장 ${TY[d.t]}</div>
- <div class="flash" id="f" tabindex="0" role="button" aria-label="카드 뒤집기"><div class="big term">${esc(d.p)}</div>
- ${flipped?`<div class="ans"><mark>${esc(d.ko)}</mark></div>${d.en?`<div class="en">${esc(d.en)}</div>`:""}`:`<div class="hint">눌러서 뜻 보기 · 키보드: Space 뒤집기, ← 몰라요, → 알아요</div>`}</div>
- <div class="btns"><button class="no" id="n">몰라요</button><button class="yes" id="y">알아요</button></div>`;
- const f=$("#f");f.onclick=()=>{flipped=!flipped;card(false)};f.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();f.click()}};
- $("#n").onclick=()=>{unknown.push(d);mark(d,false);cur++;flipped=false;card(false)};
- $("#y").onclick=()=>{cur++;flipped=false;card(false)};
- kb=e=>{if(e.target.id==="f"&&(e.key===" "||e.key==="Enter"))return;if(e.key===" "||e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();f.click()}else if(e.key==="ArrowLeft"){e.preventDefault();$("#n").click()}else if(e.key==="ArrowRight"){e.preventDefault();$("#y").click()}};
+  const a=$("#again");if(a)a.onclick=()=>{deck=shuf(unknown);unknown=[];hist=[];cur=0;flipped=false;card(false)};
+  $("#restart").onclick=()=>card(true,true);
+  kb=e=>{if(e.key==="Enter"){e.preventDefault();(a||$("#restart")).click()}};return}
+ const d=deck[cur],toKo=st.cdir==="toKo";
+ const front=toKo?`<div class="big term">${esc(d.p)}</div>`:`<div class="big">${esc(d.ko)}</div>${d.en?`<div class="en">${esc(d.en)}</div>`:""}`;
+ const back=toKo?`<div class="ans">${esc(d.ko)}</div>${d.en?`<div class="en">${esc(d.en)}</div>`:""}`:`<div class="ans term">${esc(d.p)}</div>`;
+ V.innerHTML=`<div class="cardtop">${seg("cdir",st.cdir,[["toKo","영어 → 한글"],["toEn","한글 → 영어"]])}<span class="count" style="margin:0">${cur+1} / ${deck.length} · 모름 ${unknown.length}</span></div>
+ <div class="bar" style="margin:0 0 12px"><i style="width:${cur/deck.length*100}%"></i></div>
+ <div class="flash enter" id="f" tabindex="0" role="button" aria-label="카드 뒤집기"><span class="tag ftag">${d.ch}장 ${TY[d.t]}${W[d.key]?` · ✕${W[d.key]}`:""}</span>${front}
+ ${flipped?back:`<div class="hint">눌러서 뜻 보기</div>`}</div>
+ <div class="btns"><button class="no" id="n">몰라요 <span class="sm">↓</span></button><button class="yes" id="y">알아요 <span class="sm">→</span></button></div>
+ <div class="keys"><kbd>Space</kbd>/<kbd>↑</kbd> 뒤집기 · <kbd>↓</kbd> 몰라요 · <kbd>→</kbd> 알아요 · <kbd>←</kbd> 되돌리기${hist.length?` · <button class="link" id="undo">↶ 되돌리기</button>`:""}</div>`;
+ bindSeg("cdir",v=>{st.cdir=v;savePrefs();flipped=false;card(false)});
+ const f=$("#f");f.onclick=()=>{flipped=!flipped;card(false);const g=$("#f");g.classList.remove("enter");g.classList.add("flip")};
+ const go=known=>{if(moving)return;hist.push({cur,unknownLen:unknown.length,wasUnknown:!known,d});if(!known){unknown.push(d);mark(d,false)}cur++;flipped=false;swapEl($("#f"),()=>card(false))};
+ const undo=()=>{const h=hist.pop();if(!h)return;cur=h.cur;unknown.length=h.unknownLen;if(h.wasUnknown&&W[h.d.key]){W[h.d.key]--;if(W[h.d.key]<=0)delete W[h.d.key];saveW()}flipped=false;card(false)};
+ $("#n").onclick=()=>go(false);$("#y").onclick=()=>go(true);const u=$("#undo");if(u)u.onclick=undo;
+ kb=(e,typing)=>{if(typing)return;
+  if(e.key===" "||e.key==="ArrowUp"||e.key==="Enter"){e.preventDefault();f.click()}
+  else if(e.key==="ArrowDown"){e.preventDefault();go(false)}else if(e.key==="ArrowRight"){e.preventDefault();go(true)}
+  else if(e.key==="ArrowLeft"||e.key==="z"||e.key==="Z"||e.key==="Backspace"){e.preventDefault();undo()}};
 }
-let Q=[],qi=0,score=0,wrong=[],answered=false,QN=20,kind="mc";
-const SK={mc:"mt_sess_mc",sp:"mt_sess_sp",card:"mt_sess_card"};
-const getS=k=>{try{return JSON.parse(localStorage.getItem(SK[k])||"null")}catch(e){return null}};
-const putS=(k,v)=>{try{v?localStorage.setItem(SK[k],JSON.stringify(v)):localStorage.removeItem(SK[k])}catch(e){}};
-const byId=id=>D[id];
-function saveQ(){putS(kind,{dir:st.dir,qi,score,wrong:wrong.map(d=>d.id),Q:Q.map(x=>kind==="mc"?{d:x.d.id,o:x.opts.map(o=>o.id)}:{d:x.d.id})})}
-function loadQ(k){const v=getS(k);if(!v||!v.Q||v.qi>=v.Q.length)return false;kind=k;st.dir=v.dir||st.dir;qi=v.qi;score=v.score;wrong=v.wrong.map(byId);Q=v.Q.map(x=>k==="mc"?{d:byId(x.d),opts:x.o.map(byId)}:{d:byId(x.d)});return true}
+
+/* ---------- 문제 공통 ---------- */
+let Q=[],qi=0,score=0,wrong=[],answered=false,kind="mc";
+const SK={mc:"mt_sess_mc",sp:"mt_sess_sp"};
+function saveQ(){LS.set(SK[kind],{dir:st.dir,qi,score,wrong:wrong.map(w=>({d:w.d.id,a:w.a})),Q:Q.map(x=>kind==="mc"?{d:x.d.id,o:x.opts.map(o=>o.id)}:{d:x.d.id})})}
+function loadQ(k){const v=LS.get(SK[k],null);if(!v||!v.Q||v.qi>=v.Q.length)return false;kind=k;if(k==="mc")st.dir=v.dir||st.dir;qi=v.qi;score=v.score;wrong=(v.wrong||[]).map(w=>typeof w==="number"?{d:byId(w),a:""}:{d:byId(w.d),a:w.a});Q=v.Q.map(x=>k==="mc"?{d:byId(x.d),opts:x.o.map(byId)}:{d:byId(x.d)});return true}
 function mkQ(items){
  const all=pool().length>=8?pool():D;
  return items.map(d=>{
@@ -180,55 +292,65 @@ function mkQ(items){
 }
 function setup(title,extra){
  const n=pool().length;if(!n)return empty();
- V.innerHTML=`<div class="q"><p style="margin-top:0;font-weight:700">${title}</p>${extra}
- <div class="row"><label>문제 수 <select id="n">${[10,20,30,50,100].map(x=>`<option ${x===QN?"selected":""}>${x}</option>`).join("")}</select></label></div>
- <p class="note">위에서 고른 범위 ${n}개 중 출제${st.wonly?" (오답만)":""}</p><button class="primary" id="go">새로 시작</button>
- ${(()=>{const v=getS(kind);return v&&v.Q&&v.qi<v.Q.length?`<div style="height:10px"></div><button class="primary alt" id="resume">이어서 풀기 · ${v.qi+1}번부터 (${v.Q.length}문제 중, 현재 ${v.score}개 맞음)</button>`:""})()}</div>`;
+ const v=LS.get(SK[kind],null);const H=LS.get("mt_hist",[]).filter(h=>h.k===kind).slice(-5).reverse();
+ const counts=[10,20,30,50,100].filter(x=>x<n);
+ V.innerHTML=`<div class="q enter"><p class="ttl">${title}</p>${extra}
+ <div class="row"><span class="lbl">문제 수</span>${seg("qn",String(Math.min(st.QN,n)===n&&!counts.includes(st.QN)?"all":st.QN),[...counts.map(x=>[String(x),x]),["all",`전체 ${n}`]])}</div>
+ <p class="note">위에서 고른 범위 ${n}개 중 출제${st.wonly?" (오답만)":""}</p>
+ ${v&&v.Q&&v.qi<v.Q.length?`<button class="primary" id="resume">이어서 풀기 · ${v.qi+1}번부터 <span class="sm">(${v.Q.length}문제 중 ${v.score}개 맞음)</span></button><div class="gap"></div><button class="primary alt" id="go">새로 시작</button>`:`<button class="primary" id="go">시작</button>`}
+ ${H.length?`<p class="note" style="margin-top:16px">최근 기록 · ${H.map(h=>`<b>${h.s}</b>점<span class="sm">(${h.n}문제)</span>`).join(" · ")}</p>`:""}</div>`;
+ bindSeg("qn",x=>{st.QN=x==="all"?9999:+x;savePrefs();V.querySelectorAll('[data-seg="qn"] button').forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===x))});
+ bindSeg("dir",x=>{st.dir=x;savePrefs();V.querySelectorAll('[data-seg="dir"] button').forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===x))});
  const rs=$("#resume");if(rs)rs.onclick=()=>{const k=kind;if(loadQ(k))k==="mc"?ask():askS()};
- $("#n").onchange=e=>QN=+e.target.value;
- kb=e=>{if(e.key==="Enter"&&e.target.tagName!=="SELECT"&&e.target.tagName!=="BUTTON"){e.preventDefault();$("#go").click()}};
- V.querySelectorAll('input[name=dir]').forEach(r=>r.onchange=()=>st.dir=r.value);
+ kb=(e,typing)=>{if(e.key==="Enter"&&!typing&&e.target.tagName!=="BUTTON"){e.preventDefault();(rs||$("#go")).click()}};
  return true;
 }
+const progHTML=()=>`<div class="prog"><span>${qi+1} / ${Q.length}</span><span><b class="okc">${score}</b> 맞음 · <b class="badc">${wrong.length}</b> 틀림 · <button class="link" id="quit">그만하고 채점</button></span></div><div class="bar"><i style="width:${qi/Q.length*100}%"></i></div>`;
+function bindQuit(){const q=$("#quit");if(q)q.onclick=()=>finish(true)}
+
+/* ---------- 객관식 ---------- */
 function quiz(){
  kind="mc";
- if(!setup("객관식 4지선다",`<div class="row"><label><input type="radio" name="dir" value="toKo" ${st.dir==="toKo"?"checked":""}> 영어 → 한글 뜻</label></div>
- <div class="row"><label><input type="radio" name="dir" value="toTerm" ${st.dir==="toTerm"?"checked":""}> 한글 뜻 → 영어</label></div>`))return;
- $("#go").onclick=()=>{Q=mkQ(shuf(pool()).slice(0,QN));qi=0;score=0;wrong=[];ask()};
+ if(!setup("객관식 4지선다",`<div class="row"><span class="lbl">방향</span>${seg("dir",st.dir,[["toKo","영어 → 한글"],["toTerm","한글 → 영어"]])}</div>`))return;
+ $("#go").onclick=()=>{Q=mkQ(shuf(pool()).slice(0,st.QN));qi=0;score=0;wrong=[];ask()};
 }
 function ask(){
- if(qi>=Q.length)return result();
+ if(qi>=Q.length)return finish();
  saveQ();
  answered=false;const {d,opts}=Q[qi];const toKo=st.dir==="toKo";let sel=0;
- V.innerHTML=`<div class="q"><div class="prog"><span>${qi+1} / ${Q.length}</span><span>${d.ch}장 ${TY[d.t]}</span></div><div class="bar"><i style="width:${qi/Q.length*100}%"></i></div>
- <div class="ask ${toKo?"term":""}">${esc(toKo?d.p:d.ko)}</div>
+ V.innerHTML=`<div class="q enter">${progHTML()}
+ <div class="qtag">${d.ch}장 ${TY[d.t]}${W[d.key]?` · <span class="badc">전에 ${W[d.key]}번 틀림</span>`:""}</div>
+ <div class="ask ${toKo?"term":""}">${esc(toKo?d.p:d.ko)}</div>${!toKo&&d.en?`<p class="note" style="margin:-18px 0 20px">${esc(d.en)}</p>`:""}
  ${opts.map((o,i)=>`<button class="opt ${toKo?"":"term"} ${i===0?"sel":""}" data-i="${i}"><span class="n">${i+1}</span><span>${esc(toKo?o.ko:o.p)}</span></button>`).join("")}<div id="after"></div>
- <div class="keys"><kbd>↑</kbd><kbd>↓</kbd> 선택 · <kbd>Enter</kbd>/<kbd>→</kbd> 확인·다음 · <kbd>1</kbd>~<kbd>4</kbd> 바로 고르기</div></div>`;
+ <div class="keys"><kbd>↑</kbd><kbd>↓</kbd> 선택 · <kbd>Enter</kbd>/<kbd>→</kbd> 확인·다음 · <kbd>1</kbd>~<kbd>4</kbd> 바로 고르기 · <kbd>Esc</kbd> 채점</div></div>`;
+ bindQuit();
  const B=[...V.querySelectorAll(".opt")];
  const hi=i=>{sel=(i+B.length)%B.length;B.forEach((x,k)=>x.classList.toggle("sel",k===sel))};
  const pick=i=>{
   if(answered)return;answered=true;hi(i);const o=opts[i];const ok=o.id===d.id;
+  V.firstElementChild.classList.remove("enter");
   B.forEach(x=>x.classList.remove("sel"));
-  if(ok)score++;else{B[i].classList.add("wrong");wrong.push(d)}mark(d,ok);
-  B.forEach((x,k)=>{if(opts[k].id===d.id)x.classList.add("right")});
-  next(`${esc(d.p)} = ${esc(d.ko)}${d.en?` (${esc(d.en)})`:""}`);
+  if(ok)score++;else{B[i].classList.add("wrong");wrong.push({d,a:toKo?o.ko:o.p})}mark(d,ok);
+  const bi=$(".bar i");if(bi)bi.style.width=((qi+1)/Q.length*100)+"%";
+  const pr=V.querySelector(".prog span:last-child");if(pr){pr.querySelector(".okc").textContent=score;pr.querySelector(".badc").textContent=wrong.length}
+  B.forEach((x,k)=>{if(opts[k].id===d.id)x.classList.add("right");const o=opts[k];const ex=document.createElement("span");ex.className="ex";ex.style.animationDelay=(k*45)+"ms";ex.innerHTML=toKo?`<b class="term">${esc(o.p)}</b>${o.en?`<small>${esc(o.en)}</small>`:""}`:`<b>${esc(o.ko)}</b>${o.en?`<small>${esc(o.en)}</small>`:""}`;x.appendChild(ex)});
+  {const k=qi;qi++;saveQ();qi=k}
+  $("#after").innerHTML=`<button class="primary" id="nx">${qi+1<Q.length?"다음":"결과 보기"}</button>`;
+  $("#nx").onclick=()=>swap(()=>{qi++;ask()});
  };
  B.forEach((b,i)=>b.onclick=()=>pick(i));
- kb=e=>{
-  const tag=e.target.tagName;if(tag==="INPUT"||tag==="SELECT")return;
+ kb=(e,typing)=>{if(typing)return;
+  if(e.key==="Escape"){e.preventDefault();if(answered)qi++;finish(true);return}
   if(!answered){
    if(e.key==="ArrowDown"){e.preventDefault();hi(sel+1)}
    else if(e.key==="ArrowUp"){e.preventDefault();hi(sel-1)}
    else if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault();pick(sel)}
    else if(/^[1-4]$/.test(e.key)&&+e.key<=B.length){e.preventDefault();pick(+e.key-1)}
-  }else if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault();qi++;ask()}
+  }else if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault();swap(()=>{qi++;ask()})}
  };
 }
-function next(info){
- {const k=qi;qi++;saveQ();qi=k}
- $("#after").innerHTML=`<p class="note">${info}</p><button class="primary" id="nx">다음</button>`;
- $("#nx").onclick=()=>{qi++;kind==="mc"?ask():askS()};if(kind!=="mc")$("#nx").focus();
-}
+
+/* ---------- 스펠링 ---------- */
 const norm=s=>s.toLowerCase().replace(/[^a-z]/g,"");
 function accepts(p){
  const out=new Set();const inner=(p.match(/\(([^)]*)\)/g)||[]).join(",").replace(/[()]/g,"");
@@ -236,39 +358,65 @@ function accepts(p){
  for(const part of (base+","+inner).split(",")){const n=norm(part);if(!n)continue;out.add(n);if(/\/o$|\/i$/.test(part.trim()))out.add(norm(part.trim().slice(0,-2)))}
  return out;
 }
+function lev(a,b){const m=a.length,n=b.length;if(Math.abs(m-n)>2)return 9;let p=[...Array(n+1).keys()];for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
 function spell(){
  kind="sp";
- if(!setup("스펠링 (한글 보고 영어 쓰기)",`<p class="note" style="margin-top:0">기출처럼 "답 영어로 작성" 대비. 대소문자·띄어쓰기·하이픈은 무시하고, 연결형은 /o 빼고 써도 정답이에요.</p>`))return;
- $("#go").onclick=()=>{Q=shuf(pool()).slice(0,QN).map(d=>({d}));qi=0;score=0;wrong=[];askS()};
+ if(!setup("스펠링 · 한글 보고 영어 쓰기",`<p class="note" style="margin-top:0">기출의 "답 영어로 작성" 대비. 대소문자·띄어쓰기·하이픈은 무시하고, 연결형은 /o 빼고 써도 정답이에요.</p>`))return;
+ $("#go").onclick=()=>{Q=shuf(pool()).slice(0,st.QN).map(d=>({d}));qi=0;score=0;wrong=[];askS()};
 }
 function askS(){
  kb=null;
- if(qi>=Q.length)return result();
+ if(qi>=Q.length)return finish();
  saveQ();
- answered=false;const {d}=Q[qi];
- V.innerHTML=`<div class="q"><div class="prog"><span>${qi+1} / ${Q.length}</span><span>${d.ch}장 ${TY[d.t]}</span></div><div class="bar"><i style="width:${qi/Q.length*100}%"></i></div>
- <div class="ask">${esc(d.ko)}</div>${d.en?`<p class="note" style="margin-top:-8px">${esc(d.en)}</p>`:""}
- <input class="spell term" id="a" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="영어로 입력">
- <div class="btns" style="margin-top:0"><button class="no" id="pass">모르겠음</button><button class="yes" id="chk">확인</button></div><div id="after"></div></div>`;
+ answered=false;const {d}=Q[qi];let hint=0;
+ const main=[...accepts(d.p)][0]||"";
+ V.innerHTML=`<div class="q enter">${progHTML()}
+ <div class="qtag">${d.ch}장 ${TY[d.t]}${W[d.key]?` · <span class="badc">전에 ${W[d.key]}번 틀림</span>`:""}</div>
+ <div class="ask">${esc(d.ko)}</div>${d.en?`<p class="note" style="margin:-18px 0 18px">${esc(d.en)}</p>`:""}
+ <input class="spell term" id="a" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="영어로 입력 후 Enter">
+ <div id="hintbox" class="note" style="min-height:1.4em;margin:-2px 2px 10px"></div>
+ <div class="btns" style="margin-top:0"><button class="no" id="hint">힌트</button><button class="no" id="pass">모르겠음</button><button class="yes" id="chk">확인</button></div><div id="after"></div>
+ <div class="keys"><kbd>Enter</kbd> 확인·다음 · <kbd>Tab</kbd> 힌트 · <kbd>Esc</kbd> 채점</div></div>`;
+ bindQuit();
  const a=$("#a");a.focus();
- const go=(skip)=>{if(answered)return;answered=true;const v=norm(a.value);const ok=!skip&&v&&accepts(d.p).has(v);
-  if(ok)score++;else wrong.push(d);mark(d,ok);a.disabled=true;
-  $("#after").innerHTML=`<div class="fb ${ok?"ok":"bad"}">${ok?"정답!":"정답: "}<span class="term">${esc(d.p)}</span></div>`;
-  const div=document.createElement("div");$("#after").appendChild(div);div.id="after2";
-  $("#after2").outerHTML=`<button class="primary" id="nx">다음</button>`;$("#nx").onclick=()=>{qi++;askS()};$("#nx").focus()};
- $("#chk").onclick=()=>go(false);$("#pass").onclick=()=>go(true);
- a.onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();go(false)}};
+ const showHint=()=>{if(answered)return;hint=Math.min(hint+1,main.length);$("#hintbox").innerHTML=`힌트: <span class="term hintw">${esc(main.slice(0,hint))}${"_".repeat(Math.max(0,main.length-hint)).split("").join(" ")}</span> (${main.length}글자)`;a.focus()};
+ const check=skip=>{if(answered)return;answered=true;const raw=a.value.trim();const v=norm(raw);const acc=accepts(d.p);const ok=!skip&&v&&acc.has(v);
+  V.firstElementChild.classList.remove("enter");
+  let near=false;if(!ok&&v){for(const x of acc)if(lev(v,x)<=(x.length>7?2:1)){near=true;break}}
+  if(ok)score++;else wrong.push({d,a:skip?"(모름)":raw||"(빈칸)"});mark(d,ok);a.disabled=true;
+  const bi=$(".bar i");if(bi)bi.style.width=((qi+1)/Q.length*100)+"%";
+  const pr=V.querySelector(".prog span:last-child");if(pr){pr.querySelector(".okc").textContent=score;pr.querySelector(".badc").textContent=wrong.length}
+  {const k=qi;qi++;saveQ();qi=k}
+  $("#after").innerHTML=`<div class="fb ${ok?"ok":"bad"}">${ok?`정답!${hint?` <span class="sm">(힌트 ${hint}글자 사용)</span>`:""}`:near?"아깝다, 철자 확인!":"오답"} &nbsp;<span class="term">${esc(d.p)}</span>${!ok&&raw?`<div class="sm" style="margin-top:4px;font-weight:500">내 답: <span class="term">${esc(raw)}</span></div>`:""}</div>
+  <button class="primary" id="nx">${qi+1<Q.length?"다음":"결과 보기"}</button>`;
+  $("#nx").onclick=()=>swap(()=>{qi++;askS()});$("#nx").focus();
+  kb=(e)=>{if(e.key==="Escape"){e.preventDefault();qi++;finish(true)}};
+ };
+ $("#chk").onclick=()=>check(false);$("#pass").onclick=()=>check(true);$("#hint").onclick=showHint;
+ a.onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();check(false)}else if(e.key==="Tab"){e.preventDefault();showHint()}};
+ kb=e=>{if(e.key==="Escape"){e.preventDefault();finish(true)}};
 }
-function result(){
- kb=null;putS(kind,null);
- const pct=Math.round(score/Q.length*100);
- V.innerHTML=`<div class="q"><div class="score">${pct}<small>점 (${score}/${Q.length})</small></div>
- ${wrong.length?`<p style="font-weight:700">틀린 문제</p><ul class="wrongs">${wrong.map(d=>`<li><span class="term">${esc(d.p)}</span> – ${esc(d.ko)}</li>`).join("")}</ul>
- <button class="primary" id="rw">틀린 것만 다시 풀기</button><div style="height:8px"></div>`:`<p style="text-align:center">전부 맞았어요!</p>`}
+
+/* ---------- 결과 ---------- */
+function finish(early=false){
+ kb=null;const done=Math.min(qi,Q.length);const total=early?done:Q.length;
+ LS.set(SK[kind],null);
+ if(!total){kind==="mc"?quiz():spell();return}
+ const pct=Math.round(score/total*100);
+ const H=LS.get("mt_hist",[]);H.push({k:kind,s:pct,n:total,t:Date.now()});LS.set("mt_hist",H.slice(-30));
+ const done_=Q.slice(0,total).map(x=>x.d);const wset=new Set(wrong.map(w=>w.d.id));
+ const byCh=[1,2,3,4].map(c=>{const a=done_.filter(d=>d.ch===c);return a.length?{c,n:a.length,ok:a.filter(d=>!wset.has(d.id)).length}:null}).filter(Boolean);
+ V.innerHTML=`<div class="q enter"><div class="score">${pct}<small>점 · ${score}/${total}${early?` (${Q.length}문제 중 ${total}개 풀고 채점)`:""}</small></div>
+ <p class="verdict">${pct>=90?"완벽에 가까워요 👏":pct>=70?"좋아요, 틀린 것만 한 번 더!":pct>=50?"절반 넘었어요. 오답 위주로 다시 보세요":"아직 낯선 단어가 많아요. 카드로 먼저 훑어보세요"}</p>
+ ${byCh.length>1?`<div class="chs">${byCh.map(x=>`<div><span>${x.c}장</span><b>${Math.round(x.ok/x.n*100)}%</b><i style="--w:${x.ok/x.n*100}%"></i><small>${x.ok}/${x.n}</small></div>`).join("")}</div>`:""}
+ ${wrong.length?`<p class="ttl" style="font-size:1.05rem;margin:22px 0 8px">틀린 문제 ${wrong.length}개</p><div class="wl">${wrong.map(w=>`<div><span class="term">${esc(w.d.p)}</span><span>${esc(w.d.ko)}</span>${w.a?`<small>내 답: ${esc(w.a)}</small>`:""}</div>`).join("")}</div>
+ <div class="gap"></div><button class="primary" id="rw">틀린 것만 다시 풀기</button><div class="gap"></div>`:`<p style="text-align:center">전부 맞았어요!</p>`}
  <button class="primary alt" id="rn">새로 풀기</button></div>`;
- const rw=$("#rw");if(rw)rw.onclick=()=>{Q=kind==="mc"?mkQ(shuf(wrong)):shuf(wrong).map(d=>({d}));qi=0;score=0;wrong=[];kind==="mc"?ask():askS()};
+ const rw=$("#rw");if(rw)rw.onclick=()=>{const ws=wrong.map(w=>w.d);Q=kind==="mc"?mkQ(shuf(ws)):shuf(ws).map(d=>({d}));qi=0;score=0;wrong=[];kind==="mc"?ask():askS()};
  $("#rn").onclick=()=>kind==="mc"?quiz():spell();chips();
+ kb=(e,typing)=>{if(e.key==="Enter"&&!typing&&e.target.tagName!=="BUTTON"){e.preventDefault();(rw||$("#rn")).click()}};
 }
+document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===st.mode));
 render();
 </script>
 </body>
