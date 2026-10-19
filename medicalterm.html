@@ -281,13 +281,30 @@ let Q=[],qi=0,score=0,wrong=[],answered=false,kind="mc";
 const SK={mc:"mt_sess_mc",sp:"mt_sess_sp"};
 function saveQ(){LS.set(SK[kind],{dir:st.dir,qi,score,wrong:wrong.map(w=>({d:w.d.id,a:w.a})),Q:Q.map(x=>kind==="mc"?{d:x.d.id,o:x.opts.map(o=>o.id)}:{d:x.d.id})})}
 function loadQ(k){const v=LS.get(SK[k],null);if(!v||!v.Q||v.qi>=v.Q.length)return false;kind=k;if(k==="mc")st.dir=v.dir||st.dir;qi=v.qi;score=v.score;wrong=(v.wrong||[]).map(w=>typeof w==="number"?{d:byId(w),a:""}:{d:byId(w.d),a:w.a});Q=v.Q.map(x=>k==="mc"?{d:byId(x.d),opts:x.o.map(byId)}:{d:byId(x.d)});return true}
+/* 헷갈리는 오답 고르기: 철자 모양 + 뜻 + 길이가 비슷한 것 위주 */
+const bg=t=>{const x=" "+t+" ",S=new Set();for(let i=0;i<x.length-1;i++)S.add(x.slice(i,i+2));return S};
+const dice=(A,B)=>{if(!A.size||!B.size)return 0;let n=0;for(const x of A)if(B.has(x))n++;return 2*n/(A.size+B.size)};
+const cleanEn=t=>t.toLowerCase().replace(/\([^)]*\)/g,"").replace(/[^a-z]/g,"");
+const cleanKo=t=>t.replace(/\([^)]*\)/g,"").replace(/[^\uac00-\ud7a3]/g,"");
+D.forEach(d=>{d.pe=cleanEn(d.p);d.pk=cleanKo(d.ko);d.bE=bg(d.pe);d.bK=bg(d.pk);d.ee=d.en.toLowerCase().trim()});
+function simScore(d,x,toKo){
+ let sc=dice(d.bE,x.bE)*1.2+dice(d.bK,x.bK)*1.0;
+ const e1=d.pe,e2=x.pe;
+ if(e1.length>3&&e2.length>3){if(e1.slice(-4)===e2.slice(-4))sc+=.35;else if(e1.slice(-3)===e2.slice(-3))sc+=.2;if(e1.slice(0,3)===e2.slice(0,3))sc+=.3}
+ const L1=(toKo?d.ko:d.p).length,L2=(toKo?x.ko:x.p).length;sc-=Math.abs(L1-L2)/Math.max(L1,L2)*.5;
+ if(x.ch===d.ch)sc+=.08;
+ return sc+Math.random()*.3;
+}
 function mkQ(items){
- const all=pool().length>=8?pool():D;
+ const toKo=st.dir==="toKo";
  return items.map(d=>{
-  let src=all.filter(x=>x.t===d.t&&x.ch===d.ch&&x.ko!==d.ko&&x.p!==d.p);
-  if(src.length<6)src=D.filter(x=>x.t===d.t&&x.ko!==d.ko&&x.p!==d.p);
-  const seen=new Set([d.ko]),seenP=new Set([d.p]);const ds=[];
-  for(const x of shuf(src)){if(!seen.has(x.ko)&&!seenP.has(x.p)){seen.add(x.ko);seenP.add(x.p);ds.push(x)}if(ds.length===3)break}
+  const bad=x=>x.id===d.id||x.pe===d.pe||x.pk===d.pk||(d.ee&&x.ee===d.ee)||(d.pk&&x.pk&&(x.pk.includes(d.pk)||d.pk.includes(x.pk))&&Math.min(x.pk.length,d.pk.length)>=2);
+  let src=D.filter(x=>x.t===d.t&&!bad(x));
+  if(src.length<3)src=D.filter(x=>!bad(x));
+  const ranked=src.map(x=>[simScore(d,x,toKo),x]).sort((a,b)=>b[0]-a[0]).map(r=>r[1]);
+  const ds=[];const seenK=new Set([d.pk]),seenE=new Set([d.pe]);
+  for(const x of ranked){if(seenK.has(x.pk)||seenE.has(x.pe))continue;seenK.add(x.pk);seenE.add(x.pe);ds.push(x);if(ds.length===3)break}
+  for(const x of src){if(ds.length===3)break;if(!seenK.has(x.pk)&&!seenE.has(x.pe)){seenK.add(x.pk);seenE.add(x.pe);ds.push(x)}}
   return{d,opts:shuf([d,...ds])}});
 }
 function setup(title,extra){
