@@ -142,7 +142,7 @@ tbody tr{cursor:pointer}
 .okc{color:var(--ok)}.badc{color:var(--bad)}
 .hintw{letter-spacing:.08em;color:var(--ink)}
 .verdict{text-align:center;color:var(--ink2);margin:0 0 18px}
-.chs{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.chs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .chs div{background:var(--fill);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;row-gap:6px;font-size:.92rem}
 .chs b{font-size:1.1rem}
 .chs i{grid-column:1/-1;height:5px;border-radius:9px;background:linear-gradient(90deg,var(--accent) var(--w),var(--line) var(--w))}
@@ -151,17 +151,41 @@ tbody tr{cursor:pointer}
 .wl div{background:var(--fill);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 12px}
 .wl small{grid-column:1/-1;color:var(--bad);font-size:.84rem}
 .btns #hint{flex:.6}
+
+.mocktab[aria-pressed="false"]{color:var(--accent)!important}
+.xtypes{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 16px}
+.xtypes span{background:var(--fill);border-radius:10px;padding:6px 11px;font-size:.84rem;color:var(--soft)}
+.xtypes b{color:var(--ink2);font-weight:600;margin-right:6px}
+.q .ask.xq{font-size:1.4rem;line-height:1.45;font-weight:600;letter-spacing:-.01em}
+.opt.chk .n{border:1.5px solid var(--line)}
+.opt.chk.on{background:var(--accentSoft);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.opt.chk.on .n{background:var(--accent);color:#fff;border-color:var(--accent)}
+.opt.missed{box-shadow:inset 0 0 0 1.5px var(--ok);background:var(--card)}
+.opt.missed::after{content:"놓침";margin-left:auto;font-size:.8rem;color:var(--ok);font-weight:700}
+.xex{border-radius:14px;padding:14px 16px;margin:6px 0 12px;font-size:1rem}
+.xex.ok{background:var(--okSoft)}.xex.bad{background:var(--badSoft)}
+.xex b{color:var(--ok)}.xex.bad b{color:var(--bad)}
+.xex p{margin:6px 0 0;color:var(--ink2)}
+.xex small{display:block;margin-top:4px;color:var(--bad)}
+.xwl{display:grid;gap:10px}
+.xwl>div{background:var(--fill);border-radius:14px;padding:14px 16px}
+.xwl p{margin:0 0 4px}
+.xwl .xwq{font-weight:600;margin-bottom:8px}
+.xwl span{font-size:.8rem;font-weight:700;margin-right:6px}
+.xwl small{display:block;color:var(--soft);margin-top:6px}
+@media (max-width:560px){.tabs button{font-size:.88rem}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <h1><span>의학용어</span> 중간고사 Ch.1~4</h1>
 <p class="sub">'의용' 단어장 751개 + 4장 PPT 추가분 41개 · 한글 뜻은 단어장·PPT 표기 그대로</p>
-<div class="tabs" role="group" aria-label="모드" title="Alt+1~4로 탭 전환">
+<div class="tabs" role="group" aria-label="모드" title="Alt+1~5로 탭 전환">
 <button data-mode="list" aria-pressed="true">암기표</button>
 <button data-mode="card" aria-pressed="false">카드</button>
 <button data-mode="quiz" aria-pressed="false">객관식</button>
 <button data-mode="spell" aria-pressed="false">스펠링</button>
+<button data-mode="mock" aria-pressed="false" class="mocktab">모의고사</button>
 </div>
 <div class="filters" id="chF"></div>
 <div class="filters" id="tyF"></div>
@@ -210,10 +234,10 @@ let kb=null;
 document.addEventListener("keydown",e=>{
  if(e.isComposing)return;
  const tag=e.target.tagName,typing=tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA";
- if(!typing&&e.altKey&&/^[1-4]$/.test(e.key)){e.preventDefault();setMode(["list","card","quiz","spell"][+e.key-1]);return}
+ if(!typing&&e.altKey&&/^[1-5]$/.test(e.key)){e.preventDefault();setMode(["list","card","quiz","spell","mock"][+e.key-1]);return}
  if(kb)kb(e,typing);
 });
-function render(){kb=null;chips();({list,card,quiz,spell})[st.mode]()}
+function render(){kb=null;chips();$("#tyF").style.display=st.mode==="mock"?"none":"";({list,card,quiz,spell,mock})[st.mode]()}
 const empty=()=>{V.innerHTML=`<div class="q"><p style="margin:0">${st.wonly?"선택한 범위에 틀린 단어가 없어요. 객관식·스펠링·카드에서 틀리거나 '몰라요'를 누르면 여기에 모여요.":"선택한 범위에 단어가 없어요."}</p></div>`};
 const seg=(name,cur,items)=>`<div class="seg" data-seg="${name}">${items.map(([v,l])=>`<button data-v="${v}" aria-pressed="${v===cur}">${l}</button>`).join("")}</div>`;
 function bindSeg(name,fn){const el=V.querySelector(`[data-seg="${name}"]`);if(el)el.onclick=e=>{const b=e.target.closest("button");if(b)fn(b.dataset.v)}}
@@ -433,6 +457,297 @@ function finish(early=false){
  $("#rn").onclick=()=>kind==="mc"?quiz():spell();chips();
  kb=(e,typing)=>{if(e.key==="Enter"&&!typing&&e.target.tagName!=="BUTTON"){e.preventDefault();(rw||$("#rn")).click()}};
 }
+const MQ=[
+/* ===== B: 용어 → 영어 뜻 (조각 하나만 바뀐 오답) ===== */
+{k:"B",ch:4,q:"Bradycardia indicates?",o:["Rapid heartbeat","Irregular heartbeat","Slow heartbeat","Regular heartbeat"],a:2,ex:"brady-(느린) + cardi/o(심장) + -ia. 작년 기출 그대로. 분당 60회 이하 = 서맥"},
+{k:"B",ch:3,q:"What is the meaning of hepatomegaly?",o:["Inflammation of the liver","Enlargement of the liver","Removal of the liver","Tumor of the liver"],a:1,ex:"hepat/o(간) + -megaly(비대). 작년 splenomegaly 문제와 같은 구조"},
+{k:"B",ch:3,q:"What is the meaning of splenomegaly?",o:["Softening of the spleen","Hardening of the spleen","Enlargement of the spleen","Surgical removal of the spleen"],a:2,ex:"splen/o(비장) + -megaly. 오답: -malacia 연화, -sclerosis 경화, -ectomy 절제"},
+{k:"B",ch:3,q:"What is the meaning of osteomalacia?",o:["Softening of bone","Hardening of bone","Pain in a bone","Inflammation of bone"],a:0,ex:"oste/o(뼈) + -malacia(연화, softening)"},
+{k:"B",ch:3,q:"Arteriosclerosis means:",o:["Enlargement of arteries","Softening of arteries","Hardening of arteries","Incision of an artery"],a:2,ex:"arteri/o(동맥) + -sclerosis(경화, hardening)"},
+{k:"B",ch:1,q:"Gastrectomy is:",o:["Incision of the stomach","Removal of the stomach","Visual examination of the stomach","Inflammation of the stomach"],a:1,ex:"-ectomy = excision, removal. 째기만 하면 gastrotomy"},
+{k:"B",ch:1,q:"Gastrotomy is:",o:["Removal of the stomach","New opening of the stomach","Incision of the stomach","Record of the stomach"],a:2,ex:"-tomy = process of cutting, incision"},
+{k:"B",ch:3,q:"Colostomy means:",o:["Removal of the colon","Incision into the colon","New opening of the colon to the outside of the body","Visual examination of the colon"],a:2,ex:"-stomy = new opening (stoma). 떼면 -ectomy, 째면 -tomy, 구멍 내면 -stomy"},
+{k:"B",ch:3,q:"Thoracentesis is:",o:["Incision of the chest","Surgical puncture to remove fluid from the chest","Removal of the chest wall","Visual examination of the chest"],a:1,ex:"thorac/o(가슴) + -centesis(천자, puncture to remove fluid)"},
+{k:"B",ch:3,q:"Arthralgia means:",o:["Inflammation of a joint","Pain in a joint","Softening of a joint","Removal of a joint"],a:1,ex:"arthr/o(관절) + -algia(통증)"},
+{k:"B",ch:3,q:"Neutropenia means:",o:["Increase in neutrophils","Deficiency of neutrophils","Destruction of neutrophils","Formation of neutrophils"],a:1,ex:"-penia = deficiency(결핍, 감소)"},
+{k:"B",ch:1,q:"Leukocytosis means:",o:["Deficiency of white blood cells","Cancer of white blood cells","Slight increase in numbers of normal white blood cells","Destruction of white blood cells"],a:2,ex:"-osis가 혈구에 붙으면 '증가'. 암성 백혈구 증가는 leukemia(백혈병)라서 구분!"},
+{k:"B",ch:4,q:"Tachypnea means:",o:["Slow breathing","Rapid breathing","Difficult breathing","Absence of breathing"],a:1,ex:"tachy-(빠른) + -pnea(호흡). 오답: brady- 느린, dys- 어려운, a- 없는"},
+{k:"B",ch:4,q:"Dyspnea means:",o:["Rapid breathing","Absence of breathing","Difficult breathing","Normal breathing"],a:2,ex:"dys- = abnormal, bad, painful, difficult"},
+{k:"B",ch:4,q:"Apnea means:",o:["Not breathing","Slow breathing","Painful breathing","Excessive breathing"],a:0,ex:"a- = no, not, without"},
+{k:"B",ch:4,q:"Hypoglycemia is:",o:["Excessive sugar in the blood","Deficient sugar in the blood","Normal sugar in the blood","Sugar in the urine"],a:1,ex:"hypo-(부족) + glyc/o(당) + -emia(혈액 상태)"},
+{k:"B",ch:3,q:"Blepharoptosis means:",o:["Inflammation of the eyelid","Surgical repair of the eyelid","Drooping of the eyelid","Softening of the eyelid"],a:2,ex:"blephar/o(눈꺼풀) + -ptosis(처짐). 성형은 blepharoplasty"},
+{k:"B",ch:3,q:"Rhinoplasty is:",o:["Discharge from the nose","Inflammation of the nose","Surgical repair of the nose","Incision of the nose"],a:2,ex:"-plasty = surgical repair. 콧물은 rhinorrhea"},
+{k:"B",ch:3,q:"Rhinorrhea is:",o:["Discharge from the nose","Surgical repair of the nose","Drooping of the nose","Pain in the nose"],a:0,ex:"-rrhea = flow, discharge"},
+{k:"B",ch:3,q:"Hemostasis means:",o:["Breakdown of blood","Stopping or controlling the flow of blood","Formation of blood cells","Excessive blood flow"],a:1,ex:"-stasis = stopping, controlling. 분해는 hemolysis"},
+{k:"B",ch:4,q:"Subcutaneous means pertaining to:",o:["Through the skin","Under the skin","Above the skin","Around the skin"],a:1,ex:"sub-(아래) + cutane/o(피부). 경피(through)는 percutaneous"},
+{k:"B",ch:4,q:"Percutaneous means pertaining to:",o:["Through the skin","Under the skin","Within the skin","Removal of skin"],a:0,ex:"per- = through"},
+{k:"B",ch:4,q:"Retroperitoneal means pertaining to:",o:["Within the peritoneum","Around the peritoneum","Behind the peritoneum","Above the peritoneum"],a:2,ex:"retro- = behind, backward"},
+{k:"B",ch:4,q:"Contralateral means pertaining to:",o:["One side","Both sides","The opposite side","The middle"],a:2,ex:"contra- = against, opposite. 한쪽 unilateral, 양쪽 bilateral"},
+{k:"B",ch:4,q:"Hemiglossectomy is:",o:["Removal of the entire tongue","Removal of half of the tongue","Incision of the tongue","Inflammation of the tongue"],a:1,ex:"hemi-(절반) + gloss/o(혀) + -ectomy"},
+{k:"B",ch:4,q:"Pancytopenia is:",o:["Deficiency of all blood cells","Increase of all blood cells","Deficiency of red blood cells only","Destruction of white blood cells"],a:0,ex:"pan-(모든) + cyt/o(세포) + -penia(결핍)"},
+{k:"B",ch:4,q:"Polyneuritis means:",o:["Pain in one nerve","Inflammation of many nerves","Tumor of nerves","Disease of a single nerve"],a:1,ex:"poly-(많은) + neur/o + -itis"},
+{k:"B",ch:4,q:"Postpartum means:",o:["Before birth","After birth","Pertaining to the newborn","During pregnancy"],a:1,ex:"post-(이후) + -partum(분만). 분만 전은 antepartum, 신생아는 neonatal"},
+{k:"B",ch:4,q:"Hyperplasia is:",o:["Increase in the size of cells","Increase in the number of cells","Decrease in cell size","Abnormal development"],a:1,ex:"hyperplasia = 세포 '수' 증가(증식). 크기 증가는 hypertrophy, 감소는 atrophy"},
+{k:"B",ch:4,q:"Hypertrophy is:",o:["Increase in the size of cells (excessive development)","Increase in the number of cells","Wasting away of cells","Abnormal formation of cells"],a:0,ex:"-trophy = development, nourishment. 크기 증가 = 비대"},
+{k:"B",ch:3,q:"Cardiomyopathy is:",o:["Inflammation of the heart","Disease of heart muscle","Enlargement of the heart","Hardening of heart vessels"],a:1,ex:"cardi/o + my/o(근육) + -pathy(질병)"},
+{k:"B",ch:1,q:"Iatrogenic means:",o:["Produced by treatment","Producing cancer","Produced by disease","Pertaining to the mind"],a:0,ex:"iatr/o(치료, 의사) + -genic(~에 의해 생긴)"},
+{k:"B",ch:1,q:"Carcinogenic means:",o:["Produced by treatment","Pertaining to producing cancer","Removal of cancer","Study of cancer"],a:1,ex:"carcin/o(암) + -genic(생산하는)"},
+{k:"B",ch:1,q:"Epigastric means pertaining to:",o:["Below the stomach","Above the stomach","Within the stomach","Behind the stomach"],a:1,ex:"epi- = above, upon. 아래는 hypogastric"},
+{k:"B",ch:4,q:"Intercostal means pertaining to:",o:["Below the ribs","Between the ribs","Above the ribs","Through the ribs"],a:1,ex:"inter-(사이) + cost/o(갈비뼈). 갈비 아래는 infracostal"},
+{k:"B",ch:4,q:"Anoxia means:",o:["Excessive oxygen","Without oxygen","Rapid breathing","Normal oxygen"],a:1,ex:"an- + -oxia(산소)"},
+{k:"B",ch:4,q:"Euthyroid means:",o:["Abnormal thyroid","Normal thyroid function","Enlarged thyroid","Removal of thyroid"],a:1,ex:"eu- = good, normal"},
+{k:"B",ch:4,q:"Exophthalmos is:",o:["Inward displacement of the eye","Outward bulging (protrusion) of the eyeball","Drooping of the eyelid","Inflammation of the eye"],a:1,ex:"ex-(바깥) + ophthalm/o(눈). 안구돌출증"},
+{k:"B",ch:3,q:"Laparoscopy is:",o:["Incision of the abdomen","Visual examination of the abdomen","Removal of abdominal fluid","Record of the abdomen"],a:1,ex:"lapar/o(배) + -scopy(시각적 검사). 개복술은 laparotomy"},
+{k:"B",ch:1,q:"Encephalopathy is:",o:["Inflammation of the brain","Disease of the brain","Record of brain waves","Study of nerves"],a:1,ex:"encephal/o(뇌) + -pathy"},
+{k:"B",ch:1,q:"Nephrectomy is:",o:["Removal of a kidney","Inflammation of a kidney","Incision of the bladder","Study of the kidney"],a:0,ex:"nephr/o(신장) + -ectomy"},
+{k:"B",ch:4,q:"Neoplasm means:",o:["New growth (tumor)","Old tissue","Normal formation","Death of tissue"],a:0,ex:"neo-(새로운) + -plasm(형성)"},
+{k:"B",ch:4,q:"Dysplasia means:",o:["Abnormal development (formation) of cells","Increase in cell number","Absence of development","Normal growth"],a:0,ex:"dys-(비정상) + -plasia(형성)"},
+{k:"B",ch:3,q:"Thrombocytopenia is:",o:["Increase in platelets","Deficiency of platelets (clotting cells)","Deficiency of red blood cells","Clot in a vessel"],a:1,ex:"thromb/o(응고) + cyt/o + -penia"},
+{k:"B",ch:3,q:"Erythropenia is:",o:["Deficiency of red blood cells","Deficiency of white blood cells","Increase of red blood cells","Destruction of platelets"],a:0,ex:"erythr/o(붉은) + -penia"},
+
+/* ===== A: 영어 정의 → 용어 (같은 계통 오답) ===== */
+{k:"A",ch:1,q:"What is the term for a red blood cell?",o:["Leukocyte","Erythrocyte","Thrombocyte","Lymphocyte"],a:1,ex:"erythr/o(붉은) + -cyte. 작년 기출은 이걸 영어로 쓰는 단답형"},
+{k:"A",ch:1,q:"What is the term for a clotting cell (platelet)?",o:["Thrombocyte","Erythrocyte","Leukocyte","Monocyte"],a:0,ex:"thromb/o = clot"},
+{k:"A",ch:2,q:"What part of the respiratory system is called the \"voice box\"?",o:["Larynx","Pharynx","Trachea","Esophagus"],a:0,ex:"작년 기출. pharynx = throat(인두), trachea = windpipe(기관)"},
+{k:"A",ch:2,q:"The throat, a common passageway for food and air, is the:",o:["Larynx","Pharynx","Trachea","Bronchus"],a:1,ex:"pharynx(인두). x→g: pharyng/o"},
+{k:"A",ch:2,q:"The windpipe is the:",o:["Esophagus","Pharynx","Trachea","Larynx"],a:2,ex:"trache/o = trachea, windpipe"},
+{k:"A",ch:1,q:"The tube that carries urine from the kidney to the urinary bladder is the:",o:["Urethra","Ureter","Ileum","Ilium"],a:1,ex:"ureter 요관: e가 2개 = 2개(좌우)"},
+{k:"A",ch:1,q:"The tube that carries urine from the urinary bladder to the outside of the body is the:",o:["Ureter","Urethra","Renal pelvis","Ilium"],a:1,ex:"urethra 요도: e 1개 = 1개"},
+{k:"A",ch:1,q:"The third part of the small intestine is the:",o:["Ilium","Ileum","Colon","Rectum"],a:1,ex:"ileum(회장) — e는 eating. ilium은 엉덩뼈"},
+{k:"A",ch:1,q:"The upper part of the hip bone is the:",o:["Ileum","Ilium","Pubis","Sacrum"],a:1,ex:"ilium(장골, 엉덩뼈)"},
+{k:"A",ch:2,q:"Small structures in the cytoplasm where catabolism takes place and energy is released are:",o:["Ribosomes","Mitochondria","Endoplasmic reticulum","Chromosomes"],a:1,ex:"mitochondria = 세포의 발전소"},
+{k:"A",ch:2,q:"A network of canals within the cytoplasm where proteins are made is the:",o:["Mitochondria","Cell membrane","Endoplasmic reticulum","Nucleus"],a:2,ex:"ER(소포체). 단백질 합성 통로"},
+{k:"A",ch:2,q:"The control center of the cell that contains chromosomes is the:",o:["Nucleus","Cytoplasm","Cell membrane","Mitochondria"],a:0,ex:"nucleus. kary/o, nucle/o"},
+{k:"A",ch:2,q:"A photograph of chromosomes arranged by size and number is a:",o:["Chromosome","Karyotype","Gene","Histology"],a:1,ex:"kary/o(핵) + -type(분류, picture)"},
+{k:"A",ch:2,q:"The space between the lungs that contains the heart, esophagus, and trachea is the:",o:["Pleural cavity","Mediastinum","Peritoneum","Abdominal cavity"],a:1,ex:"mediastinum(세로칸, 종격)"},
+{k:"A",ch:2,q:"The double membrane surrounding each lung is the:",o:["Peritoneum","Pleura","Diaphragm","Mediastinum"],a:1,ex:"pleura(흉막). 배는 peritoneum"},
+{k:"A",ch:2,q:"The membrane that surrounds the organs of the abdominal cavity is the:",o:["Pleura","Peritoneum","Pericardium","Mediastinum"],a:1,ex:"peritoneum(복막)"},
+{k:"A",ch:2,q:"The muscle that separates the thoracic and abdominal cavities is the:",o:["Diaphragm","Mediastinum","Peritoneum","Pleura"],a:0,ex:"diaphragm(가로막)"},
+{k:"A",ch:2,q:"Lying on the back is:",o:["Prone","Supine","Lateral","Dorsal"],a:1,ex:"supine = spine(등)을 대고 누움. prone = 엎드림"},
+{k:"A",ch:2,q:"Lying on the belly (face down) is:",o:["Supine","Prone","Medial","Ventral"],a:1,ex:"prone 엎드린, 복와위"},
+{k:"A",ch:2,q:"The plane that divides the body into right and left sides is the:",o:["Frontal (coronal) plane","Sagittal plane","Transverse (axial) plane","Horizontal plane"],a:1,ex:"sagittal = 좌/우"},
+{k:"A",ch:2,q:"The plane that divides the body into anterior and posterior portions is the:",o:["Sagittal plane","Frontal (coronal) plane","Transverse plane","Midsagittal plane"],a:1,ex:"frontal(coronal) = 앞/뒤"},
+{k:"A",ch:2,q:"The plane that divides the body into upper and lower portions is the:",o:["Transverse (axial) plane","Sagittal plane","Frontal plane","Coronal plane"],a:0,ex:"transverse(axial) = 위/아래, CT"},
+{k:"A",ch:2,q:"Far from the point of attachment to the trunk is:",o:["Proximal","Distal","Medial","Superficial"],a:1,ex:"dist/o = far. 가까우면 proximal"},
+{k:"A",ch:2,q:"Pertaining to the middle or nearer the midline is:",o:["Lateral","Medial","Distal","Inferior"],a:1,ex:"medi/o = middle"},
+{k:"A",ch:2,q:"The abdominal region below the umbilical region is the:",o:["Epigastric region","Hypogastric region","Hypochondriac region","Lumbar region"],a:1,ex:"hypo-(아래) + gastr/o. 하복부"},
+{k:"A",ch:2,q:"The abdominal regions beneath the ribs (right and left) are the:",o:["Hypochondriac regions","Inguinal regions","Lumbar regions","Epigastric regions"],a:0,ex:"hypo- + chondr/o(연골) + -iac. 갈비연골 아래"},
+{k:"A",ch:2,q:"The abdominal quadrant that contains the appendix is the:",o:["RUQ","LUQ","RLQ","LLQ"],a:2,ex:"충수(appendix) = RLQ"},
+{k:"A",ch:2,q:"The quadrant containing the right lobe of the liver and the gallbladder is the:",o:["RUQ","LUQ","RLQ","LLQ"],a:0,ex:"RUQ: 간 우엽, 담낭. 위·비장은 LUQ"},
+{k:"A",ch:2,q:"The seven vertebrae in the neck region are the:",o:["Thoracic vertebrae","Cervical vertebrae","Lumbar vertebrae","Sacral vertebrae"],a:1,ex:"C1~C7. 7-12-5-5-4"},
+{k:"A",ch:2,q:"The twelve vertebrae that are joined to the ribs are the:",o:["Cervical","Thoracic","Lumbar","Coccygeal"],a:1,ex:"T1~T12"},
+{k:"A",ch:2,q:"A pad of cartilage between two vertebrae is a(n):",o:["Disc","Vertebra","Spinal cord","Sacrum"],a:0,ex:"intervertebral disc"},
+{k:"A",ch:3,q:"The most numerous white blood cell, a phagocyte, is the:",o:["Eosinophil","Basophil","Neutrophil","Lymphocyte"],a:2,ex:"neutrophil(호중구) 50~60%, 세균을 먹음"},
+{k:"A",ch:3,q:"A white blood cell that increases in allergic conditions is the:",o:["Eosinophil","Neutrophil","Monocyte","Basophil"],a:0,ex:"eosinophil(호산구): 알레르기, 기생충"},
+{k:"A",ch:3,q:"A white blood cell that becomes a macrophage in tissues is the:",o:["Lymphocyte","Monocyte","Eosinophil","Neutrophil"],a:1,ex:"monocyte(단핵구) → macrophage(대식세포)"},
+{k:"A",ch:3,q:"A white blood cell made in lymph tissue that produces antibodies is the:",o:["Lymphocyte","Basophil","Neutrophil","Erythrocyte"],a:0,ex:"lymphocyte(림프구)"},
+{k:"A",ch:3,q:"Berry-shaped bacteria growing in twisted chains are:",o:["Staphylococci","Streptococci","Diplococci","Macrophages"],a:1,ex:"strept/o = twisted chains. 포도송이는 staphyl/o"},
+{k:"A",ch:3,q:"Berry-shaped bacteria growing in clusters are:",o:["Streptococci","Staphylococci","Diplococci","Neutrophils"],a:1,ex:"staphyl/o = clusters"},
+{k:"A",ch:4,q:"A substance, usually foreign to the body, that stimulates the production of antibodies is a(n):",o:["Antibody","Antigen","Antibiotic","Antitoxin"],a:1,ex:"antigen(항원) - 4장 Closer Look 정의 그대로"},
+{k:"A",ch:4,q:"Protein substances made by white blood cells in response to foreign antigens are:",o:["Antigens","Antibodies","Antibiotics","Toxins"],a:1,ex:"antibody(항체)"},
+{k:"A",ch:4,q:"A group of signs or symptoms that commonly occur together and indicate a particular disease is a:",o:["Prodrome","Syndrome","Symptom","Sign"],a:1,ex:"syn-(함께) + -drome(달리다)"},
+{k:"A",ch:4,q:"A symptom that comes before the actual illness is a:",o:["Syndrome","Prodrome","Relapse","Remission"],a:1,ex:"pro-(앞) + -drome"},
+{k:"A",ch:4,q:"Objective evidence of disease that is observed by the examiner is a:",o:["Symptom","Sign","Syndrome","Prodrome"],a:1,ex:"sign 징후 = 객관적 / symptom 증상 = 환자가 느낌"},
+{k:"A",ch:4,q:"A factor that makes a particular treatment inadvisable is a(n):",o:["Indication","Contraindication","Prognosis","Diagnosis"],a:1,ex:"contra-(반대) + indication. 금기"},
+{k:"A",ch:4,q:"The return of disease symptoms after they had disappeared is:",o:["Remission","Relapse","Prolapse","Prodrome"],a:1,ex:"re-(다시) + -lapse(미끄러지다). 재발"},
+{k:"A",ch:4,q:"Lessening (partial or complete disappearance) of symptoms of a disease is:",o:["Relapse","Remission","Prolapse","Syndrome"],a:1,ex:"re- + -mission(보내다). 완화, 관해"},
+{k:"A",ch:4,q:"Webbed fingers or toes are called:",o:["Symphysis","Syndactyly","Symbiosis","Polydactyly"],a:1,ex:"syn- + dactyl/o(손발가락). 선천기형 예시"},
+{k:"A",ch:4,q:"A pregnancy that occurs outside the uterus, usually in a fallopian tube, is:",o:["Ectopic pregnancy","Prenatal pregnancy","Antepartum","Neonatal"],a:0,ex:"ec-(바깥) + top/o(위치)"},
+{k:"A",ch:4,q:"An artificial replacement for a missing part of the body is a:",o:["Prosthesis","Synthesis","Symphysis","Prolapse"],a:0,ex:"pros-(앞) + -thesis(두다)"},
+{k:"A",ch:4,q:"Spread of a cancerous tumor to a distant location is:",o:["Metastasis","Hemostasis","Metamorphosis","Metabolism"],a:0,ex:"meta-(너머) + -stasis. 전이"},
+{k:"A",ch:4,q:"A rapid heartbeat (over 100 beats per minute) is:",o:["Bradycardia","Tachycardia","Arrhythmia","Tachypnea"],a:1,ex:"빈맥 = 분당 100회 이상 (4장 PPT 한글 슬라이드)"},
+{k:"A",ch:4,q:"An irregular heartbeat is:",o:["Arrhythmia","Bradycardia","Tachycardia","Dyspnea"],a:0,ex:"부정맥 = 불규칙한 맥박"},
+{k:"A",ch:4,q:"An ultrasound image of the heart is a(n):",o:["Electrocardiogram","Echocardiogram","Sonogram","Angiogram"],a:1,ex:"echocardiogram. 태아 초음파는 sonogram, 심전도는 ECG"},
+{k:"A",ch:1,q:"An instrument used to visually examine the eye is a(n):",o:["Ophthalmoscope","Endoscope","Ophthalmology","Optometrist"],a:0,ex:"-scope = 기구, -scopy = 검사"},
+{k:"A",ch:1,q:"A record of the electricity in the brain is a(n):",o:["Electrocardiogram","Electroencephalogram","Electroencephalograph","Encephalopathy"],a:1,ex:"-gram = 기록물(EEG). -graph는 기계"},
+{k:"A",ch:1,q:"A specialist in the study and treatment of tumors is a(n):",o:["Oncologist","Pathologist","Urologist","Hematologist"],a:0,ex:"onc/o = tumor"},
+{k:"A",ch:2,q:"The study of tissues is:",o:["Cytology","Histology","Pathology","Karyotype"],a:1,ex:"hist/o = tissue. 세포학은 cytology"},
+{k:"A",ch:3,q:"Deficiency of hemoglobin or red blood cells is:",o:["Anemia","Ischemia","Leukemia","Hemostasis"],a:0,ex:"an- + -emia"},
+{k:"A",ch:3,q:"Deficient blood flow to a part of the body (holding back blood) is:",o:["Anemia","Ischemia","Hemolysis","Necrosis"],a:1,ex:"isch/o = to hold back"},
+{k:"A",ch:3,q:"A small artery is a(n):",o:["Venule","Arteriole","Capillary","Aorta"],a:1,ex:"-ole = small. 작은 정맥은 venule(-ule)"},
+{k:"A",ch:4,q:"Separation of wastes from the blood using a machine (artificial kidney) is:",o:["Analysis","Dialysis","Paralysis","Transfusion"],a:1,ex:"dia-(완전한) + -lysis(분리). 투석"},
+{k:"A",ch:4,q:"Excessive loss of water from the body is:",o:["Dehydration","Diarrhea","Hydrotherapy","Dialysis"],a:0,ex:"de-(부족) + hydr/o(물)"},
+{k:"A",ch:3,q:"The combining form meaning both spinal cord and bone marrow is:",o:["my/o","myel/o","mast/o","muc/o"],a:1,ex:"myel/o. my/o는 근육"},
+{k:"A",ch:3,q:"The suffix meaning hernia is:",o:["-cele","-centesis","-coccus","-cyte"],a:0,ex:"rectocele, cystocele, hysterocele"},
+{k:"A",ch:3,q:"The suffix meaning surgical puncture to remove fluid is:",o:["-tomy","-centesis","-stomy","-ectomy"],a:1,ex:"amniocentesis, thoracentesis"},
+
+/* ===== C: 개념 이해 ===== */
+{k:"C",ch:1,q:"In the term gastritis, the combining vowel is dropped because:",o:["The suffix begins with a vowel","The root ends with a consonant","Two roots are joined","The prefix begins with a vowel"],a:0,ex:"접미사가 모음(-itis)으로 시작하면 연결모음 생략"},
+{k:"C",ch:1,q:"Which term is spelled correctly?",o:["Gastrenterology","Gastroenterology","Gastroenterlogy","Gastrenterlogy"],a:1,ex:"어근과 어근 사이 연결모음 o는 뒤에 모음이 와도 유지"},
+{k:"C",ch:1,q:"A combining form consists of:",o:["Prefix + root","Root + combining vowel","Root + suffix","Prefix + suffix"],a:1,ex:"gastr/o = gastr + o"},
+{k:"C",ch:1,q:"The combining vowel is usually:",o:["a","e","o","i"],a:2,ex:"대부분 o"},
+{k:"C",ch:1,q:"How many ureters are there in the human body?",o:["One","Two","Three","Four"],a:1,ex:"ureter 2개(좌우), urethra 1개"},
+{k:"C",ch:2,q:"How many chromosomes are in a normal human body cell (not egg or sperm)?",o:["23","44","46","48"],a:2,ex:"23쌍 = 46개. 난자·정자는 23개"},
+{k:"C",ch:2,q:"How many chromosomes does a normal egg or sperm cell contain?",o:["23","46","22","92"],a:0,ex:"생식세포는 짝 없이 23개"},
+{k:"C",ch:2,q:"Building up large proteins from small pieces in a cell is:",o:["Catabolism","Anabolism","Metastasis","Dialysis"],a:1,ex:"ana-(위로) 동화 / cata-(아래로) 이화 / 둘 합쳐 metabolism"},
+{k:"C",ch:2,q:"Which type of tissue includes blood, bone, cartilage, and adipose tissue?",o:["Epithelial tissue","Muscle tissue","Connective tissue","Nerve tissue"],a:2,ex:"결합조직. 혈액도 결합조직!"},
+{k:"C",ch:1,q:"A carcinoma is a cancerous tumor arising from which tissue?",o:["Epithelial tissue","Connective tissue (flesh)","Nerve tissue","Blood"],a:0,ex:"carcinoma = 상피, sarcoma = 결합조직(살, 뼈, 근육)"},
+{k:"C",ch:1,q:"A sarcoma is a cancerous tumor of:",o:["Glandular epithelium","Flesh (connective tissue such as bone, muscle, fat)","The skin surface","White blood cells"],a:1,ex:"sarc/o = flesh"},
+{k:"C",ch:1,q:"Leukemia differs from leukocytosis because in leukemia:",o:["White blood cells decrease","Cancerous (abnormal) white blood cells increase","Red blood cells increase","Normal white blood cells increase slightly in infection"],a:1,ex:"leukocytosis = 감염 때 정상 백혈구 증가"},
+{k:"C",ch:4,q:"Recombinant DNA techniques are used to manufacture which substance outside the body?",o:["Hemoglobin","Insulin","Antibodies","Cholesterol"],a:1,ex:"대장균(E. coli)에 인간 인슐린 유전자 삽입"},
+{k:"C",ch:4,q:"Reye syndrome may occur in children after a viral infection treated with:",o:["Antibiotics","Aspirin","Insulin","Chemotherapy"],a:1,ex:"구토, 뇌부종, 저혈당, 간기능장애"},
+{k:"C",ch:4,q:"Transurethral resection of the prostate (TURP) is indicated when:",o:["The prostate is completely absent","Prostatic tissue increases (hyperplasia) and interferes with urination","The urethra is infected","The kidney fails"],a:1,ex:"trans-(요도를 통해) 전립샘 일부 절제"},
+{k:"C",ch:4,q:"A patient tells the doctor that he has a headache. The headache is a:",o:["Sign","Symptom","Syndrome","Prodrome"],a:1,ex:"환자가 느끼는 주관적인 것 = symptom"},
+{k:"C",ch:4,q:"In which term does the prefix in- mean \"not\"?",o:["Incision","Insomniac","Injection","Intravenous"],a:1,ex:"insomniac(불면증 환자) = not. incision은 into"},
+{k:"C",ch:4,q:"Which prefix does NOT mean \"before\"?",o:["Ante-","Pre-","Pro-","Post-"],a:3,ex:"post- = after, behind"},
+{k:"C",ch:4,q:"Bradycardia is a pulse rate of:",o:["60 beats per minute or less","60 to 100 beats per minute","Over 100 beats per minute","Irregular beats"],a:0,ex:"서맥 ≤60, 빈맥 ≥100"},
+{k:"C",ch:4,q:"Fetal alcohol syndrome is an example of a congenital anomaly that is:",o:["Always hereditary","Produced by factors present during pregnancy","Caused by aspirin in children","Acquired in adulthood"],a:1,ex:"임신 중 음주 → 태아 신체·정신 결함"},
+{k:"C",ch:4,q:"The adrenal glands are located:",o:["Near (on top of) each kidney","Near the thyroid gland","In the pelvic cavity","Behind the stomach"],a:0,ex:"ad-(근처) + ren/o(신장)"},
+{k:"C",ch:3,q:"Which suffix, when added to a blood cell term, indicates an abnormal increase?",o:["-penia","-osis","-lysis","-stasis"],a:1,ex:"leukocytosis vs erythropenia"},
+{k:"C",ch:2,q:"The spinal column is composed of bone, whereas the spinal cord is composed of:",o:["Cartilage","Nervous tissue","Muscle","Fat"],a:1,ex:"척추(뼈) vs 척수(신경)"},
+{k:"C",ch:2,q:"Which cavity contains the brain?",o:["Spinal cavity","Cranial cavity","Thoracic cavity","Pelvic cavity"],a:1,ex:"crani/o = skull"},
+{k:"C",ch:3,q:"Adenoids are best described as:",o:["Glands that secrete hormones","Lymphatic tissue in the pharynx that resembles a gland","Tumors of glands","Inflamed tonsils only"],a:1,ex:"aden/o + -oid(닮은) — 샘처럼 생겼지만 샘 아님"},
+
+/* ===== 복수정답 ===== */
+{k:"M",ch:3,q:"Which are granulocytes (polymorphonuclear leukocytes)? (복수정답 가능)",o:["Eosinophil","Basophil","Neutrophil","Lymphocyte","Monocyte"],a:[0,1,2],ex:"과립구 = 호산구·호염기구·호중구 / 단핵구 = 림프구·단핵구"},
+{k:"M",ch:3,q:"Which are mononuclear leukocytes? (복수정답 가능)",o:["Lymphocyte","Monocyte","Neutrophil","Eosinophil"],a:[0,1],ex:"핵이 하나"},
+{k:"M",ch:2,q:"Which organs are located in the thoracic cavity? (복수정답 가능)",o:["Lungs","Heart","Esophagus","Liver","Urinary bladder"],a:[0,1,2],ex:"간은 복강, 방광은 골반강"},
+{k:"M",ch:2,q:"Which are found in the abdominal cavity? (복수정답 가능)",o:["Stomach","Liver","Spleen","Lungs","Brain"],a:[0,1,2],ex:"복강: 위, 간, 담낭, 비장, 이자, 장"},
+{k:"M",ch:4,q:"Which are examples of congenital anomalies? (복수정답 가능)",o:["Syndactyly","Clubfoot","Fetal alcohol syndrome","Osteoarthritis"],a:[0,1,2],ex:"4장 PPT 사진 3개 그대로"},
+{k:"M",ch:2,q:"Which are the four basic types of tissue? (복수정답 가능)",o:["Epithelial","Muscle","Connective","Nerve","Adipose"],a:[0,1,2,3],ex:"지방(adipose)은 결합조직의 한 종류"},
+{k:"M",ch:4,q:"Which prefixes mean \"before\" or \"forward\"? (복수정답 가능)",o:["Ante-","Pre-","Pro-","Pros-","Post-"],a:[0,1,2,3],ex:"post-만 after"},
+{k:"M",ch:3,q:"Which suffixes mean \"pain\"? (복수정답 가능)",o:["-algia","-dynia","-ptosis","-stasis"],a:[0,1],ex:"arthralgia, pleurodynia"},
+{k:"M",ch:2,q:"Which planes divide the body vertically (top to bottom)? (복수정답 가능)",o:["Sagittal plane","Frontal (coronal) plane","Transverse (axial) plane"],a:[0,1],ex:"transverse만 가로"},
+{k:"M",ch:4,q:"Which terms mean pertaining to under the skin? (복수정답 가능)",o:["Subcutaneous","Hypodermic","Percutaneous","Epidermal"],a:[0,1],ex:"sub-·hypo- = under. per- = through"},
+
+/* ===== S: 영어로 쓰기 (단답형) ===== */
+{k:"S",ch:1,q:"What is the term for a red blood cell? (답 영어로 작성)",a:["erythrocyte","erythrocytes"],ex:"작년 기출 1번 그대로"},
+{k:"S",ch:1,q:"What is the term for a white blood cell? (답 영어로 작성)",a:["leukocyte","leukocytes"],ex:"leuk/o + -cyte"},
+{k:"S",ch:1,q:"What is the term for a clotting cell (platelet)? (답 영어로 작성)",a:["thrombocyte","thrombocytes","platelet"],ex:"thromb/o + -cyte"},
+{k:"S",ch:1,q:"Inflammation of the stomach? (답 영어로 작성)",a:["gastritis"],ex:"모음 접미사 → o 생략"},
+{k:"S",ch:1,q:"Process of study of the stomach and intestines? (답 영어로 작성)",a:["gastroenterology"],ex:"어근 사이 o 유지"},
+{k:"S",ch:1,q:"Record of the electricity in the heart? (답 영어로 작성)",a:["electrocardiogram","ecg","ekg"],ex:"electr/o + cardi/o + -gram"},
+{k:"S",ch:1,q:"Study of the blood? (답 영어로 작성)",a:["hematology"],ex:"hemat/o + -logy"},
+{k:"S",ch:1,q:"Tumor of a gland? (답 영어로 작성)",a:["adenoma"],ex:"aden/o + -oma"},
+{k:"S",ch:4,q:"Slow heartbeat? (답 영어로 작성)",a:["bradycardia"],ex:"brady- + cardi/o + -ia"},
+{k:"S",ch:4,q:"Rapid breathing? (답 영어로 작성)",a:["tachypnea"],ex:"tachy- + -pnea"},
+{k:"S",ch:4,q:"Difficult breathing? (답 영어로 작성)",a:["dyspnea"],ex:"dys- + -pnea"},
+{k:"S",ch:2,q:"The voice box? (답 영어로 작성)",a:["larynx"],ex:"y가 n보다 먼저: l-a-r-y-n-x"},
+{k:"S",ch:2,q:"The windpipe? (답 영어로 작성)",a:["trachea"],ex:"trache/o"},
+{k:"S",ch:2,q:"The space between the lungs? (답 영어로 작성)",a:["mediastinum"],ex:"세로칸"},
+{k:"S",ch:2,q:"Lying on the back? (답 영어로 작성)",a:["supine"],ex:"supine ↔ prone"},
+{k:"S",ch:3,q:"Enlargement of the liver? (답 영어로 작성)",a:["hepatomegaly"],ex:"hepat/o + -megaly"},
+{k:"S",ch:3,q:"Pain in a joint? (답 영어로 작성)",a:["arthralgia"],ex:"arthr + -algia (o 생략)"},
+{k:"S",ch:1,q:"Process of viewing living tissue (removed from the body) under a microscope? (답 영어로 작성)",a:["biopsy"],ex:"bi/o + -opsy"},
+{k:"S",ch:1,q:"Examination of a dead body to determine the cause of death? (답 영어로 작성)",a:["autopsy","necropsy"],ex:"auto- + -opsy"},
+{k:"S",ch:1,q:"Prediction about the outcome of an illness? (답 영어로 작성)",a:["prognosis"],ex:"pro-(앞) + gnos/o + -sis. 진단은 diagnosis"},
+{k:"S",ch:4,q:"A substance that stimulates the production of antibodies? (답 영어로 작성)",a:["antigen","antigens"],ex:"anti- + -gen"},
+{k:"S",ch:3,q:"Deficiency of hemoglobin or red blood cells in the blood? (답 영어로 작성)",a:["anemia"],ex:"an- + -emia"},
+{k:"S",ch:4,q:"Spread of a cancerous tumor to a distant site? (답 영어로 작성)",a:["metastasis"],ex:"meta- + -stasis"},
+{k:"S",ch:3,q:"Inflammation of the lungs? (답 영어로 작성)",a:["pneumonia","pneumonitis"],ex:"pneumon/o + -ia"}
+];
+
+/* ---------- 모의고사 (기출형) ---------- */
+const XT={A:"정의 → 용어",B:"용어 → 뜻",C:"개념",M:"복수정답",S:"영어로 쓰기"};
+const XR={A:.38,B:.26,C:.14,M:.08,S:.14};
+let X=[],xi=0,xscore=0,xwrong=[],xans=false,XN=P0.XN||25;
+const saveX=()=>LS.set("mt_sess_ex",{X:X.map(x=>({i:x.i,ord:x.ord})),xi,xscore,xwrong});
+function buildX(n){
+ const src=MQ.map((q,i)=>({q,i})).filter(x=>st.chs.has(x.q.ch));
+ const by={};src.forEach(x=>(by[x.q.k]=by[x.q.k]||[]).push(x));
+ Object.keys(by).forEach(k=>by[k]=shuf(by[k]));
+ if(n>=src.length)return shuf(src).map(mkX);
+ const pick=[];Object.keys(XR).forEach(k=>{const m=Math.round(n*XR[k]);pick.push(...(by[k]||[]).splice(0,m))});
+ const rest=shuf(Object.values(by).flat());while(pick.length<n&&rest.length)pick.push(rest.pop());
+ return shuf(pick.slice(0,n)).map(mkX);
+}
+const mkX=x=>({i:x.i,ord:x.q.o?shuf(x.q.o.map((_,k)=>k)):null});
+function mock(){
+ const src=MQ.filter(q=>st.chs.has(q.ch));const n=src.length;
+ const v=LS.get("mt_sess_ex",null);const H=LS.get("mt_hist",[]).filter(h=>h.k==="ex").slice(-5).reverse();
+ const cnt={};src.forEach(q=>cnt[q.k]=(cnt[q.k]||0)+1);
+ V.innerHTML=`<div class="q enter"><p class="ttl">모의고사 · 기출형</p>
+ <p class="note" style="margin-top:-6px">작년 기출처럼 <b>문제·보기 전부 영어</b>. 답을 고르면 한글 해설이 나와요.</p>
+ <div class="xtypes">${Object.entries(XT).map(([k,l])=>`<span><b>${l}</b>${cnt[k]||0}</span>`).join("")}</div>
+ <div class="row"><span class="lbl">문항 수</span>${seg("xn",String(XN>=n?"all":XN),[...[15,25,40].filter(x=>x<n).map(x=>[String(x),x]),["all",`전체 ${n}`]])}</div>
+ <p class="note">위에서 고른 장(${[...st.chs].sort().join("·")}장)에서 출제 · 유형 비율은 기출과 비슷하게 섞어요</p>
+ ${v&&v.X&&v.xi<v.X.length?`<button class="primary" id="xres">이어서 풀기 · ${v.xi+1}번부터 <span class="sm">(${v.X.length}문제 중 ${v.xscore}개 맞음)</span></button><div class="gap"></div><button class="primary alt" id="xgo">새로 시작</button>`:`<button class="primary" id="xgo">시작</button>`}
+ ${H.length?`<p class="note" style="margin-top:16px">최근 기록 · ${H.map(h=>`<b>${h.s}</b>점<span class="sm">(${h.n}문제)</span>`).join(" · ")}</p>`:""}</div>`;
+ bindSeg("xn",x=>{XN=x==="all"?9999:+x;LS.set("mt_prefs",{...LS.get("mt_prefs",{}),XN});V.querySelectorAll('[data-seg="xn"] button').forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===x))});
+ $("#xgo").onclick=()=>{X=buildX(XN);xi=0;xscore=0;xwrong=[];askX()};
+ const r=$("#xres");if(r)r.onclick=()=>{X=v.X.map(x=>({i:x.i,ord:x.ord}));xi=v.xi;xscore=v.xscore;xwrong=v.xwrong||[];askX()};
+ kb=(e,typing)=>{if(e.key==="Enter"&&!typing&&e.target.tagName!=="BUTTON"){e.preventDefault();(r||$("#xgo")).click()}};
+}
+const xprog=()=>`<div class="prog"><span>${xi+1} / ${X.length}</span><span><b class="okc">${xscore}</b> 맞음 · <b class="badc">${xwrong.length}</b> 틀림 · <button class="link" id="quit">그만하고 채점</button></span></div><div class="bar"><i style="width:${xi/X.length*100}%"></i></div>`;
+function xAfter(ok,q,mine){
+ V.firstElementChild.classList.remove("enter");
+ const bi=$(".bar i");if(bi)bi.style.width=((xi+1)/X.length*100)+"%";
+ if(ok)xscore++;else xwrong.push({i:X[xi].i,a:mine});
+ const pr=V.querySelector(".prog span:last-child");if(pr){pr.querySelector(".okc").textContent=xscore;pr.querySelector(".badc").textContent=xwrong.length}
+ {const k=xi;xi++;saveX();xi=k}
+ $("#after").innerHTML=`<div class="xex ${ok?"ok":"bad"}"><b>${ok?"정답":"오답"}</b>${q.k==="S"?` · 정답: <span class="term">${esc(q.a[0])}</span>`:""}<p>${esc(q.ex)}</p></div><button class="primary" id="nx">${xi+1<X.length?"다음":"결과 보기"}</button>`;
+ $("#nx").onclick=()=>swap(()=>{xi++;askX()});
+}
+function askX(){
+ kb=null;if(xi>=X.length)return finishX();
+ saveX();xans=false;
+ const x=X[xi],q=MQ[x.i];
+ const head=`<div class="q enter">${xprog()}<div class="qtag">${q.ch}장 · ${XT[q.k]}</div><div class="ask xq">${xi+1}. ${esc(q.q)}</div>`;
+ if(q.k==="S"){
+  V.innerHTML=head+`<input class="spell term" id="a" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="영어로 입력 후 Enter">
+  <div class="btns" style="margin-top:0"><button class="no" id="pass">모르겠음</button><button class="yes" id="chk">확인</button></div><div id="after"></div>
+  <div class="keys"><kbd>Enter</kbd> 확인·다음 · <kbd>Esc</kbd> 채점</div></div>`;
+  bindQX();const a=$("#a");a.focus();
+  const check=skip=>{if(xans)return;xans=true;const raw=a.value.trim();const v=norm(raw);const ok=!skip&&v&&q.a.some(t=>norm(t)===v);a.disabled=true;
+   xAfter(ok,q,skip?"(모름)":raw||"(빈칸)");
+   if(!ok&&v&&q.a.some(t=>lev(v,norm(t))<=(t.length>7?2:1)))$(".xex b").textContent="아깝다, 철자 확인!";
+   if(!ok&&raw)$(".xex p").insertAdjacentHTML("beforebegin",`<small>내 답: <span class="term">${esc(raw)}</span></small>`);
+   $("#nx").focus();kb=e=>{if(e.key==="Escape"){e.preventDefault();xi++;finishX(true)}}};
+  $("#chk").onclick=()=>check(false);$("#pass").onclick=()=>check(true);
+  a.onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();check(false)}};
+  kb=e=>{if(e.key==="Escape"){e.preventDefault();finishX(true)}};
+  return;
+ }
+ const multi=q.k==="M";const ord=x.ord;let sel=0;const chosen=new Set();
+ V.innerHTML=head+ord.map((k,i)=>`<button class="opt ${multi?"chk":""} ${i===0?"sel":""}" data-i="${i}"><span class="n">${multi?"":String.fromCharCode(65+i)}</span><span>${esc(q.o[k])}</span></button>`).join("")+
+  `${multi?`<button class="primary" id="sub" style="margin-top:4px">제출</button>`:""}<div id="after"></div>
+  <div class="keys">${multi?`<kbd>↑</kbd><kbd>↓</kbd> 이동 · <kbd>Space</kbd>/<kbd>1</kbd>~<kbd>${ord.length}</kbd> 체크 · <kbd>Enter</kbd> 제출·다음`:`<kbd>↑</kbd><kbd>↓</kbd> 선택 · <kbd>Enter</kbd>/<kbd>→</kbd> 확인·다음 · <kbd>A</kbd>~<kbd>${String.fromCharCode(64+ord.length)}</kbd>(또는 숫자) 바로 고르기`} · <kbd>Esc</kbd> 채점</div></div>`;
+ bindQX();
+ const B=[...V.querySelectorAll(".opt")];
+ const hi=i=>{sel=(i+B.length)%B.length;B.forEach((b,k)=>b.classList.toggle("sel",k===sel))};
+ const tog=i=>{if(xans)return;chosen.has(i)?chosen.delete(i):chosen.add(i);B[i].classList.toggle("on",chosen.has(i));B[i].querySelector(".n").textContent=chosen.has(i)?"✓":"";hi(i)};
+ const grade=()=>{
+  if(xans)return;if(multi&&!chosen.size)return;xans=true;
+  const ans=new Set(multi?q.a:[q.a]);const picked=multi?[...chosen]:[sel];
+  const pickedOrig=new Set(picked.map(i=>ord[i]));
+  const ok=ans.size===pickedOrig.size&&[...ans].every(a=>pickedOrig.has(a));
+  B.forEach((b,i)=>{b.classList.remove("sel");const o=ord[i];if(ans.has(o))b.classList.add("right");else if(pickedOrig.has(o))b.classList.add("wrong");if(multi&&ans.has(o)&&!pickedOrig.has(o))b.classList.add("missed")});
+  const sub=$("#sub");if(sub)sub.remove();
+  xAfter(ok,q,picked.map(i=>q.o[ord[i]]).join(", "));
+ };
+ B.forEach((b,i)=>b.onclick=()=>{if(multi)tog(i);else{hi(i);grade()}});
+ const sb=$("#sub");if(sb)sb.onclick=grade;
+ kb=(e,typing)=>{if(typing)return;
+  if(e.key==="Escape"){e.preventDefault();if(xans)xi++;finishX(true);return}
+  if(!xans){
+   if(e.key==="ArrowDown"){e.preventDefault();hi(sel+1)}
+   else if(e.key==="ArrowUp"){e.preventDefault();hi(sel-1)}
+   else if(/^[1-9]$/.test(e.key)&&+e.key<=B.length){e.preventDefault();multi?tog(+e.key-1):(hi(+e.key-1),grade())}
+   else if(/^[a-eA-E]$/.test(e.key)&&e.key.toLowerCase().charCodeAt(0)-97<B.length){e.preventDefault();const i=e.key.toLowerCase().charCodeAt(0)-97;multi?tog(i):(hi(i),grade())}
+   else if(multi&&e.key===" "){e.preventDefault();tog(sel)}
+   else if(e.key==="Enter"||(!multi&&(e.key===" "||e.key==="ArrowRight"))){e.preventDefault();grade()}
+  }else if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault();swap(()=>{xi++;askX()})}
+ };
+}
+function bindQX(){const q=$("#quit");if(q)q.onclick=()=>finishX(true)}
+function finishX(early=false){
+ kb=null;const total=early?Math.min(xi,X.length):X.length;LS.set("mt_sess_ex",null);
+ if(!total){mock();return}
+ const pct=Math.round(xscore/total*100);
+ const H=LS.get("mt_hist",[]);H.push({k:"ex",s:pct,n:total,t:Date.now()});LS.set("mt_hist",H.slice(-30));
+ const done=X.slice(0,total).map(x=>x.i);const ws=new Set(xwrong.map(w=>w.i));
+ const byT=Object.keys(XT).map(k=>{const a=done.filter(i=>MQ[i].k===k);return a.length?{l:XT[k],n:a.length,ok:a.filter(i=>!ws.has(i)).length}:null}).filter(Boolean);
+ V.innerHTML=`<div class="q enter"><div class="score">${pct}<small>점 · ${xscore}/${total}${early?` (${X.length}문제 중 ${total}개 풀고 채점)`:""}</small></div>
+ <p class="verdict">${pct>=90?"이대로만 보면 돼요 👏":pct>=70?"좋아요, 틀린 유형만 한 번 더!":pct>=50?"목표 50점은 넘었어요. 오답 해설 위주로 보세요":"해설 읽고 틀린 것만 다시 풀어봐요"}</p>
+ <div class="chs">${byT.map(t=>`<div><span>${t.l}</span><b>${Math.round(t.ok/t.n*100)}%</b><i style="--w:${t.ok/t.n*100}%"></i><small>${t.ok}/${t.n}</small></div>`).join("")}</div>
+ ${xwrong.length?`<p class="ttl" style="font-size:1.05rem;margin:22px 0 8px">틀린 문제 ${xwrong.length}개</p><div class="xwl">${xwrong.map(w=>{const q=MQ[w.i];const ans=q.k==="S"?q.a[0]:(Array.isArray(q.a)?q.a:[q.a]).map(k=>q.o[k]).join(", ");return `<div><p class="xwq">${esc(q.q)}</p><p><span class="okc">정답</span> ${esc(ans)}</p>${w.a?`<p><span class="badc">내 답</span> ${esc(w.a)}</p>`:""}<small>${esc(q.ex)}</small></div>`}).join("")}</div>
+ <div class="gap"></div><button class="primary" id="xrw">틀린 것만 다시 풀기</button><div class="gap"></div>`:`<p style="text-align:center">전부 맞았어요!</p>`}
+ <button class="primary alt" id="xrn">새로 풀기</button></div>`;
+ const rw=$("#xrw");if(rw)rw.onclick=()=>{X=shuf(xwrong.map(w=>({i:w.i,ord:MQ[w.i].o?shuf(MQ[w.i].o.map((_,k)=>k)):null})));xi=0;xscore=0;xwrong=[];askX()};
+ $("#xrn").onclick=mock;
+ kb=(e,typing)=>{if(e.key==="Enter"&&!typing&&e.target.tagName!=="BUTTON"){e.preventDefault();(rw||$("#xrn")).click()}};
+}
+
 document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===st.mode));
 render();
 </script>
